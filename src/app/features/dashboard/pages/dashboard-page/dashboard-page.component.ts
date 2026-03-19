@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
+import { AuthSessionStore } from '../../../../core/auth/auth-session.store';
 
 @Component({
   selector: 'hsc-dashboard-page',
@@ -11,4 +12,6 @@ import { PageContainerComponent } from '../../../../core/layout/page-container/p
   styleUrl: './dashboard-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardPageComponent {}
+export class DashboardPageComponent {
+  protected readonly authSessionStore = inject(AuthSessionStore);
+}

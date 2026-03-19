@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AuthSessionStore } from '../../auth/auth-session.store';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { HeaderComponent } from '../header/header.component';
+
 
 @Component({
   selector: 'hsc-admin-shell',
@@ -11,4 +13,10 @@ import { HeaderComponent } from '../header/header.component';
   styleUrl: './admin-shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdminShellComponent {}
+export class AdminShellComponent {
+  private readonly authSessionStore = inject(AuthSessionStore);
+
+  ngOnInit(): void {
+    this.authSessionStore.loadSession();
+  }
+}

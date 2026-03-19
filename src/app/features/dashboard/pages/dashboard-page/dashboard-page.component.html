@@ -4,15 +4,40 @@
 >
   <div class="dashboard">
     <section class="dashboard__card">
-      <h2>Status</h2>
-      <p>Shell carregado com sucesso.</p>
-      <p>Auth base entra no próximo passo.</p>
+      <h2>Status da sessão</h2>
+      <ul class="dashboard__list">
+        <li>Status: {{ authSessionStore.status() }}</li>
+        <li>Authenticated: {{ authSessionStore.isAuthenticated() }}</li>
+        <li>Admin allowed: {{ authSessionStore.isAdminAreaAllowed() }}</li>
+        <li>Viewer: {{ authSessionStore.isViewer() }}</li>
+        <li>Editor: {{ authSessionStore.isEditor() }}</li>
+        <li>Admin: {{ authSessionStore.isAdmin() }}</li>
+      </ul>
+    </section>
+
+    <section class="dashboard__card">
+      <h2>Operador atual</h2>
+
+      @if (authSessionStore.user(); as user) {
+        <ul class="dashboard__list">
+          <li>ID: {{ user.id }}</li>
+          <li>Nome: {{ user.name }}</li>
+          <li>Email: {{ user.email }}</li>
+          <li>Role: {{ authSessionStore.role() }}</li>
+        </ul>
+      } @else {
+        <p>Nenhum operador autenticado resolvido até o momento.</p>
+      }
+
+      @if (authSessionStore.error(); as error) {
+        <p class="dashboard__error">Erro: {{ error }}</p>
+      }
     </section>
 
     <section class="dashboard__card">
       <h2>Áreas previstas</h2>
 
-      <ul>
+      <ul class="dashboard__list">
         <li><a routerLink="/seasons">Seasons</a></li>
         <li><a routerLink="/news">News</a></li>
         <li><a routerLink="/events">Events</a></li>

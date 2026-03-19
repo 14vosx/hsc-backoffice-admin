@@ -4,6 +4,14 @@
   </div>
 
   <div class="header__meta">
-    <span>Session: pending</span>
+    <span>Status: {{ authSessionStore.status() }}</span>
+
+    @if (authSessionStore.user(); as user) {
+      <span> • {{ user.name }}</span>
+    }
+
+    @if (authSessionStore.role(); as role) {
+      <span> • Role: {{ role }}</span>
+    }
   </div>
 </div>
