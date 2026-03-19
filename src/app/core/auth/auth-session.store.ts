@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 
 import { AuthApiService } from './auth-api.service';
 import { AuthSessionState } from './models/auth.model';
@@ -16,6 +17,8 @@ export class AuthSessionStore {
     role: null,
     error: null,
   });
+
+  private pendingLoad: Promise<void> | null = null;
 
   readonly status = computed(() => this.state().status);
   readonly user = computed(() => this.state().user);
@@ -35,41 +38,50 @@ export class AuthSessionStore {
     return role === 'viewer' || role === 'editor' || role === 'admin';
   });
 
-  loadSession(): void {
-    this.state.update((current) => ({
-      ...current,
-      status: 'unknown',
-      error: null,
-    }));
+  async ensureSessionResolved(): Promise<void> {
+    if (this.status() !== 'unknown') {
+      return;
+    }
 
-    this.authApi.getSession().subscribe({
-      next: (session) => {
-        if (!session.authenticated) {
-          this.markUnauthenticated();
-          return;
-        }
+    if (this.pendingLoad) {
+      return this.pendingLoad;
+    }
 
-        this.state.set({
-          status: 'authenticated',
-          user: session.user,
-          role: session.role,
-          error: null,
-        });
-      },
-      error: (error: unknown) => {
-        if (error instanceof HttpErrorResponse && error.status === 401) {
-          this.markUnauthenticated();
-          return;
-        }
-
-        this.state.set({
-          status: 'error',
-          user: null,
-          role: null,
-          error: 'Failed to resolve admin session.',
-        });
-      },
+    this.pendingLoad = this.loadSessionInternal().finally(() => {
+      this.pendingLoad = null;
     });
+
+    return this.pendingLoad;
+  }
+
+  async bootstrapDevSession(): Promise<void> {
+    try {
+      const session = await firstValueFrom(this.authApi.bootstrapDevSession());
+
+      if (!session.authenticated) {
+        this.markUnauthenticated();
+        return;
+      }
+
+      this.state.set({
+        status: 'authenticated',
+        user: session.user,
+        role: session.role,
+        error: null,
+      });
+    } catch (error: unknown) {
+      if (error instanceof HttpErrorResponse && error.status === 401) {
+        this.markUnauthenticated();
+        return;
+      }
+
+      this.state.set({
+        status: 'error',
+        user: null,
+        role: null,
+        error: 'Failed to bootstrap local admin session.',
+      });
+    }
   }
 
   clearSession(): void {
@@ -88,5 +100,41 @@ export class AuthSessionStore {
       role: null,
       error: null,
     });
+  }
+
+  private async loadSessionInternal(): Promise<void> {
+    this.state.update((current) => ({
+      ...current,
+      status: 'unknown',
+      error: null,
+    }));
+
+    try {
+      const session = await firstValueFrom(this.authApi.getSession());
+
+      if (!session.authenticated) {
+        this.markUnauthenticated();
+        return;
+      }
+
+      this.state.set({
+        status: 'authenticated',
+        user: session.user,
+        role: session.role,
+        error: null,
+      });
+    } catch (error: unknown) {
+      if (error instanceof HttpErrorResponse && error.status === 401) {
+        this.markUnauthenticated();
+        return;
+      }
+
+      this.state.set({
+        status: 'error',
+        user: null,
+        role: null,
+        error: 'Failed to resolve admin session.',
+      });
+    }
   }
 }

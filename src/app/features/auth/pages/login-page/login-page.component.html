@@ -1,10 +1,17 @@
 <main class="login-page">
   <h1>HSC Backoffice Admin</h1>
   <p>Área administrativa do ecossistema HSC.</p>
-  <p>O fluxo de autenticação real será ligado nas próximas etapas do PR-1.</p>
+  <p>Fluxo local de desenvolvimento com Auth API real.</p>
 
-  <p>
-    Neste momento, o acesso ao shell depende da resolução da sessão
-    administrativa.
-  </p>
+  <button
+    type="button"
+    (click)="handleBootstrapDevSession()"
+    [disabled]="isBootstrapping()"
+  >
+    @if (isBootstrapping()) {
+      Criando sessão local...
+    } @else {
+      Criar sessão local de desenvolvimento
+    }
+  </button>
 </main>

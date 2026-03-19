@@ -23,11 +23,24 @@ export class AuthApiService {
    * Neste momento, ele existe como ponto único de integração do frontend.
    */
   private readonly sessionEndpoint = '/auth/session';
+  private readonly devBootstrapSessionEndpoint = '/auth/dev/bootstrap-session';
 
   getSession(): Observable<AuthSession> {
     return this.http.get<RawSessionResponse>(this.sessionEndpoint).pipe(
       map((response) => this.normalizeSession(response)),
     );
+  }
+
+  bootstrapDevSession(): Observable<AuthSession> {
+    return this.http
+      .post<RawSessionResponse>(
+        this.devBootstrapSessionEndpoint,
+        {},
+        {
+          withCredentials: true,
+        },
+      )
+      .pipe(map((response) => this.normalizeSession(response)));
   }
 
   private normalizeSession(response: RawSessionResponse): AuthSession {

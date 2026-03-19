@@ -3,13 +3,13 @@ import { CanActivateFn, Router, UrlTree } from '@angular/router';
 
 import { AuthSessionStore } from '../auth/auth-session.store';
 
-export const authGuard: CanActivateFn = (): boolean | UrlTree => {
+export const authGuard: CanActivateFn = async (): Promise<boolean | UrlTree> => {
   const router = inject(Router);
   const authSessionStore = inject(AuthSessionStore);
-
-  const status = authSessionStore.status();
-
-  if (status === 'authenticated') {
+  
+  await authSessionStore.ensureSessionResolved();
+  
+  if (authSessionStore.isAuthenticated()) {
     return true;
   }
 

@@ -13,10 +13,4 @@ import { HeaderComponent } from '../header/header.component';
   styleUrl: './admin-shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdminShellComponent {
-  private readonly authSessionStore = inject(AuthSessionStore);
-
-  ngOnInit(): void {
-    this.authSessionStore.loadSession();
-  }
-}
+export class AdminShellComponent {}
