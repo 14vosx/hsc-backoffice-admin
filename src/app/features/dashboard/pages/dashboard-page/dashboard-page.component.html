@@ -1,1 +1,22 @@
-<p>dashboard-page works!</p>
+<hsc-page-container
+  title="Backoffice Admin"
+  subtitle="Dashboard técnico inicial do PR-1"
+>
+  <div class="dashboard">
+    <section class="dashboard__card">
+      <h2>Status</h2>
+      <p>Shell carregado com sucesso.</p>
+      <p>Auth base entra no próximo passo.</p>
+    </section>
+
+    <section class="dashboard__card">
+      <h2>Áreas previstas</h2>
+
+      <ul>
+        <li><a routerLink="/seasons">Seasons</a></li>
+        <li><a routerLink="/news">News</a></li>
+        <li><a routerLink="/events">Events</a></li>
+      </ul>
+    </section>
+  </div>
+</hsc-page-container>

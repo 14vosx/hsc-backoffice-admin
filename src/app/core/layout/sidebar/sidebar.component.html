@@ -1,1 +1,26 @@
-<p>sidebar works!</p>
+<nav class="sidebar">
+  <div class="sidebar__brand">
+    <strong>HSC Backoffice</strong>
+  </div>
+
+  <a
+    class="sidebar__link"
+    routerLink="/dashboard"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    Dashboard
+  </a>
+
+  <a class="sidebar__link" routerLink="/seasons" routerLinkActive="active">
+    Seasons
+  </a>
+
+  <a class="sidebar__link" routerLink="/news" routerLinkActive="active">
+    News
+  </a>
+
+  <a class="sidebar__link" routerLink="/events" routerLinkActive="active">
+    Events
+  </a>
+</nav>

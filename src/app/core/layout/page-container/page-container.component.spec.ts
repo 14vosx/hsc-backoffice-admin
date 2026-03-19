@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PageContainer } from './page-container.component';
+import { PageContainerComponent } from './page-container.component';
 
-describe('PageContainer', () => {
-  let component: PageContainer;
-  let fixture: ComponentFixture<PageContainer>;
+describe('PageContainerComponent', () => {
+  let component: PageContainerComponent;
+  let fixture: ComponentFixture<PageContainerComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PageContainer],
+      imports: [PageContainerComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(PageContainer);
+    fixture = TestBed.createComponent(PageContainerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

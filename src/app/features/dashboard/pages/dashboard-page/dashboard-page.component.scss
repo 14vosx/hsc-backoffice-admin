@@ -1,0 +1,14 @@
+.dashboard {
+  display: grid;
+  gap: 16px;
+}
+
+.dashboard__card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.dashboard__card h2 {
+  margin-top: 0;
+}

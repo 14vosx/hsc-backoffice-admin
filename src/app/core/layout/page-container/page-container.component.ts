@@ -1,10 +1,13 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
   selector: 'hsc-page-container',
-  imports: [],
+  standalone: true,
   templateUrl: './page-container.component.html',
   styleUrl: './page-container.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PageContainer {}
+export class PageContainerComponent {
+  readonly title = input.required<string>();
+  readonly subtitle = input<string>('');
+}

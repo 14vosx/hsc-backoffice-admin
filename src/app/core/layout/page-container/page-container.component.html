@@ -1,1 +1,13 @@
-<p>page-container works!</p>
+<section class="page-container">
+  <header class="page-container__header">
+    <h1 class="page-container__title">{{ title() }}</h1>
+
+    @if (subtitle()) {
+      <p class="page-container__subtitle">{{ subtitle() }}</p>
+    }
+  </header>
+
+  <div class="page-container__body">
+    <ng-content></ng-content>
+  </div>
+</section>
