@@ -54,6 +54,14 @@ export class AuthSessionStore {
     return this.pendingLoad;
   }
 
+  async reloadSession(): Promise<void> {
+    this.pendingLoad = this.loadSessionInternal().finally(() => {
+      this.pendingLoad = null;
+    });
+
+    return this.pendingLoad;
+  }
+
   async bootstrapDevSession(): Promise<void> {
     try {
       const session = await firstValueFrom(this.authApi.bootstrapDevSession());

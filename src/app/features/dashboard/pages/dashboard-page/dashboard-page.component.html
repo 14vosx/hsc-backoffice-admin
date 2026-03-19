@@ -4,7 +4,22 @@
 >
   <div class="dashboard">
     <section class="dashboard__card">
-      <h2>Status da sessão</h2>
+      <div class="dashboard__card-header">
+        <h2>Status da sessão</h2>
+
+        <button
+          type="button"
+          (click)="handleRefreshSession()"
+          [disabled]="isRefreshing()"
+        >
+          @if (isRefreshing()) {
+            Recarregando...
+          } @else {
+            Recarregar sessão
+          }
+        </button>
+      </div>
+
       <ul class="dashboard__list">
         <li>Status: {{ authSessionStore.status() }}</li>
         <li>Authenticated: {{ authSessionStore.isAuthenticated() }}</li>

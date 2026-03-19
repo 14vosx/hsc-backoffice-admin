@@ -6,8 +6,31 @@
   min-height: 100vh;
   display: grid;
   place-content: center;
-  gap: 12px;
   padding: 24px;
+}
+
+.login-page__card {
+  display: grid;
+  gap: 16px;
+  width: min(560px, 100%);
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.login-page__status {
+  display: grid;
+  gap: 8px;
+}
+
+.login-page__status p {
+  margin: 0;
+}
+
+.login-page__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 button {
@@ -21,4 +44,12 @@ button {
 button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+.login-page__secondary {
+  background: #f9fafb;
+}
+
+.login-page__error {
+  color: #b91c1c;
 }

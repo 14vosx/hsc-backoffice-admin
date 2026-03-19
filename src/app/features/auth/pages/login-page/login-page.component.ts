@@ -12,9 +12,10 @@ import { AuthSessionStore } from '../../../../core/auth/auth-session.store';
 })
 export class LoginPageComponent {
   private readonly router = inject(Router);
-  private readonly authSessionStore = inject(AuthSessionStore);
+  protected readonly authSessionStore = inject(AuthSessionStore);
 
   protected readonly isBootstrapping = signal(false);
+  protected readonly isResolving = signal(false);
 
   protected async handleBootstrapDevSession(): Promise<void> {
     this.isBootstrapping.set(true);
@@ -24,6 +25,20 @@ export class LoginPageComponent {
       await this.router.navigateByUrl('/dashboard');
     } finally {
       this.isBootstrapping.set(false);
+    }
+  }
+
+  protected async handleResolveCurrentSession(): Promise<void> {
+    this.isResolving.set(true);
+
+    try {
+      await this.authSessionStore.reloadSession();
+
+      if (this.authSessionStore.isAuthenticated()) {
+        await this.router.navigateByUrl('/dashboard');
+      }
+    } finally {
+      this.isResolving.set(false);
     }
   }
 }

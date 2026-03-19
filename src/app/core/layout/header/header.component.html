@@ -1,17 +1,17 @@
 <div class="header">
-  <div>
+  <div class="header__title">
     <strong>Backoffice Admin</strong>
   </div>
 
   <div class="header__meta">
-    <span>Status: {{ authSessionStore.status() }}</span>
-
-    @if (authSessionStore.user(); as user) {
-      <span> • {{ user.name }}</span>
-    }
+    <span class="header__badge">status: {{ authSessionStore.status() }}</span>
 
     @if (authSessionStore.role(); as role) {
-      <span> • Role: {{ role }}</span>
+      <span class="header__badge">role: {{ role }}</span>
+    }
+
+    @if (authSessionStore.user(); as user) {
+      <span class="header__identity">{{ user.name }}</span>
     }
   </div>
 </div>

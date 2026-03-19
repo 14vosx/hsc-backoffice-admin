@@ -1,17 +1,50 @@
 <main class="login-page">
-  <h1>HSC Backoffice Admin</h1>
-  <p>Área administrativa do ecossistema HSC.</p>
-  <p>Fluxo local de desenvolvimento com Auth API real.</p>
+  <section class="login-page__card">
+    <h1>HSC Backoffice Admin</h1>
+    <p>Área administrativa do ecossistema HSC.</p>
+    <p>Fluxo local conectado à Auth API real.</p>
 
-  <button
-    type="button"
-    (click)="handleBootstrapDevSession()"
-    [disabled]="isBootstrapping()"
-  >
-    @if (isBootstrapping()) {
-      Criando sessão local...
-    } @else {
-      Criar sessão local de desenvolvimento
-    }
-  </button>
+    <div class="login-page__status">
+      <p><strong>Status:</strong> {{ authSessionStore.status() }}</p>
+
+      @if (authSessionStore.role(); as role) {
+        <p><strong>Role:</strong> {{ role }}</p>
+      }
+
+      @if (authSessionStore.user(); as user) {
+        <p><strong>Operador:</strong> {{ user.name }} ({{ user.email }})</p>
+      }
+
+      @if (authSessionStore.error(); as error) {
+        <p class="login-page__error"><strong>Erro:</strong> {{ error }}</p>
+      }
+    </div>
+
+    <div class="login-page__actions">
+      <button
+        type="button"
+        (click)="handleBootstrapDevSession()"
+        [disabled]="isBootstrapping() || isResolving()"
+      >
+        @if (isBootstrapping()) {
+          Criando sessão local...
+        } @else {
+          Criar sessão local de desenvolvimento
+        }
+      </button>
+
+      <button
+        type="button"
+        class="login-page__secondary"
+        (click)="handleResolveCurrentSession()"
+        [disabled]="isBootstrapping() || isResolving()"
+      >
+        @if (isResolving()) {
+          Resolvendo sessão...
+        } @else {
+          Resolver sessão atual
+        }
+      </button>
+    </div>
+  </section>
 </main>
