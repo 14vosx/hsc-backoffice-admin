@@ -2,8 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
+import { API_BASE_URL } from '../config/api.config';
 import { AuthSession, AuthUser } from './models/auth.model';
 import { AppRole } from './models/role.model';
+
+type MagicLinkRequestResponse = {
+  ok: boolean;
+  message?: string;
+};
 
 type RawSessionResponse = Partial<{
   authenticated: boolean;
@@ -17,16 +23,12 @@ type RawSessionResponse = Partial<{
 export class AuthApiService {
   private readonly http = inject(HttpClient);
 
-  /**
-   * TODO:
-   * Reconciliar este endpoint com o contrato final da Auth API.
-   * Neste momento, ele existe como ponto único de integração do frontend.
-   */
-  private readonly sessionEndpoint = '/auth/session';
-  private readonly devBootstrapSessionEndpoint = '/auth/dev/bootstrap-session';
+  private readonly sessionEndpoint = `${API_BASE_URL}/auth/session`;
+  private readonly requestMagicLinkEndpoint = `${API_BASE_URL}/auth/magic-link/request`;
+  private readonly devBootstrapSessionEndpoint = `${API_BASE_URL}/auth/dev/bootstrap-session`;
 
   getSession(): Observable<AuthSession> {
-    return this.http.get<RawSessionResponse>(this.sessionEndpoint).pipe(
+    return this.http.get<RawSessionResponse>(this.sessionEndpoint, { withCredentials: true }).pipe(
       map((response) => this.normalizeSession(response)),
     );
   }
@@ -42,6 +44,16 @@ export class AuthApiService {
       )
       .pipe(map((response) => this.normalizeSession(response)));
   }
+
+  requestMagicLink(email: string): Observable<MagicLinkRequestResponse> {
+  return this.http.post<MagicLinkRequestResponse>(
+    this.requestMagicLinkEndpoint,
+    { email },
+    {
+      withCredentials: true,
+    },
+  );
+}
 
   private normalizeSession(response: RawSessionResponse): AuthSession {
     const authenticated = response.authenticated === true;

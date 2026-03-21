@@ -23,8 +23,24 @@
   gap: 8px;
 }
 
-.login-page__status p {
+.login-page__status p,
+.login-page__form p {
   margin: 0;
+}
+
+.login-page__form {
+  display: grid;
+  gap: 12px;
+}
+
+.login-page__form label {
+  font-weight: 600;
+}
+
+.login-page__form input {
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
 }
 
 .login-page__actions {
@@ -48,6 +64,10 @@ button:disabled {
 
 .login-page__secondary {
   background: #f9fafb;
+}
+
+.login-page__message {
+  color: #065f46;
 }
 
 .login-page__error {

@@ -12,6 +12,14 @@ export const routes: Routes = [
     title: 'Login | HSC Backoffice',
   },
   {
+    path: 'auth/callback',
+    loadComponent: () =>
+      import('./features/auth/pages/auth-callback-page/auth-callback-page.component').then(
+        (m) => m.AuthCallbackPageComponent,
+      ),
+    title: 'Autenticação | HSC Backoffice',
+  },
+  {
     path: '',
     loadComponent: () =>
       import('./core/layout/admin-shell/admin-shell.component').then(

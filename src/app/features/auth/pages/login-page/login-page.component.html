@@ -1,8 +1,7 @@
 <main class="login-page">
   <section class="login-page__card">
     <h1>HSC Backoffice Admin</h1>
-    <p>Área administrativa do ecossistema HSC.</p>
-    <p>Fluxo local conectado à Auth API real.</p>
+    <p>Entre com seu email para receber um link mágico de acesso.</p>
 
     <div class="login-page__status">
       <p><strong>Status:</strong> {{ authSessionStore.status() }}</p>
@@ -16,28 +15,49 @@
       }
 
       @if (authSessionStore.error(); as error) {
-        <p class="login-page__error"><strong>Erro:</strong> {{ error }}</p>
+        <p class="login-page__error"><strong>Erro de sessão:</strong> {{ error }}</p>
+      }
+    </div>
+
+    <div class="login-page__form">
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        [value]="email()"
+        (input)="updateEmail(($any($event.target).value ?? '').toString())"
+        [disabled]="isRequestingLink() || isResolving()"
+        placeholder="admin@haxixesmokeclub.com"
+        autocomplete="email"
+      />
+
+      <button
+        type="button"
+        (click)="handleRequestMagicLink()"
+        [disabled]="isRequestingLink() || isResolving()"
+      >
+        @if (isRequestingLink()) {
+          Enviando link...
+        } @else {
+          Enviar link mágico
+        }
+      </button>
+
+      @if (requestMessage(); as message) {
+        <p class="login-page__message">{{ message }}</p>
+      }
+
+      @if (requestError(); as error) {
+        <p class="login-page__error">{{ error }}</p>
       }
     </div>
 
     <div class="login-page__actions">
       <button
         type="button"
-        (click)="handleBootstrapDevSession()"
-        [disabled]="isBootstrapping() || isResolving()"
-      >
-        @if (isBootstrapping()) {
-          Criando sessão local...
-        } @else {
-          Criar sessão local de desenvolvimento
-        }
-      </button>
-
-      <button
-        type="button"
         class="login-page__secondary"
         (click)="handleResolveCurrentSession()"
-        [disabled]="isBootstrapping() || isResolving()"
+        [disabled]="isRequestingLink() || isResolving()"
       >
         @if (isResolving()) {
           Resolvendo sessão...

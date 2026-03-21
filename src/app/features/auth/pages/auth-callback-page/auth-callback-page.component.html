@@ -1,0 +1,19 @@
+<main class="auth-callback-page">
+  <section class="auth-callback-page__card">
+    <h1>HSC Backoffice Admin</h1>
+
+    @if (isResolving()) {
+      <p>{{ message() }}</p>
+    } @else {
+      <p>{{ message() }}</p>
+
+      @if (error(); as errorMessage) {
+        <p class="auth-callback-page__error">{{ errorMessage }}</p>
+      }
+
+      <button type="button" (click)="goToLogin()">
+        Voltar para login
+      </button>
+    }
+  </section>
+</main>
