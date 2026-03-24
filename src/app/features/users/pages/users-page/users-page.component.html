@@ -1,0 +1,65 @@
+<section class="users-page">
+  <header class="users-page__header">
+    <h1>Usuários</h1>
+    <p>Gestão administrativa de usuários do Backoffice.</p>
+  </header>
+
+  <div class="users-page__content">
+    <form class="users-page__form" [formGroup]="createForm" (ngSubmit)="submitCreate()">
+      <div>
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" />
+      </div>
+
+      <div>
+        <label for="display_name">Nome</label>
+        <input id="display_name" type="text" formControlName="display_name" />
+      </div>
+
+      <div>
+        <label for="role">Role</label>
+        <select id="role" formControlName="role">
+          <option value="admin">admin</option>
+          <option value="editor">editor</option>
+          <option value="viewer">viewer</option>
+        </select>
+      </div>
+
+      <button type="submit">Criar usuário</button>
+    </form>
+  </div>
+
+  @if (vm$ | async; as vm) {
+    <div class="users-page__content">
+      @if (vm.loading) {
+        <p>Carregando usuários...</p>
+      } @else if (vm.error) {
+        <p>{{ vm.error }}</p>
+      } @else {
+        <p><strong>Total:</strong> {{ vm.count }}</p>
+
+        <ul>
+          @for (item of vm.items; track item.id) {
+            <li>
+              <strong>#{{ item.id }}</strong>
+              —
+              {{ item.display_name || 'Sem nome' }}
+              —
+              {{ item.email }}
+              —
+              role: {{ item.role }}
+
+              <div>
+                <button type="button" (click)="renameUser(item)">renomear</button>
+                <button type="button" (click)="changeEmail(item)">alterar email</button>
+                <button type="button" (click)="changeRole(item, 'admin')">admin</button>
+                <button type="button" (click)="changeRole(item, 'editor')">editor</button>
+                <button type="button" (click)="changeRole(item, 'viewer')">viewer</button>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  }
+</section>

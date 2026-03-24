@@ -51,6 +51,14 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
+        path: 'users',
+        loadComponent: () =>
+          import('./features/users/pages/users-page/users-page.component').then(
+            (m) => m.UsersPageComponent,
+          ),
+        title: 'Usuários | HSC Backoffice',
+      },
+      {
         path: 'events',
         redirectTo: 'dashboard',
         pathMatch: 'full',
