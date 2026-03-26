@@ -1,0 +1,18 @@
+<section class="news-create-page">
+  <header class="news-create-page__header">
+    <div>
+      <h1 class="news-create-page__title">Nova news</h1>
+      <p class="news-create-page__description">
+        Crie um novo draft administrativo para o domínio de news.
+      </p>
+    </div>
+  </header>
+
+  <hsc-news-form
+    mode="create"
+    [submitting]="submitting()"
+    [errorMessage]="error()"
+    (formSubmit)="submit($event)"
+    (cancel)="cancel()"
+  />
+</section>

@@ -1,0 +1,77 @@
+<section class="news-form">
+  @if (metadata) {
+    <div class="news-form__meta">
+      <div><strong>Status:</strong> {{ metadata.status }}</div>
+      <div><strong>Slug:</strong> <code>{{ metadata.slug }}</code></div>
+      <div>
+        <strong>Publicado em:</strong>
+        @if (metadata.published_at) {
+          {{ metadata.published_at | date: 'dd/MM/yyyy HH:mm' }}
+        } @else {
+          —
+        }
+      </div>
+      <div>
+        <strong>Criado em:</strong>
+        @if (metadata.created_at) {
+          {{ metadata.created_at | date: 'dd/MM/yyyy HH:mm' }}
+        } @else {
+          —
+        }
+      </div>
+      <div>
+        <strong>Atualizado em:</strong>
+        @if (metadata.updated_at) {
+          {{ metadata.updated_at | date: 'dd/MM/yyyy HH:mm' }}
+        } @else {
+          —
+        }
+      </div>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="news-form__feedback news-form__feedback--error">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <form class="news-form__form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <label class="news-form__field">
+      <span>Slug</span>
+      <input type="text" formControlName="slug" />
+      @if (isEditMode) {
+        <small>Slug somente leitura neste checkpoint.</small>
+      }
+      @if (form.controls.slug.touched && form.controls.slug.invalid) {
+        <small class="news-form__error">Slug é obrigatório.</small>
+      }
+    </label>
+
+    <label class="news-form__field">
+      <span>Título</span>
+      <input type="text" formControlName="title" />
+      @if (form.controls.title.touched && form.controls.title.invalid) {
+        <small class="news-form__error">Título é obrigatório.</small>
+      }
+    </label>
+
+    <label class="news-form__field">
+      <span>Conteúdo</span>
+      <textarea rows="14" formControlName="content"></textarea>
+      @if (form.controls.content.touched && form.controls.content.invalid) {
+        <small class="news-form__error">Conteúdo é obrigatório.</small>
+      }
+    </label>
+
+    <div class="news-form__actions">
+      <button type="button" class="news-form__secondary-action" [disabled]="submitting" (click)="onCancel()">
+        Cancelar
+      </button>
+
+      <button type="submit" class="news-form__primary-action" [disabled]="submitting">
+        {{ submitting ? 'Processando...' : submitLabel }}
+      </button>
+    </div>
+  </form>
+</section>

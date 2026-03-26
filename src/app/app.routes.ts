@@ -47,8 +47,27 @@ export const routes: Routes = [
       },
       {
         path: 'news',
-        redirectTo: 'dashboard',
-        pathMatch: 'full',
+        loadComponent: () =>
+          import('./features/news/pages/news-list-page/news-list-page.component').then(
+            (m) => m.NewsListPageComponent,
+          ),
+        title: 'News | HSC Backoffice',
+      },
+      {
+        path: 'news/new',
+        loadComponent: () =>
+          import('./features/news/pages/news-create-page/news-create-page.component').then(
+            (m) => m.NewsCreatePageComponent,
+          ),
+        title: 'Nova News | HSC Backoffice',
+      },
+      {
+        path: 'news/:id/edit',
+        loadComponent: () =>
+          import('./features/news/pages/news-edit-page/news-edit-page.component').then(
+            (m) => m.NewsEditPageComponent,
+          ),
+        title: 'Editar News | HSC Backoffice',
       },
       {
         path: 'users',

@@ -1,0 +1,110 @@
+<section class="news-edit-page">
+  <header class="news-edit-page__header">
+    <div>
+      <h1 class="news-edit-page__title">Editar news</h1>
+      <p class="news-edit-page__description">
+        Edite um item conhecido pelo frontend e execute ações de lifecycle do recurso.
+      </p>
+    </div>
+
+    <div class="news-edit-page__header-actions">
+      <button type="button" class="news-edit-page__secondary-action" [disabled]="submitting()" (click)="cancel()">
+        Voltar
+      </button>
+
+      @if (canRunLifecycle()) {
+        @if (!isPublished()) {
+          <button
+            type="button"
+            class="news-edit-page__secondary-action"
+            [disabled]="submitting()"
+            (click)="publish()"
+          >
+            Publicar
+          </button>
+        } @else {
+          <button
+            type="button"
+            class="news-edit-page__secondary-action"
+            [disabled]="submitting()"
+            (click)="unpublish()"
+          >
+            Despublicar
+          </button>
+        }
+
+        <button
+          type="button"
+          class="news-edit-page__danger-action"
+          [disabled]="submitting()"
+          (click)="remove()"
+        >
+          Remover
+        </button>
+      }
+    </div>
+  </header>
+
+  @if (resolutionState() === 'loading') {
+    <div class="news-edit-page__feedback">
+      Carregando contexto de edição...
+    </div>
+  } @else {
+    @if (pageError()) {
+      <div class="news-edit-page__feedback news-edit-page__feedback--error">
+        <p>{{ pageError() }}</p>
+
+        <div class="news-edit-page__feedback-actions">
+          <button type="button" class="news-edit-page__secondary-action" (click)="retry()">
+            Tentar novamente
+          </button>
+
+          <button type="button" class="news-edit-page__secondary-action" (click)="cancel()">
+            Voltar para listagem
+          </button>
+        </div>
+      </div>
+    }
+
+    @if (canRenderForm()) {
+      <hsc-news-form
+        mode="edit"
+        [initialValue]="initialValue()"
+        [metadata]="metadata()"
+        [submitting]="submitting()"
+        [errorMessage]="store.error()"
+        (formSubmit)="submit($event)"
+        (cancel)="cancel()"
+      />
+    } @else if (metadata()) {
+      <div class="news-edit-page__metadata">
+        <div><strong>Status:</strong> {{ metadata()?.status }}</div>
+        <div><strong>Slug:</strong> <code>{{ metadata()?.slug }}</code></div>
+        <div>
+          <strong>Publicado em:</strong>
+          @if (metadata()?.published_at) {
+            {{ metadata()?.published_at | date: 'dd/MM/yyyy HH:mm' }}
+          } @else {
+            —
+          }
+        </div>
+        <div>
+          <strong>Criado em:</strong>
+          @if (metadata()?.created_at) {
+            {{ metadata()?.created_at | date: 'dd/MM/yyyy HH:mm' }}
+          } @else {
+            —
+          }
+        </div>
+        <div>
+          <strong>Atualizado em:</strong>
+          @if (metadata()?.updated_at) {
+            {{ metadata()?.updated_at | date: 'dd/MM/yyyy HH:mm' }}
+          } @else {
+            —
+          }
+        </div>
+      </div>
+    }
+  }
+</section>

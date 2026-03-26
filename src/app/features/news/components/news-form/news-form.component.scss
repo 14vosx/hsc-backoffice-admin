@@ -1,0 +1,69 @@
+.news-form {
+  display: grid;
+  gap: 16px;
+}
+
+.news-form__meta,
+.news-form__feedback {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+}
+
+.news-form__feedback--error {
+  border-color: #fecaca;
+}
+
+.news-form__form {
+  display: grid;
+  gap: 16px;
+}
+
+.news-form__field {
+  display: grid;
+  gap: 8px;
+}
+
+.news-form__field input,
+.news-form__field textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: inherit;
+  background: #fff;
+}
+
+.news-form__field textarea {
+  resize: vertical;
+}
+
+.news-form__error {
+  color: #b91c1c;
+}
+
+.news-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.news-form__primary-action,
+.news-form__secondary-action {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.news-form__primary-action {
+  font-weight: 600;
+}
+
+.news-form__primary-action:disabled,
+.news-form__secondary-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
