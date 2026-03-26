@@ -1,0 +1,49 @@
+<section class="news-list-page">
+  <header class="news-list-page__header">
+    <div>
+      <h1 class="news-list-page__title">News</h1>
+      <p class="news-list-page__description">
+        Gerencie notícias administrativas do HSC Backoffice.
+      </p>
+    </div>
+
+    <button type="button" class="news-list-page__primary-action" (click)="goToCreate()">
+      Nova notícia
+    </button>
+  </header>
+
+  @if (activeMutation()) {
+    <div class="news-list-page__info">
+      Processando ação administrativa...
+    </div>
+  }
+
+  @if (error()) {
+    <div class="news-list-page__feedback news-list-page__feedback--error">
+      <p>{{ error() }}</p>
+      <button type="button" class="news-list-page__secondary-action" (click)="load()">
+        Tentar novamente
+      </button>
+    </div>
+  } @else if (loading() && items().length === 0) {
+    <div class="news-list-page__feedback">
+      Carregando news...
+    </div>
+  } @else if (isEmpty()) {
+    <div class="news-list-page__feedback">
+      <p>Nenhuma news cadastrada até o momento.</p>
+      <button type="button" class="news-list-page__primary-action" (click)="goToCreate()">
+        Criar primeira news
+      </button>
+    </div>
+  } @else {
+    <hsc-news-table
+      [items]="items()"
+      [actionsDisabled]="actionsDisabled()"
+      (edit)="goToEdit($event)"
+      (publish)="publish($event)"
+      (unpublish)="unpublish($event)"
+      (remove)="remove($event)"
+    />
+  }
+</section>

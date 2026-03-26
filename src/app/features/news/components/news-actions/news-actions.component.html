@@ -1,0 +1,24 @@
+<div class="news-actions">
+  <button type="button" class="news-actions__button" [disabled]="disabled" (click)="onEdit()">
+    Editar
+  </button>
+
+  @if (!isPublished) {
+    <button type="button" class="news-actions__button" [disabled]="disabled" (click)="onPublish()">
+      Publicar
+    </button>
+  } @else {
+    <button type="button" class="news-actions__button" [disabled]="disabled" (click)="onUnpublish()">
+      Despublicar
+    </button>
+  }
+
+  <button
+    type="button"
+    class="news-actions__button news-actions__button--danger"
+    [disabled]="disabled"
+    (click)="onRemove()"
+  >
+    Remover
+  </button>
+</div>

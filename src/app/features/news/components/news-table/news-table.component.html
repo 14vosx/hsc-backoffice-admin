@@ -1,0 +1,45 @@
+<div class="news-table-wrapper">
+  <table class="news-table">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Slug</th>
+        <th>Status</th>
+        <th>Publicado em</th>
+        <th>Atualizado em</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (item of items; track trackById($index, item)) {
+        <tr>
+          <td>{{ item.title }}</td>
+          <td><code>{{ item.slug }}</code></td>
+          <td>
+            <hsc-news-status-badge [status]="item.status" />
+          </td>
+          <td>
+            @if (item.published_at) {
+              {{ item.published_at | date: 'dd/MM/yyyy HH:mm' }}
+            } @else {
+              —
+            }
+          </td>
+          <td>{{ item.updated_at | date: 'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            <hsc-news-actions
+              [itemId]="item.id"
+              [status]="item.status"
+              [disabled]="actionsDisabled"
+              (edit)="onEdit($event)"
+              (publish)="onPublish($event)"
+              (unpublish)="onUnpublish($event)"
+              (remove)="onRemove($event)"
+            />
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

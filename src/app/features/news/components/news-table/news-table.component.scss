@@ -1,0 +1,24 @@
+.news-table-wrapper {
+  overflow-x: auto;
+}
+
+.news-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.news-table th,
+.news-table td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top;
+}
+
+.news-table th {
+  font-size: 14px;
+}
+
+.news-table code {
+  font-size: 12px;
+}
