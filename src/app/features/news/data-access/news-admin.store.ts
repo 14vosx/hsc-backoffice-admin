@@ -3,6 +3,7 @@ import { firstValueFrom } from 'rxjs';
 
 import {
   createEditableDraftFromCreate,
+  createEditableDraftFromDetail,
   mergeEditableDraftWithItem,
   toNewsFormValue,
 } from '../utils/news-form.mapper';
@@ -10,6 +11,7 @@ import { mapNewsErrorMessage } from '../utils/news-error.mapper';
 import { NewsAdminApiService } from './news-admin-api.service';
 import {
   AdminNewsEditableDraft,
+  AdminNewsDetail,
   AdminNewsListItem,
   CreateNewsResponse,
   NewsFormValue,
@@ -117,6 +119,25 @@ export class NewsAdminStore {
   async ensureItem(id: number): Promise<AdminNewsListItem | null> {
     await this.ensureLoaded();
     return this.itemById(id);
+  }
+
+  async loadDetail(id: number): Promise<AdminNewsDetail> {
+    this.loading.set(true);
+    this.error.set(null);
+
+    try {
+      const detail = await firstValueFrom(this.api.get(id));
+
+      this.upsertLocal(detail);
+      this.seedEditableDraft(createEditableDraftFromDetail(detail));
+
+      return detail;
+    } catch (error) {
+      this.error.set(mapNewsErrorMessage(error));
+      throw error;
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   async create(value: NewsFormValue): Promise<CreateNewsResponse> {

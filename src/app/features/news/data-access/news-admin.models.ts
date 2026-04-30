@@ -18,6 +18,15 @@ export type AdminNewsListResponse = {
   items: AdminNewsListItem[];
 };
 
+export type AdminNewsDetail = AdminNewsListItem & {
+  content: string;
+};
+
+export type AdminNewsDetailResponse = {
+  ok: true;
+  item: AdminNewsDetail;
+};
+
 export type NewsFormValue = {
   slug: string;
   title: string;

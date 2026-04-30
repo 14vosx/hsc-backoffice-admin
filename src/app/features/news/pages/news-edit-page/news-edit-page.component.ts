@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,7 +8,7 @@ import { NewsAdminStore } from '../../data-access/news-admin.store';
 import { AdminNewsEditableDraft, NewsFormValue } from '../../data-access/news-admin.models';
 import { toNewsFormValue, toUpdateNewsPayload } from '../../utils/news-form.mapper';
 
-type EditPageResolutionState = 'loading' | 'ready' | 'invalid-id' | 'not-found' | 'missing-draft';
+type EditPageResolutionState = 'loading' | 'ready' | 'invalid-id' | 'not-found' | 'error';
 
 @Component({
   selector: 'hsc-news-edit-page',
@@ -193,32 +194,22 @@ export class NewsEditPageComponent implements OnInit {
     }
 
     try {
-      const item = await this.store.ensureItem(id);
-
-      if (!item) {
-        this.resolutionState.set('not-found');
-        this.resolutionMessage.set(
-          'A news solicitada não pôde ser resolvida localmente pela listagem administrativa.',
-        );
-        return;
-      }
-
-      const draft = this.store.editableDraftById(id);
-
-      if (!draft) {
-        this.resolutionState.set('missing-draft');
-        this.resolutionMessage.set(
-          'Este item foi localizado na listagem, mas o conteúdo editável não está disponível localmente neste checkpoint. Operações de lifecycle continuam disponíveis.',
-        );
-        return;
-      }
+      await this.store.loadDetail(id);
 
       this.resolutionState.set('ready');
       this.resolutionMessage.set(null);
-    } catch {
+    } catch (error) {
+      if (error instanceof HttpErrorResponse && error.status === 404) {
+        this.resolutionState.set('not-found');
+        this.resolutionMessage.set('A news solicitada não foi encontrada.');
+        return;
+      }
+
       if (!this.store.error()) {
         this.resolutionMessage.set('Falha ao preparar a edição da news.');
       }
+
+      this.resolutionState.set('error');
     }
   }
 }

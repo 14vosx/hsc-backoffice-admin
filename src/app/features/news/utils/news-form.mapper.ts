@@ -1,4 +1,5 @@
 import {
+  AdminNewsDetail,
   AdminNewsEditableDraft,
   AdminNewsListItem,
   CreateNewsPayload,
@@ -50,6 +51,21 @@ export function createEditableDraftFromCreate(
     published_at: null,
     created_at: null,
     updated_at: null,
+  };
+}
+
+export function createEditableDraftFromDetail(
+  detail: AdminNewsDetail,
+): AdminNewsEditableDraft {
+  return {
+    id: detail.id,
+    slug: detail.slug,
+    title: detail.title,
+    content: detail.content,
+    status: detail.status,
+    published_at: detail.published_at,
+    created_at: detail.created_at,
+    updated_at: detail.updated_at,
   };
 }
 

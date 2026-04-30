@@ -1,10 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { API_BASE_URL } from '../../../core/config/api.config';
 import {
   AdminNewsDeleteResponse,
+  AdminNewsDetail,
+  AdminNewsDetailResponse,
   AdminNewsListResponse,
   AdminNewsMutationResponse,
   CreateNewsPayload,
@@ -23,6 +26,14 @@ export class NewsAdminApiService {
     return this.http.get<AdminNewsListResponse>(this.newsEndpoint, {
       withCredentials: true,
     });
+  }
+
+  get(id: number): Observable<AdminNewsDetail> {
+    return this.http
+      .get<AdminNewsDetailResponse>(`${this.newsEndpoint}/${id}`, {
+        withCredentials: true,
+      })
+      .pipe(map((response) => response.item));
   }
 
   create(payload: CreateNewsPayload): Observable<CreateNewsResponse> {
