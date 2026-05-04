@@ -6,6 +6,10 @@
         Acompanhe os ciclos competitivos oficiais do servidor HSC.
       </p>
     </div>
+
+    <button type="button" class="seasons-list-page__primary-action" (click)="goToCreate()">
+      Nova season
+    </button>
   </header>
 
   @if (error()) {
@@ -26,6 +30,9 @@
         Quando houver ciclos competitivos oficiais, eles aparecerão aqui para
         acompanhamento administrativo.
       </p>
+      <button type="button" class="seasons-list-page__primary-action" (click)="goToCreate()">
+        Criar primeira season
+      </button>
     </div>
   } @else {
     <hsc-seasons-table [items]="items()" />
