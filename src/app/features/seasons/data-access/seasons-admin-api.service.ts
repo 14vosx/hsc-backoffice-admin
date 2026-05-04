@@ -3,7 +3,11 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { API_BASE_URL } from '../../../core/config/api.config';
-import { AdminSeasonListResponse } from './seasons-admin.models';
+import {
+  AdminSeasonListResponse,
+  CreateSeasonPayload,
+  CreateSeasonResponse,
+} from './seasons-admin.models';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +18,12 @@ export class SeasonsAdminApiService {
 
   list(): Observable<AdminSeasonListResponse> {
     return this.http.get<AdminSeasonListResponse>(this.seasonsEndpoint, {
+      withCredentials: true,
+    });
+  }
+
+  create(payload: CreateSeasonPayload): Observable<CreateSeasonResponse> {
+    return this.http.post<CreateSeasonResponse>(this.seasonsEndpoint, payload, {
       withCredentials: true,
     });
   }

@@ -1,0 +1,58 @@
+.seasons-form {
+  display: grid;
+  gap: 16px;
+}
+
+.seasons-form__feedback {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+}
+
+.seasons-form__feedback--error {
+  border-color: #fecaca;
+}
+
+.seasons-form__form {
+  display: grid;
+  gap: 16px;
+}
+
+.seasons-form mat-form-field {
+  width: 100%;
+}
+
+.seasons-form__identity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.seasons-form__datetime-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(120px, 0.6fr);
+  gap: 16px;
+}
+
+.seasons-form__error {
+  color: #b91c1c;
+}
+
+.seasons-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+@media (max-width: 720px) {
+  .seasons-form__identity-grid,
+  .seasons-form__datetime-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .seasons-form__actions {
+    justify-content: stretch;
+    flex-direction: column-reverse;
+  }
+}

@@ -31,6 +31,7 @@
   border-color: #fecaca;
 }
 
+.seasons-list-page__primary-action,
 .seasons-list-page__secondary-action {
   border: 1px solid #d1d5db;
   background: #fff;
@@ -39,6 +40,11 @@
   cursor: pointer;
 }
 
+.seasons-list-page__primary-action {
+  font-weight: 600;
+}
+
+.seasons-list-page__primary-action:hover,
 .seasons-list-page__secondary-action:hover {
   background: #f9fafb;
 }

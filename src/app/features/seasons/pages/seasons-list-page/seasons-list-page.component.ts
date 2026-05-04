@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { SeasonsTableComponent } from '../../components/seasons-table/seasons-table.component';
 import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
@@ -12,6 +13,7 @@ import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SeasonsListPageComponent implements OnInit {
+  private readonly router = inject(Router);
   readonly store = inject(SeasonsAdminStore);
 
   readonly items = this.store.items;
@@ -29,5 +31,9 @@ export class SeasonsListPageComponent implements OnInit {
     } catch {
       // erro ja refletido na store
     }
+  }
+
+  goToCreate(): void {
+    void this.router.navigate(['/seasons/new']);
   }
 }

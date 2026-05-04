@@ -1,9 +1,16 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
+import { toCreateSeasonPayload } from '../utils/seasons-form.mapper';
 import { mapSeasonsErrorMessage } from '../utils/seasons-error.mapper';
 import { SeasonsAdminApiService } from './seasons-admin-api.service';
-import { AdminSeasonListItem } from './seasons-admin.models';
+import {
+  AdminSeasonListItem,
+  CreateSeasonResponse,
+  SeasonFormValue,
+} from './seasons-admin.models';
+
+export type SeasonsAdminMutationKind = 'create';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +22,7 @@ export class SeasonsAdminStore {
   readonly loading = signal(false);
   readonly loaded = signal(false);
   readonly error = signal<string | null>(null);
+  readonly activeMutation = signal<SeasonsAdminMutationKind | null>(null);
 
   readonly count = computed(() => this.items().length);
   readonly isEmpty = computed(() => this.loaded() && !this.loading() && this.count() === 0);
@@ -50,5 +58,37 @@ export class SeasonsAdminStore {
     }
 
     await this.load();
+  }
+
+  async create(value: SeasonFormValue): Promise<CreateSeasonResponse> {
+    return this.runMutation('create', async () => {
+      const payload = toCreateSeasonPayload(value);
+      const response = await firstValueFrom(this.api.create(payload));
+
+      try {
+        await this.refresh();
+      } catch {
+        // criação já concluída; a listagem pode ser recarregada depois
+      }
+
+      return response;
+    });
+  }
+
+  private async runMutation<T>(
+    kind: SeasonsAdminMutationKind,
+    operation: () => Promise<T>,
+  ): Promise<T> {
+    this.activeMutation.set(kind);
+    this.error.set(null);
+
+    try {
+      return await operation();
+    } catch (error) {
+      this.error.set(mapSeasonsErrorMessage(error));
+      throw error;
+    } finally {
+      this.activeMutation.set(null);
+    }
   }
 }

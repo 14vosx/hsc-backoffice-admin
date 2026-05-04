@@ -1,0 +1,90 @@
+<section class="seasons-form">
+  @if (errorMessage) {
+    <div class="seasons-form__feedback seasons-form__feedback--error">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <form class="seasons-form__form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="seasons-form__identity-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Slug</mat-label>
+        <input matInput type="text" formControlName="slug" />
+        @if (form.controls.slug.hasError('required')) {
+          <mat-error>Slug é obrigatório.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Nome</mat-label>
+        <input matInput type="text" formControlName="name" />
+        @if (form.controls.name.hasError('required')) {
+          <mat-error>Nome da season é obrigatório.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Narrativa / descrição</mat-label>
+      <textarea matInput rows="6" formControlName="description"></textarea>
+    </mat-form-field>
+
+    <div class="seasons-form__datetime-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Início</mat-label>
+        <input matInput [matDatepicker]="startPicker" formControlName="startDate" />
+        <mat-hint>Use o horário local do operador. A API receberá UTC.</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="startPicker" />
+        <mat-datepicker #startPicker />
+        @if (form.controls.startDate.hasError('required')) {
+          <mat-error>Data de início é obrigatória.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Horário de início</mat-label>
+        <input matInput type="text" placeholder="00:00" formControlName="startTime" />
+        @if (form.controls.startTime.hasError('required')) {
+          <mat-error>Horário de início é obrigatório.</mat-error>
+        } @else if (form.controls.startTime.hasError('pattern')) {
+          <mat-error>Use HH:mm entre 00:00 e 23:59.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fim</mat-label>
+        <input matInput [matDatepicker]="endPicker" formControlName="endDate" />
+        <mat-hint>Use o horário local do operador. A API receberá UTC.</mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="endPicker" />
+        <mat-datepicker #endPicker />
+        @if (form.controls.endDate.hasError('required')) {
+          <mat-error>Data de fim é obrigatória.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Horário de fim</mat-label>
+        <input matInput type="text" placeholder="23:59" formControlName="endTime" />
+        @if (form.controls.endTime.hasError('required')) {
+          <mat-error>Horário de fim é obrigatório.</mat-error>
+        } @else if (form.controls.endTime.hasError('pattern')) {
+          <mat-error>Use HH:mm entre 00:00 e 23:59.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    @if (hasDateRangeError) {
+      <div class="seasons-form__error">A data de fim deve ser depois da data de início.</div>
+    }
+
+    <div class="seasons-form__actions">
+      <button mat-button type="button" [disabled]="submitting" (click)="onCancel()">
+        Cancelar
+      </button>
+
+      <button mat-flat-button type="submit" [disabled]="submitting">
+        {{ submitting ? 'Processando...' : 'Criar season' }}
+      </button>
+    </div>
+  </form>
+</section>
