@@ -1,0 +1,44 @@
+.seasons-list-page {
+  display: grid;
+  gap: 16px;
+}
+
+.seasons-list-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.seasons-list-page__title {
+  margin: 0 0 4px;
+}
+
+.seasons-list-page__description,
+.seasons-list-page__hint {
+  margin: 0;
+  color: #4b5563;
+}
+
+.seasons-list-page__feedback {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+}
+
+.seasons-list-page__feedback--error {
+  border-color: #fecaca;
+}
+
+.seasons-list-page__secondary-action {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.seasons-list-page__secondary-action:hover {
+  background: #f9fafb;
+}

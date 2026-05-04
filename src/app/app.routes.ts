@@ -42,8 +42,11 @@ export const routes: Routes = [
       },
       {
         path: 'seasons',
-        redirectTo: 'dashboard',
-        pathMatch: 'full',
+        loadComponent: () =>
+          import('./features/seasons/pages/seasons-list-page/seasons-list-page.component').then(
+            (m) => m.SeasonsListPageComponent,
+          ),
+        title: 'Seasons | HSC Backoffice',
       },
       {
         path: 'news',
