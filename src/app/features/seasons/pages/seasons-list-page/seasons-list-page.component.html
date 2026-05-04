@@ -1,0 +1,33 @@
+<section class="seasons-list-page">
+  <header class="seasons-list-page__header">
+    <div>
+      <h1 class="seasons-list-page__title">Seasons</h1>
+      <p class="seasons-list-page__description">
+        Acompanhe os ciclos competitivos oficiais do servidor HSC.
+      </p>
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="seasons-list-page__feedback seasons-list-page__feedback--error">
+      <p>{{ error() }}</p>
+      <button type="button" class="seasons-list-page__secondary-action" (click)="load()">
+        Tentar novamente
+      </button>
+    </div>
+  } @else if (loading() && items().length === 0) {
+    <div class="seasons-list-page__feedback">
+      Carregando seasons...
+    </div>
+  } @else if (isEmpty()) {
+    <div class="seasons-list-page__feedback">
+      <p>Nenhuma season cadastrada até o momento.</p>
+      <p class="seasons-list-page__hint">
+        Quando houver ciclos competitivos oficiais, eles aparecerão aqui para
+        acompanhamento administrativo.
+      </p>
+    </div>
+  } @else {
+    <hsc-seasons-table [items]="items()" />
+  }
+</section>

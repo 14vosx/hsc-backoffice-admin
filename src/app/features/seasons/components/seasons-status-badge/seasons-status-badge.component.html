@@ -1,0 +1,9 @@
+<span
+  class="seasons-status-badge"
+  [class.seasons-status-badge--draft]="normalizedStatus === 'draft'"
+  [class.seasons-status-badge--active]="normalizedStatus === 'active'"
+  [class.seasons-status-badge--closed]="normalizedStatus === 'closed'"
+  [class.seasons-status-badge--unknown]="normalizedStatus === 'unknown'"
+>
+  {{ label }}
+</span>
