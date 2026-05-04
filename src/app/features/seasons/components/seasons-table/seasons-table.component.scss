@@ -34,6 +34,12 @@
   font-size: 12px;
 }
 
+.seasons-table__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .seasons-table__action {
   border: 1px solid #d1d5db;
   border-radius: 8px;
@@ -42,6 +48,16 @@
   cursor: pointer;
 }
 
-.seasons-table__action:hover {
+.seasons-table__action--danger {
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.seasons-table__action:hover:not(:disabled) {
   background: #f9fafb;
+}
+
+.seasons-table__action:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }

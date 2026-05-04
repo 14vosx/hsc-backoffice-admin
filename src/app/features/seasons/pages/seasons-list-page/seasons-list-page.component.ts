@@ -21,6 +21,7 @@ export class SeasonsListPageComponent implements OnInit {
   readonly loading = this.store.loading;
   readonly error = this.store.error;
   readonly isEmpty = this.store.isEmpty;
+  readonly activeMutation = this.store.activeMutation;
 
   ngOnInit(): void {
     void this.load();
@@ -40,5 +41,37 @@ export class SeasonsListPageComponent implements OnInit {
 
   goToEdit(item: AdminSeasonListItem): void {
     void this.router.navigate(['/seasons', item.slug, 'edit']);
+  }
+
+  async activateSeason(item: AdminSeasonListItem): Promise<void> {
+    const confirmed = window.confirm(
+      'Ativar esta season como ciclo competitivo oficial em andamento? Se houver outra season ativa, ela poderá deixar de ser ativa.',
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await this.store.activate(item.slug);
+    } catch {
+      // erro ja refletido na store
+    }
+  }
+
+  async closeSeason(item: AdminSeasonListItem): Promise<void> {
+    const confirmed = window.confirm(
+      'Fechar esta season? Seasons fechadas não podem mais ser editadas.',
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await this.store.close(item.slug);
+    } catch {
+      // erro ja refletido na store
+    }
   }
 }

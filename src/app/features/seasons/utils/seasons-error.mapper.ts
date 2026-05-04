@@ -42,6 +42,14 @@ export function mapSeasonsErrorMessage(error: unknown): string {
       return 'Seasons fechadas não podem ser alteradas.';
     }
 
+    if (error.status === 409 && error.error?.error === 'season_already_active') {
+      return 'Esta season já está ativa.';
+    }
+
+    if (error.status === 409 && error.error?.error === 'no_active_season') {
+      return 'Não há season ativa para encerrar.';
+    }
+
     if (typeof error.error?.error === 'string' && error.error.error.trim()) {
       return `Falha na operação: ${error.error.error}.`;
     }

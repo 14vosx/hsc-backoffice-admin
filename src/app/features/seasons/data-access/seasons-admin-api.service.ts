@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { API_BASE_URL } from '../../../core/config/api.config';
 import {
   AdminSeasonDetailResponse,
+  AdminSeasonLifecycleResponse,
   AdminSeasonListResponse,
   AdminSeasonListItem,
   AdminSeasonUpdateResponse,
@@ -45,6 +46,26 @@ export class SeasonsAdminApiService {
     return this.http.patch<AdminSeasonUpdateResponse>(
       `${this.seasonsEndpoint}/${encodeURIComponent(slug)}`,
       payload,
+      {
+        withCredentials: true,
+      },
+    );
+  }
+
+  activate(slug: string): Observable<AdminSeasonLifecycleResponse> {
+    return this.http.post<AdminSeasonLifecycleResponse>(
+      `${this.seasonsEndpoint}/${encodeURIComponent(slug)}/activate`,
+      {},
+      {
+        withCredentials: true,
+      },
+    );
+  }
+
+  close(slug: string): Observable<AdminSeasonLifecycleResponse> {
+    return this.http.post<AdminSeasonLifecycleResponse>(
+      `${this.seasonsEndpoint}/${encodeURIComponent(slug)}/close`,
+      {},
       {
         withCredentials: true,
       },
