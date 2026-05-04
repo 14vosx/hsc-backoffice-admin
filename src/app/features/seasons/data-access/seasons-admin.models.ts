@@ -60,3 +60,9 @@ export type AdminSeasonUpdateResponse = {
   slug: string;
   updated: true;
 };
+
+export type AdminSeasonLifecycleResponse = {
+  ok: true;
+  slug: string;
+  status: 'active' | 'closed' | string;
+};

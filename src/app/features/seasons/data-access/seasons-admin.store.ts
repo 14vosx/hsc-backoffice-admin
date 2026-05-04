@@ -5,13 +5,14 @@ import { toCreateSeasonPayload, toUpdateSeasonPayload } from '../utils/seasons-f
 import { mapSeasonsErrorMessage } from '../utils/seasons-error.mapper';
 import { SeasonsAdminApiService } from './seasons-admin-api.service';
 import {
+  AdminSeasonLifecycleResponse,
   AdminSeasonUpdateResponse,
   AdminSeasonListItem,
   CreateSeasonResponse,
   SeasonFormValue,
 } from './seasons-admin.models';
 
-export type SeasonsAdminMutationKind = 'create' | 'update';
+export type SeasonsAdminMutationKind = 'create' | 'update' | 'activate' | 'close';
 
 @Injectable({
   providedIn: 'root',
@@ -104,6 +105,34 @@ export class SeasonsAdminStore {
         await this.refresh();
       } catch {
         // alteração já concluída; a listagem pode ser recarregada depois
+      }
+
+      return response;
+    });
+  }
+
+  async activate(slug: string): Promise<AdminSeasonLifecycleResponse> {
+    return this.runMutation('activate', async () => {
+      const response = await firstValueFrom(this.api.activate(slug));
+
+      try {
+        await this.refresh();
+      } catch {
+        // ativação já concluída; a listagem pode ser recarregada depois
+      }
+
+      return response;
+    });
+  }
+
+  async close(slug: string): Promise<AdminSeasonLifecycleResponse> {
+    return this.runMutation('close', async () => {
+      const response = await firstValueFrom(this.api.close(slug));
+
+      try {
+        await this.refresh();
+      } catch {
+        // fechamento já concluído; a listagem pode ser recarregada depois
       }
 
       return response;

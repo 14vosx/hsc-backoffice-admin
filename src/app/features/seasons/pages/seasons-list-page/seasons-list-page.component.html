@@ -19,7 +19,9 @@
         Tentar novamente
       </button>
     </div>
-  } @else if (loading() && items().length === 0) {
+  }
+
+  @if (loading() && items().length === 0) {
     <div class="seasons-list-page__feedback">
       Carregando seasons...
     </div>
@@ -35,6 +37,12 @@
       </button>
     </div>
   } @else {
-    <hsc-seasons-table [items]="items()" (edit)="goToEdit($event)" />
+    <hsc-seasons-table
+      [items]="items()"
+      [activeMutation]="activeMutation()"
+      (edit)="goToEdit($event)"
+      (activate)="activateSeason($event)"
+      (close)="closeSeason($event)"
+    />
   }
 </section>

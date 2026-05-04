@@ -29,9 +29,40 @@
           <td>{{ item.end_at | date: 'dd/MM/yyyy HH:mm' }}</td>
           <td>{{ item.updated_at | date: 'dd/MM/yyyy HH:mm' }}</td>
           <td>
-            <button type="button" class="seasons-table__action" (click)="editItem(item)">
-              Editar
-            </button>
+            <div class="seasons-table__actions">
+              @if (canEdit(item)) {
+                <button
+                  type="button"
+                  class="seasons-table__action"
+                  [disabled]="activeMutation !== null"
+                  (click)="editItem(item)"
+                >
+                  Editar
+                </button>
+              }
+
+              @if (canActivate(item)) {
+                <button
+                  type="button"
+                  class="seasons-table__action"
+                  [disabled]="activeMutation !== null"
+                  (click)="activateItem(item)"
+                >
+                  Ativar
+                </button>
+              }
+
+              @if (canClose(item)) {
+                <button
+                  type="button"
+                  class="seasons-table__action seasons-table__action--danger"
+                  [disabled]="activeMutation !== null"
+                  (click)="closeItem(item)"
+                >
+                  Fechar
+                </button>
+              }
+            </div>
           </td>
         </tr>
       }
