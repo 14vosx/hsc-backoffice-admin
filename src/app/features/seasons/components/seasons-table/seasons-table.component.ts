@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { AdminSeasonListItem } from '../../data-access/seasons-admin.models';
 import { SeasonsStatusBadgeComponent } from '../seasons-status-badge/seasons-status-badge.component';
@@ -14,8 +14,13 @@ import { SeasonsStatusBadgeComponent } from '../seasons-status-badge/seasons-sta
 })
 export class SeasonsTableComponent {
   @Input({ required: true }) items: AdminSeasonListItem[] = [];
+  @Output() edit = new EventEmitter<AdminSeasonListItem>();
 
   trackById(_index: number, item: AdminSeasonListItem): number {
     return item.id;
+  }
+
+  editItem(item: AdminSeasonListItem): void {
+    this.edit.emit(item);
   }
 }

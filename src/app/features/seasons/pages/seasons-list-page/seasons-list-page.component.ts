@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { Router } from '@angular/router';
 
 import { SeasonsTableComponent } from '../../components/seasons-table/seasons-table.component';
+import { AdminSeasonListItem } from '../../data-access/seasons-admin.models';
 import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
 
 @Component({
@@ -35,5 +36,9 @@ export class SeasonsListPageComponent implements OnInit {
 
   goToCreate(): void {
     void this.router.navigate(['/seasons/new']);
+  }
+
+  goToEdit(item: AdminSeasonListItem): void {
+    void this.router.navigate(['/seasons', item.slug, 'edit']);
   }
 }

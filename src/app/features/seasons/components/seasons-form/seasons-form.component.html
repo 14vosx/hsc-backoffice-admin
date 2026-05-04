@@ -6,10 +6,16 @@
   }
 
   <form class="seasons-form__form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    @if (isClosed) {
+      <div class="seasons-form__feedback">
+        Seasons fechadas não podem ser alteradas.
+      </div>
+    }
+
     <div class="seasons-form__identity-grid">
       <mat-form-field appearance="outline">
         <mat-label>Slug</mat-label>
-        <input matInput type="text" formControlName="slug" />
+        <input matInput type="text" formControlName="slug" [readonly]="mode === 'edit'" />
         @if (form.controls.slug.hasError('required')) {
           <mat-error>Slug é obrigatório.</mat-error>
         }
@@ -82,8 +88,8 @@
         Cancelar
       </button>
 
-      <button mat-flat-button type="submit" [disabled]="submitting">
-        {{ submitting ? 'Processando...' : 'Criar season' }}
+      <button mat-flat-button type="submit" [disabled]="isSubmitDisabled">
+        {{ submitLabel }}
       </button>
     </div>
   </form>

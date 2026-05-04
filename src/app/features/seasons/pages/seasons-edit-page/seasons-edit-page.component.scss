@@ -1,0 +1,68 @@
+.seasons-edit-page {
+  display: grid;
+  gap: 16px;
+}
+
+.seasons-edit-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.seasons-edit-page__title {
+  margin: 0 0 4px;
+}
+
+.seasons-edit-page__description {
+  margin: 0;
+  color: #4b5563;
+}
+
+.seasons-edit-page__feedback,
+.seasons-edit-page__metadata {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+}
+
+.seasons-edit-page__feedback--error {
+  border-color: #fecaca;
+}
+
+.seasons-edit-page__feedback-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.seasons-edit-page__secondary-action {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.seasons-edit-page__secondary-action:hover {
+  background: #f9fafb;
+}
+
+.seasons-edit-page__secondary-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.seasons-edit-page__metadata {
+  display: grid;
+  gap: 8px;
+  color: #374151;
+  font-size: 14px;
+}
+
+@media (max-width: 720px) {
+  .seasons-edit-page__header {
+    flex-direction: column;
+  }
+}
