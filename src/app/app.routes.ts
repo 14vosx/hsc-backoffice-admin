@@ -57,6 +57,14 @@ export const routes: Routes = [
         title: 'Nova Season | HSC Backoffice',
       },
       {
+        path: 'seasons/:slug/edit',
+        loadComponent: () =>
+          import('./features/seasons/pages/seasons-edit-page/seasons-edit-page.component').then(
+            (m) => m.SeasonsEditPageComponent,
+          ),
+        title: 'Editar Season | HSC Backoffice',
+      },
+      {
         path: 'news',
         loadComponent: () =>
           import('./features/news/pages/news-list-page/news-list-page.component').then(

@@ -30,8 +30,16 @@ export function mapSeasonsErrorMessage(error: unknown): string {
       return 'A data de início deve ser anterior à data de fim.';
     }
 
+    if (error.status === 404 && error.error?.error === 'season_not_found') {
+      return 'A season solicitada não foi encontrada.';
+    }
+
     if (error.status === 409 && error.error?.error === 'slug_already_exists') {
       return 'Já existe uma season com este slug.';
+    }
+
+    if (error.status === 409 && error.error?.error === 'season_closed') {
+      return 'Seasons fechadas não podem ser alteradas.';
     }
 
     if (typeof error.error?.error === 'string' && error.error.error.trim()) {

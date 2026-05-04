@@ -18,6 +18,11 @@ export type AdminSeasonListResponse = {
   items: AdminSeasonListItem[];
 };
 
+export type AdminSeasonDetailResponse = {
+  ok: true;
+  item: AdminSeasonListItem;
+};
+
 export type SeasonFormValue = {
   slug: string;
   name: string;
@@ -36,9 +41,22 @@ export type CreateSeasonPayload = {
   end_at: string;
 };
 
+export type UpdateSeasonPayload = {
+  name?: string;
+  description?: string | null;
+  start_at?: string;
+  end_at?: string;
+};
+
 export type CreateSeasonResponse = {
   ok: true;
   id: number;
   slug: string;
   status: 'draft' | string;
+};
+
+export type AdminSeasonUpdateResponse = {
+  ok: true;
+  slug: string;
+  updated: true;
 };

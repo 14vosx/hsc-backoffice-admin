@@ -33,3 +33,15 @@
 .seasons-table code {
   font-size: 12px;
 }
+
+.seasons-table__action {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.seasons-table__action:hover {
+  background: #f9fafb;
+}
