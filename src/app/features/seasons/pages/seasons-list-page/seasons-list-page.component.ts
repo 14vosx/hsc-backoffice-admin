@@ -1,6 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
+import { ConfirmationDialogComponent } from '../../../../shared/ui/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogData } from '../../../../shared/ui/confirmation-dialog/confirmation-dialog.models';
+import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
 import { SeasonsTableComponent } from '../../components/seasons-table/seasons-table.component';
 import { AdminSeasonListItem } from '../../data-access/seasons-admin.models';
 import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
@@ -14,6 +19,8 @@ import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SeasonsListPageComponent implements OnInit {
+  private readonly dialog = inject(MatDialog);
+  private readonly feedback = inject(UiFeedbackService);
   private readonly router = inject(Router);
   readonly store = inject(SeasonsAdminStore);
 
@@ -44,9 +51,13 @@ export class SeasonsListPageComponent implements OnInit {
   }
 
   async activateSeason(item: AdminSeasonListItem): Promise<void> {
-    const confirmed = window.confirm(
-      'Ativar esta season como ciclo competitivo oficial em andamento? Se houver outra season ativa, ela poderá deixar de ser ativa.',
-    );
+    const confirmed = await this.openConfirmation({
+      title: 'Ativar season',
+      message:
+        'Ativar esta season como ciclo competitivo oficial em andamento? Se houver outra season ativa, ela poderá deixar de ser ativa.',
+      confirmLabel: 'Ativar',
+      cancelLabel: 'Cancelar',
+    });
 
     if (!confirmed) {
       return;
@@ -54,15 +65,20 @@ export class SeasonsListPageComponent implements OnInit {
 
     try {
       await this.store.activate(item.slug);
+      this.feedback.success('Season ativada com sucesso.');
     } catch {
-      // erro ja refletido na store
+      this.feedback.error(this.store.error() ?? 'Falha ao ativar season.');
     }
   }
 
   async closeSeason(item: AdminSeasonListItem): Promise<void> {
-    const confirmed = window.confirm(
-      'Fechar esta season? Seasons fechadas não podem mais ser editadas.',
-    );
+    const confirmed = await this.openConfirmation({
+      title: 'Fechar season',
+      message: 'Fechar esta season? Seasons fechadas não podem mais ser editadas.',
+      confirmLabel: 'Fechar',
+      cancelLabel: 'Cancelar',
+      tone: 'danger',
+    });
 
     if (!confirmed) {
       return;
@@ -70,8 +86,20 @@ export class SeasonsListPageComponent implements OnInit {
 
     try {
       await this.store.close(item.slug);
+      this.feedback.success('Season fechada com sucesso.');
     } catch {
-      // erro ja refletido na store
+      this.feedback.error(this.store.error() ?? 'Falha ao fechar season.');
     }
+  }
+
+  private async openConfirmation(data: ConfirmationDialogData): Promise<boolean> {
+    const dialogRef = this.dialog.open<
+      ConfirmationDialogComponent,
+      ConfirmationDialogData,
+      boolean | null | undefined
+    >(ConfirmationDialogComponent, { data });
+    const result = await firstValueFrom(dialogRef.afterClosed());
+
+    return result === true;
   }
 }

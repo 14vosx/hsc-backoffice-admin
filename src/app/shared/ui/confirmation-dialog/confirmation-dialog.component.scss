@@ -1,0 +1,25 @@
+.confirmation-dialog {
+  color: var(--mat-sys-on-surface);
+  background: var(--mat-sys-surface);
+}
+
+.confirmation-dialog__title {
+  margin: 0;
+}
+
+.confirmation-dialog__content {
+  color: var(--mat-sys-on-surface);
+}
+
+.confirmation-dialog__content p {
+  margin: 0;
+}
+
+.confirmation-dialog__actions {
+  border-top: 1px solid var(--mat-sys-outline);
+}
+
+.confirmation-dialog__confirm--danger {
+  --mdc-filled-button-container-color: var(--mat-sys-error);
+  --mdc-filled-button-label-text-color: var(--mat-sys-on-error);
+}
