@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import { SeasonsFormComponent } from '../../components/seasons-form/seasons-form.component';
 import { AdminSeasonListItem, SeasonFormValue } from '../../data-access/seasons-admin.models';
 import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
@@ -13,7 +14,7 @@ type EditPageResolutionState = 'loading' | 'ready' | 'invalid-slug' | 'not-found
 @Component({
   selector: 'hsc-seasons-edit-page',
   standalone: true,
-  imports: [DatePipe, SeasonsFormComponent],
+  imports: [DatePipe, SeasonsFormComponent, PageFeedbackComponent],
   templateUrl: './seasons-edit-page.component.html',
   styleUrl: './seasons-edit-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

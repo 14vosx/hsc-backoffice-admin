@@ -46,15 +46,15 @@
   </header>
 
   @if (resolutionState() === 'loading') {
-    <div class="news-edit-page__feedback">
+    <hsc-page-feedback variant="neutral">
       Carregando contexto de edição...
-    </div>
+    </hsc-page-feedback>
   } @else {
     @if (pageError()) {
-      <div class="news-edit-page__feedback news-edit-page__feedback--error">
+      <hsc-page-feedback variant="error">
         <p>{{ pageError() }}</p>
 
-        <div class="news-edit-page__feedback-actions">
+        <div class="news-edit-page__error-actions">
           <button type="button" class="news-edit-page__secondary-action" (click)="retry()">
             Tentar novamente
           </button>
@@ -63,7 +63,7 @@
             Voltar para listagem
           </button>
         </div>
-      </div>
+      </hsc-page-feedback>
     }
 
     @if (canRenderForm()) {

@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
+import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import {
   AdminNewsEditableDraft,
   NewsFormValue,
@@ -22,7 +23,7 @@ export type NewsFormMode = 'create' | 'edit';
 @Component({
   selector: 'hsc-news-form',
   standalone: true,
-  imports: [ReactiveFormsModule, DatePipe],
+  imports: [ReactiveFormsModule, DatePipe, PageFeedbackComponent],
   templateUrl: './news-form.component.html',
   styleUrl: './news-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
+import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
 import { NewsFormComponent } from '../../components/news-form/news-form.component';
 import { NewsAdminStore } from '../../data-access/news-admin.store';
@@ -15,7 +16,7 @@ type EditPageResolutionState = 'loading' | 'ready' | 'invalid-id' | 'not-found' 
 @Component({
   selector: 'hsc-news-edit-page',
   standalone: true,
-  imports: [DatePipe, NewsFormComponent],
+  imports: [DatePipe, NewsFormComponent, PageFeedbackComponent],
   templateUrl: './news-edit-page.component.html',
   styleUrl: './news-edit-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

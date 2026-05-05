@@ -1,0 +1,9 @@
+<section class="page-feedback" [class]="'page-feedback page-feedback--' + variant">
+  @if (title) {
+    <h2 class="page-feedback__title">{{ title }}</h2>
+  }
+
+  <div class="page-feedback__content">
+    <ng-content />
+  </div>
+</section>

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { Router } from '@angular/router';
 
 import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
+import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
 import { SeasonsTableComponent } from '../../components/seasons-table/seasons-table.component';
 import { AdminSeasonListItem } from '../../data-access/seasons-admin.models';
@@ -10,7 +11,7 @@ import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
 @Component({
   selector: 'hsc-seasons-list-page',
   standalone: true,
-  imports: [SeasonsTableComponent],
+  imports: [SeasonsTableComponent, PageFeedbackComponent],
   templateUrl: './seasons-list-page.component.html',
   styleUrl: './seasons-list-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

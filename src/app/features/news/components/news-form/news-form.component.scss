@@ -3,16 +3,11 @@
   gap: 16px;
 }
 
-.news-form__meta,
-.news-form__feedback {
+.news-form__meta {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 16px;
   background: #fff;
-}
-
-.news-form__feedback--error {
-  border-color: #fecaca;
 }
 
 .news-form__form {

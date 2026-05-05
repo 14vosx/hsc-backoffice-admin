@@ -1,15 +1,15 @@
 <section class="seasons-form">
   @if (errorMessage) {
-    <div class="seasons-form__feedback seasons-form__feedback--error">
+    <hsc-page-feedback variant="error">
       {{ errorMessage }}
-    </div>
+    </hsc-page-feedback>
   }
 
   <form class="seasons-form__form" [formGroup]="form" (ngSubmit)="onSubmit()">
     @if (isClosed) {
-      <div class="seasons-form__feedback">
+      <hsc-page-feedback variant="neutral">
         Seasons fechadas não podem ser alteradas.
-      </div>
+      </hsc-page-feedback>
     }
 
     <div class="seasons-form__identity-grid">
