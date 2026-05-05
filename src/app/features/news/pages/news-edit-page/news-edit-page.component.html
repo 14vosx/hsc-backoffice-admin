@@ -1,110 +1,138 @@
-<section class="news-edit-page">
-  <header class="news-edit-page__header">
-    <div>
-      <h1 class="news-edit-page__title">Editar news</h1>
-      <p class="news-edit-page__description">
-        Edite um item conhecido pelo frontend e execute ações de lifecycle do recurso.
-      </p>
-    </div>
-
-    <div class="news-edit-page__header-actions">
-      <button type="button" class="news-edit-page__secondary-action" [disabled]="submitting()" (click)="cancel()">
-        Voltar
-      </button>
-
-      @if (canRunLifecycle()) {
-        @if (!isPublished()) {
-          <button
-            type="button"
-            class="news-edit-page__secondary-action"
-            [disabled]="submitting()"
-            (click)="publish()"
-          >
-            Publicar
-          </button>
-        } @else {
-          <button
-            type="button"
-            class="news-edit-page__secondary-action"
-            [disabled]="submitting()"
-            (click)="unpublish()"
-          >
-            Despublicar
-          </button>
-        }
-
-        <button
-          type="button"
-          class="news-edit-page__danger-action"
-          [disabled]="submitting()"
-          (click)="remove()"
-        >
-          Remover
-        </button>
-      }
-    </div>
-  </header>
-
-  @if (resolutionState() === 'loading') {
-    <hsc-page-feedback variant="neutral">
-      Carregando contexto de edição...
-    </hsc-page-feedback>
-  } @else {
-    @if (pageError()) {
-      <hsc-page-feedback variant="error">
-        <p>{{ pageError() }}</p>
-
-        <div class="news-edit-page__error-actions">
-          <button type="button" class="news-edit-page__secondary-action" (click)="retry()">
-            Tentar novamente
+<hsc-page-container
+  title="Editar news"
+  subtitle="Edite um item conhecido pelo frontend e execute ações de lifecycle do recurso."
+>
+  <section class="news-edit-page">
+    <mat-card class="news-edit-page__actions-card" appearance="outlined">
+      <mat-card-content>
+        <div class="news-edit-page__actions">
+          <button type="button" mat-stroked-button [disabled]="submitting()" (click)="cancel()">
+            Voltar
           </button>
 
-          <button type="button" class="news-edit-page__secondary-action" (click)="cancel()">
-            Voltar para listagem
-          </button>
+          @if (canRunLifecycle()) {
+            @if (!isPublished()) {
+              <button
+                type="button"
+                mat-flat-button
+                [disabled]="submitting()"
+                (click)="publish()"
+              >
+                Publicar
+              </button>
+            } @else {
+              <button
+                type="button"
+                mat-stroked-button
+                [disabled]="submitting()"
+                (click)="unpublish()"
+              >
+                Despublicar
+              </button>
+            }
+
+            <button
+              type="button"
+              mat-stroked-button
+              class="news-edit-page__danger-action"
+              [disabled]="submitting()"
+              (click)="remove()"
+            >
+              Remover
+            </button>
+          }
         </div>
+      </mat-card-content>
+    </mat-card>
+
+    @if (resolutionState() === 'loading') {
+      <hsc-page-feedback variant="neutral">
+        Carregando contexto de edição...
       </hsc-page-feedback>
-    }
+    } @else {
+      @if (pageError()) {
+        <hsc-page-feedback variant="error">
+          <p>{{ pageError() }}</p>
 
-    @if (canRenderForm()) {
-      <hsc-news-form
-        mode="edit"
-        [initialValue]="initialValue()"
-        [metadata]="metadata()"
-        [submitting]="submitting()"
-        [errorMessage]="store.error()"
-        (formSubmit)="submit($event)"
-        (cancel)="cancel()"
-      />
-    } @else if (metadata()) {
-      <div class="news-edit-page__metadata">
-        <div><strong>Status:</strong> {{ metadata()?.status }}</div>
-        <div><strong>Slug:</strong> <code>{{ metadata()?.slug }}</code></div>
-        <div>
-          <strong>Publicado em:</strong>
-          @if (metadata()?.published_at) {
-            {{ metadata()?.published_at | date: 'dd/MM/yyyy HH:mm' }}
-          } @else {
-            —
-          }
-        </div>
-        <div>
-          <strong>Criado em:</strong>
-          @if (metadata()?.created_at) {
-            {{ metadata()?.created_at | date: 'dd/MM/yyyy HH:mm' }}
-          } @else {
-            —
-          }
-        </div>
-        <div>
-          <strong>Atualizado em:</strong>
-          @if (metadata()?.updated_at) {
-            {{ metadata()?.updated_at | date: 'dd/MM/yyyy HH:mm' }}
-          } @else {
-            —
-          }
-        </div>
-      </div>
+          <div class="news-edit-page__error-actions">
+            <button type="button" mat-button (click)="retry()">
+              Tentar novamente
+            </button>
+
+            <button type="button" mat-stroked-button (click)="cancel()">
+              Voltar para listagem
+            </button>
+          </div>
+        </hsc-page-feedback>
+      }
+
+      @if (canRenderForm()) {
+        <mat-card class="news-edit-page__form-card" appearance="outlined">
+          <mat-card-content>
+            <hsc-news-form
+              mode="edit"
+              [initialValue]="initialValue()"
+              [metadata]="metadata()"
+              [submitting]="submitting()"
+              [errorMessage]="store.error()"
+              (formSubmit)="submit($event)"
+              (cancel)="cancel()"
+            />
+          </mat-card-content>
+        </mat-card>
+      } @else if (metadata()) {
+        <mat-card class="news-edit-page__metadata-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>Resumo administrativo</mat-card-title>
+            <mat-card-subtitle>
+              Dados conhecidos para este item de news.
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <dl class="news-edit-page__metadata">
+              <div>
+                <dt>Status</dt>
+                <dd>{{ metadata()?.status }}</dd>
+              </div>
+              <div>
+                <dt>Slug</dt>
+                <dd><code>{{ metadata()?.slug }}</code></dd>
+              </div>
+              <div>
+                <dt>Publicado em</dt>
+                <dd>
+                  @if (metadata()?.published_at) {
+                    {{ metadata()?.published_at | date: 'dd/MM/yyyy HH:mm' }}
+                  } @else {
+                    —
+                  }
+                </dd>
+              </div>
+              <div>
+                <dt>Criado em</dt>
+                <dd>
+                  @if (metadata()?.created_at) {
+                    {{ metadata()?.created_at | date: 'dd/MM/yyyy HH:mm' }}
+                  } @else {
+                    —
+                  }
+                </dd>
+              </div>
+              <div>
+                <dt>Atualizado em</dt>
+                <dd>
+                  @if (metadata()?.updated_at) {
+                    {{ metadata()?.updated_at | date: 'dd/MM/yyyy HH:mm' }}
+                  } @else {
+                    —
+                  }
+                </dd>
+              </div>
+            </dl>
+          </mat-card-content>
+        </mat-card>
+      }
     }
-  }
-</section>
+  </section>
+</hsc-page-container>

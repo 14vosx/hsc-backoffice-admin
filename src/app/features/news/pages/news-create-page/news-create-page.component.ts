@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 
+import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
 import { NewsFormComponent } from '../../components/news-form/news-form.component';
 import { NewsAdminStore } from '../../data-access/news-admin.store';
 import { NewsFormValue } from '../../data-access/news-admin.models';
@@ -8,7 +10,7 @@ import { NewsFormValue } from '../../data-access/news-admin.models';
 @Component({
   selector: 'hsc-news-create-page',
   standalone: true,
-  imports: [NewsFormComponent],
+  imports: [MatCardModule, PageContainerComponent, NewsFormComponent],
   templateUrl: './news-create-page.component.html',
   styleUrl: './news-create-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

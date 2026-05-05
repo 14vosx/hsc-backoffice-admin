@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 
+import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
 import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
 import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
@@ -10,7 +13,13 @@ import { NewsTableComponent } from '../../components/news-table/news-table.compo
 @Component({
   selector: 'hsc-news-list-page',
   standalone: true,
-  imports: [NewsTableComponent, PageFeedbackComponent],
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    PageContainerComponent,
+    NewsTableComponent,
+    PageFeedbackComponent,
+  ],
   templateUrl: './news-list-page.component.html',
   styleUrl: './news-list-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

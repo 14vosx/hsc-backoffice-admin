@@ -1,33 +1,45 @@
 <section class="news-form">
   @if (metadata) {
-    <div class="news-form__meta">
-      <div><strong>Status:</strong> {{ metadata.status }}</div>
-      <div><strong>Slug:</strong> <code>{{ metadata.slug }}</code></div>
+    <dl class="news-form__meta">
       <div>
-        <strong>Publicado em:</strong>
-        @if (metadata.published_at) {
-          {{ metadata.published_at | date: 'dd/MM/yyyy HH:mm' }}
-        } @else {
-          —
-        }
+        <dt>Status</dt>
+        <dd>{{ metadata.status }}</dd>
       </div>
       <div>
-        <strong>Criado em:</strong>
-        @if (metadata.created_at) {
-          {{ metadata.created_at | date: 'dd/MM/yyyy HH:mm' }}
-        } @else {
-          —
-        }
+        <dt>Slug</dt>
+        <dd><code>{{ metadata.slug }}</code></dd>
       </div>
       <div>
-        <strong>Atualizado em:</strong>
-        @if (metadata.updated_at) {
-          {{ metadata.updated_at | date: 'dd/MM/yyyy HH:mm' }}
-        } @else {
-          —
-        }
+        <dt>Publicado em</dt>
+        <dd>
+          @if (metadata.published_at) {
+            {{ metadata.published_at | date: 'dd/MM/yyyy HH:mm' }}
+          } @else {
+            —
+          }
+        </dd>
       </div>
-    </div>
+      <div>
+        <dt>Criado em</dt>
+        <dd>
+          @if (metadata.created_at) {
+            {{ metadata.created_at | date: 'dd/MM/yyyy HH:mm' }}
+          } @else {
+            —
+          }
+        </dd>
+      </div>
+      <div>
+        <dt>Atualizado em</dt>
+        <dd>
+          @if (metadata.updated_at) {
+            {{ metadata.updated_at | date: 'dd/MM/yyyy HH:mm' }}
+          } @else {
+            —
+          }
+        </dd>
+      </div>
+    </dl>
   }
 
   @if (errorMessage) {
@@ -37,39 +49,39 @@
   }
 
   <form class="news-form__form" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <label class="news-form__field">
-      <span>Slug</span>
-      <input type="text" formControlName="slug" />
+    <mat-form-field appearance="outline">
+      <mat-label>Slug</mat-label>
+      <input matInput type="text" formControlName="slug" />
       @if (isEditMode) {
-        <small>Slug somente leitura neste checkpoint.</small>
+        <mat-hint>Slug somente leitura neste checkpoint.</mat-hint>
       }
       @if (form.controls.slug.touched && form.controls.slug.invalid) {
-        <small class="news-form__error">Slug é obrigatório.</small>
+        <mat-error>Slug é obrigatório.</mat-error>
       }
-    </label>
+    </mat-form-field>
 
-    <label class="news-form__field">
-      <span>Título</span>
-      <input type="text" formControlName="title" />
+    <mat-form-field appearance="outline">
+      <mat-label>Título</mat-label>
+      <input matInput type="text" formControlName="title" />
       @if (form.controls.title.touched && form.controls.title.invalid) {
-        <small class="news-form__error">Título é obrigatório.</small>
+        <mat-error>Título é obrigatório.</mat-error>
       }
-    </label>
+    </mat-form-field>
 
-    <label class="news-form__field">
-      <span>Conteúdo</span>
-      <textarea rows="14" formControlName="content"></textarea>
+    <mat-form-field appearance="outline">
+      <mat-label>Conteúdo</mat-label>
+      <textarea matInput rows="14" formControlName="content"></textarea>
       @if (form.controls.content.touched && form.controls.content.invalid) {
-        <small class="news-form__error">Conteúdo é obrigatório.</small>
+        <mat-error>Conteúdo é obrigatório.</mat-error>
       }
-    </label>
+    </mat-form-field>
 
     <div class="news-form__actions">
-      <button type="button" class="news-form__secondary-action" [disabled]="submitting" (click)="onCancel()">
+      <button type="button" mat-button [disabled]="submitting" (click)="onCancel()">
         Cancelar
       </button>
 
-      <button type="submit" class="news-form__primary-action" [disabled]="submitting">
+      <button type="submit" mat-flat-button [disabled]="submitting">
         {{ submitting ? 'Processando...' : submitLabel }}
       </button>
     </div>
