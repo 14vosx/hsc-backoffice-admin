@@ -1,8 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
+import { ConfirmationDialogComponent } from '../../../../shared/ui/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogData } from '../../../../shared/ui/confirmation-dialog/confirmation-dialog.models';
+import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
 import { NewsFormComponent } from '../../components/news-form/news-form.component';
 import { NewsAdminStore } from '../../data-access/news-admin.store';
 import { AdminNewsEditableDraft, NewsFormValue } from '../../data-access/news-admin.models';
@@ -19,6 +24,8 @@ type EditPageResolutionState = 'loading' | 'ready' | 'invalid-id' | 'not-found' 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewsEditPageComponent implements OnInit {
+  private readonly dialog = inject(MatDialog);
+  private readonly feedback = inject(UiFeedbackService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   readonly store = inject(NewsAdminStore);
@@ -116,10 +123,22 @@ export class NewsEditPageComponent implements OnInit {
       return;
     }
 
+    const confirmed = await this.openConfirmation({
+      title: 'Publicar news',
+      message: 'Publicar esta news no portal?',
+      confirmLabel: 'Publicar',
+      cancelLabel: 'Cancelar',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
     try {
       await this.store.publish(id);
+      this.feedback.success('News publicada com sucesso.');
     } catch {
-      // erro já refletido na store
+      this.feedback.error(this.store.error() ?? 'Falha ao publicar news.');
     }
   }
 
@@ -130,10 +149,23 @@ export class NewsEditPageComponent implements OnInit {
       return;
     }
 
+    const confirmed = await this.openConfirmation({
+      title: 'Despublicar news',
+      message: 'Despublicar esta news do portal?',
+      confirmLabel: 'Despublicar',
+      cancelLabel: 'Cancelar',
+      tone: 'danger',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
     try {
       await this.store.unpublish(id);
+      this.feedback.success('News despublicada com sucesso.');
     } catch {
-      // erro já refletido na store
+      this.feedback.error(this.store.error() ?? 'Falha ao despublicar news.');
     }
   }
 
@@ -144,7 +176,13 @@ export class NewsEditPageComponent implements OnInit {
       return;
     }
 
-    const confirmed = window.confirm('Deseja remover esta news?');
+    const confirmed = await this.openConfirmation({
+      title: 'Remover news',
+      message: 'Deseja remover esta news? Esta ação não pode ser desfeita.',
+      confirmLabel: 'Remover',
+      cancelLabel: 'Cancelar',
+      tone: 'danger',
+    });
 
     if (!confirmed) {
       return;
@@ -152,9 +190,10 @@ export class NewsEditPageComponent implements OnInit {
 
     try {
       await this.store.remove(id);
+      this.feedback.success('News removida com sucesso.');
       await this.router.navigate(['/news']);
     } catch {
-      // erro já refletido na store
+      this.feedback.error(this.store.error() ?? 'Falha ao remover news.');
     }
   }
 
@@ -211,5 +250,16 @@ export class NewsEditPageComponent implements OnInit {
 
       this.resolutionState.set('error');
     }
+  }
+
+  private async openConfirmation(data: ConfirmationDialogData): Promise<boolean> {
+    const dialogRef = this.dialog.open<
+      ConfirmationDialogComponent,
+      ConfirmationDialogData,
+      boolean | null | undefined
+    >(ConfirmationDialogComponent, { data });
+    const result = await firstValueFrom(dialogRef.afterClosed());
+
+    return result === true;
   }
 }
