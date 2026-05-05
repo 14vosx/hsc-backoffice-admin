@@ -4,7 +4,7 @@
 }
 
 .dashboard__card {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--mat-sys-outline-variant);
   border-radius: 12px;
   padding: 16px;
 }
@@ -29,14 +29,14 @@
 
 .dashboard__error {
   margin-top: 12px;
-  color: #b91c1c;
+  color: var(--mat-sys-error);
 }
 
 button {
   padding: 10px 14px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--mat-sys-outline);
   border-radius: 8px;
-  background: white;
+  background: var(--mat-sys-surface);
   cursor: pointer;
 }
 

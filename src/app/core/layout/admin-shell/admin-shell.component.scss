@@ -10,7 +10,7 @@
 }
 
 .admin-shell__sidebar {
-  border-right: 1px solid #e5e7eb;
+  border-right: 1px solid var(--mat-sys-outline-variant);
   padding: 16px;
 }
 
@@ -21,7 +21,7 @@
 }
 
 .admin-shell__header {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
   padding: 16px 24px;
 }
 
