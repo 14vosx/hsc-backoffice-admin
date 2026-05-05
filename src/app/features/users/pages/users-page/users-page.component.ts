@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BehaviorSubject, catchError, map, of, startWith, switchMap } from 'rxjs';
 
 import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
+import { InputDialogService } from '../../../../shared/ui/input-dialog/input-dialog.service';
 import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
 import {
   AdminUserListItem,
@@ -30,6 +31,7 @@ export class UsersPageComponent {
   private readonly fb = inject(FormBuilder);
   private readonly confirmation = inject(ConfirmationService);
   private readonly feedback = inject(UiFeedbackService);
+  private readonly inputDialog = inject(InputDialogService);
   private readonly usersAdminApi = inject(UsersAdminApiService);
   private readonly reload$ = new BehaviorSubject<void>(undefined);
 
@@ -125,9 +127,17 @@ export class UsersPageComponent {
       });
   }
 
-  renameUser(item: AdminUserListItem): void {
+  async renameUser(item: AdminUserListItem): Promise<void> {
     const currentName = item.display_name ?? '';
-    const nextName = window.prompt('Novo nome do usuário:', currentName);
+    const nextName = await this.inputDialog.prompt({
+      title: 'Renomear usuário',
+      label: 'Nome do usuário',
+      initialValue: currentName,
+      confirmLabel: 'Salvar nome',
+      cancelLabel: 'Cancelar',
+      inputType: 'text',
+      required: true,
+    });
 
     if (nextName == null) {
       return;
@@ -151,9 +161,18 @@ export class UsersPageComponent {
       });
   }
 
-  changeEmail(item: AdminUserListItem): void {
+  async changeEmail(item: AdminUserListItem): Promise<void> {
     const currentEmail = item.email;
-    const nextEmail = window.prompt('Novo email do usuário:', currentEmail);
+    const nextEmail = await this.inputDialog.prompt({
+      title: 'Alterar email do usuário',
+      label: 'Email do usuário',
+      initialValue: currentEmail,
+      confirmLabel: 'Salvar email',
+      cancelLabel: 'Cancelar',
+      inputType: 'email',
+      required: true,
+      hint: 'Use um email válido. A validação final é feita pelo backend.',
+    });
 
     if (nextEmail == null) {
       return;
