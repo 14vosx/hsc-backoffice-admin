@@ -3,6 +3,8 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BehaviorSubject, catchError, map, of, startWith, switchMap } from 'rxjs';
 
+import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
+import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
 import {
   AdminUserListItem,
   AdminUserRole,
@@ -26,6 +28,8 @@ type UsersPageVm = {
 })
 export class UsersPageComponent {
   private readonly fb = inject(FormBuilder);
+  private readonly confirmation = inject(ConfirmationService);
+  private readonly feedback = inject(UiFeedbackService);
   private readonly usersAdminApi = inject(UsersAdminApiService);
   private readonly reload$ = new BehaviorSubject<void>(undefined);
 
@@ -84,15 +88,27 @@ export class UsersPageComponent {
             role: 'admin',
           });
           this.reload$.next();
+          this.feedback.success('Usuário criado com sucesso.');
         },
         error: () => {
-          alert('Não foi possível criar o usuário.');
+          this.feedback.error('Não foi possível criar o usuário.');
         },
       });
   }
 
-  changeRole(item: AdminUserListItem, role: AdminUserRole): void {
+  async changeRole(item: AdminUserListItem, role: AdminUserRole): Promise<void> {
     if (item.role === role) {
+      return;
+    }
+
+    const confirmed = await this.confirmation.confirm({
+      title: 'Alterar role do usuário',
+      message: `Alterar a role de ${item.email} para ${role}? Essa mudança pode afetar permissões de acesso.`,
+      confirmLabel: 'Alterar role',
+      cancelLabel: 'Cancelar',
+    });
+
+    if (!confirmed) {
       return;
     }
 
@@ -101,9 +117,10 @@ export class UsersPageComponent {
       .subscribe({
         next: () => {
           this.reload$.next();
+          this.feedback.success('Role do usuário atualizada com sucesso.');
         },
         error: () => {
-          alert('Não foi possível atualizar a role do usuário.');
+          this.feedback.error('Não foi possível atualizar a role do usuário.');
         },
       });
   }
@@ -126,9 +143,10 @@ export class UsersPageComponent {
       .subscribe({
         next: () => {
           this.reload$.next();
+          this.feedback.success('Nome do usuário atualizado com sucesso.');
         },
         error: () => {
-          alert('Não foi possível atualizar o nome do usuário.');
+          this.feedback.error('Não foi possível atualizar o nome do usuário.');
         },
       });
   }
@@ -151,9 +169,10 @@ export class UsersPageComponent {
       .subscribe({
         next: () => {
           this.reload$.next();
+          this.feedback.success('Email do usuário atualizado com sucesso.');
         },
         error: () => {
-          alert('Não foi possível atualizar o email do usuário.');
+          this.feedback.error('Não foi possível atualizar o email do usuário.');
         },
       });
   }
