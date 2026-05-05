@@ -1,70 +1,80 @@
 <main class="login-page">
-  <section class="login-page__card">
-    <h1>HSC Backoffice Admin</h1>
-    <p>Entre com seu email para receber um link mágico de acesso.</p>
+  <mat-card class="login-page__card" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>HSC Backoffice Admin</mat-card-title>
+      <mat-card-subtitle>
+        Entre com seu email para receber um link mágico de acesso.
+      </mat-card-subtitle>
+    </mat-card-header>
 
-    <div class="login-page__status">
-      <p><strong>Status:</strong> {{ authSessionStore.status() }}</p>
+    <mat-card-content>
+      <div class="login-page__status">
+        <p><strong>Status:</strong> {{ authSessionStore.status() }}</p>
 
-      @if (authSessionStore.role(); as role) {
-        <p><strong>Role:</strong> {{ role }}</p>
-      }
-
-      @if (authSessionStore.user(); as user) {
-        <p><strong>Operador:</strong> {{ user.name }} ({{ user.email }})</p>
-      }
-
-      @if (authSessionStore.error(); as error) {
-        <p class="login-page__error"><strong>Erro de sessão:</strong> {{ error }}</p>
-      }
-    </div>
-
-    <div class="login-page__form">
-      <label for="email">Email</label>
-      <input
-        id="email"
-        type="email"
-        [value]="email()"
-        (input)="updateEmail(($any($event.target).value ?? '').toString())"
-        [disabled]="isRequestingLink() || isResolving()"
-        placeholder="admin@haxixesmokeclub.com"
-        autocomplete="email"
-      />
-
-      <button
-        type="button"
-        (click)="handleRequestMagicLink()"
-        [disabled]="isRequestingLink() || isResolving()"
-      >
-        @if (isRequestingLink()) {
-          Enviando link...
-        } @else {
-          Enviar link mágico
+        @if (authSessionStore.role(); as role) {
+          <p><strong>Role:</strong> {{ role }}</p>
         }
-      </button>
 
-      @if (requestMessage(); as message) {
-        <p class="login-page__message">{{ message }}</p>
-      }
-
-      @if (requestError(); as error) {
-        <p class="login-page__error">{{ error }}</p>
-      }
-    </div>
-
-    <div class="login-page__actions">
-      <button
-        type="button"
-        class="login-page__secondary"
-        (click)="handleResolveCurrentSession()"
-        [disabled]="isRequestingLink() || isResolving()"
-      >
-        @if (isResolving()) {
-          Resolvendo sessão...
-        } @else {
-          Resolver sessão atual
+        @if (authSessionStore.user(); as user) {
+          <p><strong>Operador:</strong> {{ user.name }} ({{ user.email }})</p>
         }
-      </button>
-    </div>
-  </section>
+
+        @if (authSessionStore.error(); as error) {
+          <p class="login-page__error"><strong>Erro de sessão:</strong> {{ error }}</p>
+        }
+      </div>
+
+      <div class="login-page__form">
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            id="email"
+            type="email"
+            [value]="email()"
+            (input)="updateEmail(($any($event.target).value ?? '').toString())"
+            [disabled]="isRequestingLink() || isResolving()"
+            placeholder="admin@haxixesmokeclub.com"
+            autocomplete="email"
+          />
+        </mat-form-field>
+
+        <button
+          type="button"
+          mat-flat-button
+          (click)="handleRequestMagicLink()"
+          [disabled]="isRequestingLink() || isResolving()"
+        >
+          @if (isRequestingLink()) {
+            Enviando link...
+          } @else {
+            Enviar link mágico
+          }
+        </button>
+
+        @if (requestMessage(); as message) {
+          <p class="login-page__message">{{ message }}</p>
+        }
+
+        @if (requestError(); as error) {
+          <p class="login-page__error">{{ error }}</p>
+        }
+      </div>
+
+      <div class="login-page__actions">
+        <button
+          type="button"
+          mat-stroked-button
+          (click)="handleResolveCurrentSession()"
+          [disabled]="isRequestingLink() || isResolving()"
+        >
+          @if (isResolving()) {
+            Resolvendo sessão...
+          } @else {
+            Resolver sessão atual
+          }
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </main>

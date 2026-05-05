@@ -1,19 +1,24 @@
 <main class="auth-callback-page">
-  <section class="auth-callback-page__card">
-    <h1>HSC Backoffice Admin</h1>
+  <mat-card class="auth-callback-page__card" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>HSC Backoffice Admin</mat-card-title>
+      <mat-card-subtitle>Validação de acesso administrativo.</mat-card-subtitle>
+    </mat-card-header>
 
-    @if (isResolving()) {
-      <p>{{ message() }}</p>
-    } @else {
-      <p>{{ message() }}</p>
+    <mat-card-content>
+      @if (isResolving()) {
+        <p>{{ message() }}</p>
+      } @else {
+        <p>{{ message() }}</p>
 
-      @if (error(); as errorMessage) {
-        <p class="auth-callback-page__error">{{ errorMessage }}</p>
+        @if (error(); as errorMessage) {
+          <p class="auth-callback-page__error">{{ errorMessage }}</p>
+        }
+
+        <button type="button" mat-stroked-button (click)="goToLogin()">
+          Voltar para login
+        </button>
       }
-
-      <button type="button" (click)="goToLogin()">
-        Voltar para login
-      </button>
-    }
-  </section>
+    </mat-card-content>
+  </mat-card>
 </main>

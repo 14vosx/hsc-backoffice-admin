@@ -1,4 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, computed, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
@@ -8,7 +12,7 @@ import { AuthSessionStore } from '../../../../core/auth/auth-session.store';
 @Component({
   selector: 'hsc-login-page',
   standalone: true,
-  imports: [],
+  imports: [MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
