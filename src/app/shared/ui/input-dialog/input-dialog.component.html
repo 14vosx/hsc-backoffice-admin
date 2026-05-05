@@ -1,0 +1,27 @@
+<section class="input-dialog">
+  <h2 mat-dialog-title class="input-dialog__title">{{ data.title }}</h2>
+
+  <mat-dialog-content class="input-dialog__content">
+    <mat-form-field class="input-dialog__field" appearance="outline">
+      <mat-label>{{ data.label }}</mat-label>
+      <input matInput [type]="inputType" [formControl]="control" />
+
+      @if (data.hint) {
+        <mat-hint>{{ data.hint }}</mat-hint>
+      }
+
+      @if (control.hasError('required')) {
+        <mat-error>Informe um valor.</mat-error>
+      }
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="input-dialog__actions">
+    <button type="button" mat-button (click)="cancel()">
+      {{ cancelLabel }}
+    </button>
+    <button type="button" mat-flat-button (click)="confirm()">
+      {{ confirmLabel }}
+    </button>
+  </mat-dialog-actions>
+</section>

@@ -1,0 +1,21 @@
+.input-dialog {
+  color: var(--mat-sys-on-surface);
+  background: var(--mat-sys-surface);
+}
+
+.input-dialog__title {
+  margin: 0;
+}
+
+.input-dialog__content {
+  color: var(--mat-sys-on-surface);
+}
+
+.input-dialog__field {
+  width: 100%;
+  min-width: min(360px, calc(100vw - 64px));
+}
+
+.input-dialog__actions {
+  border-top: 1px solid var(--mat-sys-outline);
+}
