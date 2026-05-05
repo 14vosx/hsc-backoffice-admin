@@ -3,16 +3,6 @@
   gap: 16px;
 }
 
-.seasons-create-page__header {
-  display: grid;
-  gap: 4px;
-}
-
-.seasons-create-page__title {
-  margin: 0;
-}
-
-.seasons-create-page__description {
-  margin: 0;
-  color: var(--mat-sys-on-surface-variant);
+.seasons-create-page__card {
+  background: var(--mat-sys-surface);
 }

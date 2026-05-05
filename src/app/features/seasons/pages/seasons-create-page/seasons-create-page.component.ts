@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 
+import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
 import { SeasonsFormComponent } from '../../components/seasons-form/seasons-form.component';
 import { SeasonFormValue } from '../../data-access/seasons-admin.models';
 import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
@@ -8,7 +10,7 @@ import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
 @Component({
   selector: 'hsc-seasons-create-page',
   standalone: true,
-  imports: [SeasonsFormComponent],
+  imports: [MatCardModule, PageContainerComponent, SeasonsFormComponent],
   templateUrl: './seasons-create-page.component.html',
   styleUrl: './seasons-create-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

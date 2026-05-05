@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 
 import { AdminSeasonListItem } from '../../data-access/seasons-admin.models';
 import { SeasonsAdminMutationKind } from '../../data-access/seasons-admin.store';
@@ -8,7 +9,7 @@ import { SeasonsStatusBadgeComponent } from '../seasons-status-badge/seasons-sta
 @Component({
   selector: 'hsc-seasons-table',
   standalone: true,
-  imports: [DatePipe, SeasonsStatusBadgeComponent],
+  imports: [DatePipe, MatButtonModule, SeasonsStatusBadgeComponent],
   templateUrl: './seasons-table.component.html',
   styleUrl: './seasons-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

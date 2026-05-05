@@ -32,8 +32,8 @@
             <div class="seasons-table__actions">
               @if (canEdit(item)) {
                 <button
+                  mat-button
                   type="button"
-                  class="seasons-table__action"
                   [disabled]="activeMutation !== null"
                   (click)="editItem(item)"
                 >
@@ -43,8 +43,8 @@
 
               @if (canActivate(item)) {
                 <button
+                  mat-flat-button
                   type="button"
-                  class="seasons-table__action"
                   [disabled]="activeMutation !== null"
                   (click)="activateItem(item)"
                 >
@@ -54,8 +54,9 @@
 
               @if (canClose(item)) {
                 <button
+                  mat-stroked-button
                   type="button"
-                  class="seasons-table__action seasons-table__action--danger"
+                  class="seasons-table__action--danger"
                   [disabled]="activeMutation !== null"
                   (click)="closeItem(item)"
                 >

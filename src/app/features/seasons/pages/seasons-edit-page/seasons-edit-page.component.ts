@@ -1,8 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
 import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import { SeasonsFormComponent } from '../../components/seasons-form/seasons-form.component';
 import { AdminSeasonListItem, SeasonFormValue } from '../../data-access/seasons-admin.models';
@@ -14,7 +17,14 @@ type EditPageResolutionState = 'loading' | 'ready' | 'invalid-slug' | 'not-found
 @Component({
   selector: 'hsc-seasons-edit-page',
   standalone: true,
-  imports: [DatePipe, SeasonsFormComponent, PageFeedbackComponent],
+  imports: [
+    DatePipe,
+    MatButtonModule,
+    MatCardModule,
+    PageContainerComponent,
+    SeasonsFormComponent,
+    PageFeedbackComponent,
+  ],
   templateUrl: './seasons-edit-page.component.html',
   styleUrl: './seasons-edit-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
