@@ -3,27 +3,15 @@
   gap: 16px;
 }
 
-.seasons-edit-page__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.seasons-edit-page__title {
-  margin: 0 0 4px;
-}
-
-.seasons-edit-page__description {
-  margin: 0;
-  color: var(--mat-sys-on-surface-variant);
-}
-
-.seasons-edit-page__metadata {
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 12px;
-  padding: 16px;
+.seasons-edit-page__actions-card,
+.seasons-edit-page__form-card,
+.seasons-edit-page__metadata-card {
   background: var(--mat-sys-surface);
+}
+
+.seasons-edit-page__actions-card mat-card-content {
+  display: flex;
+  justify-content: flex-start;
 }
 
 .seasons-edit-page__error-actions {
@@ -32,32 +20,50 @@
   flex-wrap: wrap;
 }
 
-.seasons-edit-page__secondary-action {
-  border: 1px solid var(--mat-sys-outline);
-  background: var(--mat-sys-surface);
-  border-radius: 8px;
-  padding: 10px 14px;
-  cursor: pointer;
-}
-
-.seasons-edit-page__secondary-action:hover {
-  background: var(--mat-sys-surface-container-low);
-}
-
-.seasons-edit-page__secondary-action:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
+.seasons-edit-page__metadata-card mat-card-header {
+  padding-bottom: 16px;
 }
 
 .seasons-edit-page__metadata {
   display: grid;
-  gap: 8px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.seasons-edit-page__metadata div {
+  display: grid;
+  gap: 4px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--mat-sys-surface-container-low);
+}
+
+.seasons-edit-page__metadata dt {
   color: var(--mat-sys-on-surface-variant);
   font-size: 14px;
 }
 
-@media (max-width: 720px) {
-  .seasons-edit-page__header {
-    flex-direction: column;
+.seasons-edit-page__metadata dd {
+  margin: 0;
+  color: var(--mat-sys-on-surface);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.seasons-edit-page__metadata code {
+  font-weight: 500;
+}
+
+@media (max-width: 960px) {
+  .seasons-edit-page__metadata {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .seasons-edit-page__metadata {
+    grid-template-columns: 1fr;
   }
 }

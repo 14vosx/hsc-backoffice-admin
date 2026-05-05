@@ -1,22 +1,29 @@
 .seasons-table-wrapper {
   overflow-x: auto;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+  background: var(--mat-sys-surface);
 }
 
 .seasons-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 920px;
 }
 
 .seasons-table th,
 .seasons-table td {
   text-align: left;
-  padding: 12px;
+  padding: 14px 16px;
   border-bottom: 1px solid var(--mat-sys-outline-variant);
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .seasons-table th {
-  font-size: 14px;
+  color: var(--mat-sys-on-surface-variant);
+  background: var(--mat-sys-surface-container-low);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .seasons-table strong,
@@ -30,34 +37,36 @@
   font-size: 13px;
 }
 
+.seasons-table tbody tr {
+  transition: background-color 120ms ease;
+}
+
+.seasons-table tbody tr:hover {
+  background: var(--mat-sys-surface-container-low);
+}
+
+.seasons-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
 .seasons-table code {
   font-size: 12px;
+  overflow-wrap: anywhere;
 }
 
 .seasons-table__actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 8px;
 }
 
-.seasons-table__action {
-  border: 1px solid var(--mat-sys-outline);
-  border-radius: 8px;
-  background: var(--mat-sys-surface);
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
 .seasons-table__action--danger {
-  border-color: var(--mat-sys-error-container);
-  color: var(--mat-sys-on-error-container);
+  color: var(--mat-sys-error);
 }
 
-.seasons-table__action:hover:not(:disabled) {
-  background: var(--mat-sys-surface-container-low);
-}
-
-.seasons-table__action:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
+@media (max-width: 720px) {
+  .seasons-table__actions {
+    justify-content: flex-start;
+  }
 }

@@ -1,57 +1,84 @@
-<section class="seasons-edit-page">
-  <header class="seasons-edit-page__header">
-    <div>
-      <h1 class="seasons-edit-page__title">Editar season</h1>
-      <p class="seasons-edit-page__description">
-        Atualize metadados e janela do ciclo competitivo oficial do servidor HSC.
-      </p>
-    </div>
+<hsc-page-container
+  title="Editar season"
+  subtitle="Atualize metadados e janela do ciclo competitivo oficial do servidor HSC."
+>
+  <section class="seasons-edit-page">
+    <mat-card class="seasons-edit-page__actions-card" appearance="outlined">
+      <mat-card-content>
+        <button type="button" mat-stroked-button [disabled]="submitting()" (click)="cancel()">
+          Voltar
+        </button>
+      </mat-card-content>
+    </mat-card>
 
-    <button type="button" class="seasons-edit-page__secondary-action" [disabled]="submitting()" (click)="cancel()">
-      Voltar
-    </button>
-  </header>
-
-  @if (resolutionState() === 'loading') {
-    <hsc-page-feedback variant="neutral">
-      Carregando season...
-    </hsc-page-feedback>
-  } @else {
-    @if (pageError()) {
-      <hsc-page-feedback variant="error">
-        <p>{{ pageError() }}</p>
-
-        <div class="seasons-edit-page__error-actions">
-          <button type="button" class="seasons-edit-page__secondary-action" (click)="retry()">
-            Tentar novamente
-          </button>
-
-          <button type="button" class="seasons-edit-page__secondary-action" (click)="cancel()">
-            Voltar para listagem
-          </button>
-        </div>
+    @if (resolutionState() === 'loading') {
+      <hsc-page-feedback variant="neutral">
+        Carregando season...
       </hsc-page-feedback>
-    }
+    } @else {
+      @if (pageError()) {
+        <hsc-page-feedback variant="error">
+          <p>{{ pageError() }}</p>
 
-    @if (canRenderForm()) {
-      <hsc-seasons-form
-        mode="edit"
-        [initialValue]="initialValue()"
-        [metadata]="item()"
-        [submitting]="submitting()"
-        [errorMessage]="store.error()"
-        (formSubmit)="submit($event)"
-        (cancel)="cancel()"
-      />
+          <div class="seasons-edit-page__error-actions">
+            <button type="button" mat-button (click)="retry()">
+              Tentar novamente
+            </button>
 
-      @if (item()) {
-        <div class="seasons-edit-page__metadata">
-          <div><strong>Status:</strong> {{ item()?.status }}</div>
-          <div><strong>Slug:</strong> <code>{{ item()?.slug }}</code></div>
-          <div><strong>Criada em:</strong> {{ item()?.created_at | date: 'dd/MM/yyyy HH:mm' }}</div>
-          <div><strong>Atualizada em:</strong> {{ item()?.updated_at | date: 'dd/MM/yyyy HH:mm' }}</div>
-        </div>
+            <button type="button" mat-stroked-button (click)="cancel()">
+              Voltar para listagem
+            </button>
+          </div>
+        </hsc-page-feedback>
+      }
+
+      @if (canRenderForm()) {
+        <mat-card class="seasons-edit-page__form-card" appearance="outlined">
+          <mat-card-content>
+            <hsc-seasons-form
+              mode="edit"
+              [initialValue]="initialValue()"
+              [metadata]="item()"
+              [submitting]="submitting()"
+              [errorMessage]="store.error()"
+              (formSubmit)="submit($event)"
+              (cancel)="cancel()"
+            />
+          </mat-card-content>
+        </mat-card>
+
+        @if (item()) {
+          <mat-card class="seasons-edit-page__metadata-card" appearance="outlined">
+            <mat-card-header>
+              <mat-card-title>Resumo administrativo</mat-card-title>
+              <mat-card-subtitle>
+                Dados de controle da season selecionada.
+              </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <dl class="seasons-edit-page__metadata">
+                <div>
+                  <dt>Status</dt>
+                  <dd>{{ item()?.status }}</dd>
+                </div>
+                <div>
+                  <dt>Slug</dt>
+                  <dd><code>{{ item()?.slug }}</code></dd>
+                </div>
+                <div>
+                  <dt>Criada em</dt>
+                  <dd>{{ item()?.created_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
+                </div>
+                <div>
+                  <dt>Atualizada em</dt>
+                  <dd>{{ item()?.updated_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
+                </div>
+              </dl>
+            </mat-card-content>
+          </mat-card>
+        }
       }
     }
-  }
-</section>
+  </section>
+</hsc-page-container>

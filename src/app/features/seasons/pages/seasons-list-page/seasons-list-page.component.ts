@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 
+import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
 import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
 import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
@@ -11,7 +14,13 @@ import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
 @Component({
   selector: 'hsc-seasons-list-page',
   standalone: true,
-  imports: [SeasonsTableComponent, PageFeedbackComponent],
+  imports: [
+    MatButtonModule,
+    MatCardModule,
+    PageContainerComponent,
+    SeasonsTableComponent,
+    PageFeedbackComponent,
+  ],
   templateUrl: './seasons-list-page.component.html',
   styleUrl: './seasons-list-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
