@@ -8,3 +8,5 @@ const isLocalhost =
 export const API_BASE_URL = isLocalhost
   ? ''
   : 'https://auth-api.haxixesmokeclub.com';
+
+export const CS2_STATIC_API_BASE_URL = 'https://haxixesmokeclub.com/api/cs2/v2';

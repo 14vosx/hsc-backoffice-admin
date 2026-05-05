@@ -59,6 +59,47 @@
                   <dd>{{ season.end_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
                 </div>
               </dl>
+
+              <section class="dashboard__competitive-summary" aria-label="Resumo competitivo">
+                <h3>Resumo competitivo</h3>
+
+                @if (competitiveLoading()) {
+                  <p class="dashboard__muted">Carregando resumo competitivo...</p>
+                } @else if (competitiveError()) {
+                  <p class="dashboard__muted">Resumo competitivo indisponível agora.</p>
+                } @else if (activeOrLatestSeasonCompetitiveSummary(); as summary) {
+                  <dl class="dashboard__meta dashboard__meta--competitive">
+                    <div>
+                      <dt>Partidas</dt>
+                      <dd>{{ summary.matches }}</dd>
+                    </div>
+                    <div>
+                      <dt>Mapas</dt>
+                      <dd>{{ summary.maps }}</dd>
+                    </div>
+                    <div>
+                      <dt>Rounds</dt>
+                      <dd>{{ summary.rounds }}</dd>
+                    </div>
+                    <div>
+                      <dt>Jogadores</dt>
+                      <dd>{{ summary.players }}</dd>
+                    </div>
+                    <div>
+                      <dt>Último mapa</dt>
+                      <dd>
+                        @if (toUtcDateTime(summary.lastMapEndedAt); as lastMapEndedAt) {
+                          {{ lastMapEndedAt | date: 'dd/MM/yyyy HH:mm' }}
+                        } @else {
+                          -
+                        }
+                      </dd>
+                    </div>
+                  </dl>
+                } @else {
+                  <p class="dashboard__muted">Resumo competitivo ainda não disponível para esta season.</p>
+                }
+              </section>
             </article>
           } @else {
             <hsc-page-feedback variant="neutral">

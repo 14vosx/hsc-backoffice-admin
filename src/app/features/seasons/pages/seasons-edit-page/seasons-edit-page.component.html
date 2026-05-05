@@ -78,6 +78,62 @@
             </mat-card-content>
           </mat-card>
         }
+
+        <mat-card class="seasons-edit-page__competitive-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>Resumo competitivo</mat-card-title>
+            <mat-card-subtitle>
+              Dados públicos gerados pela Static API v2 de Seasons.
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            @if (competitiveLoading()) {
+              <p class="seasons-edit-page__muted">Carregando resumo competitivo...</p>
+            } @else if (competitiveDetail(); as detail) {
+              <dl class="seasons-edit-page__metadata seasons-edit-page__metadata--competitive">
+                <div>
+                  <dt>Partidas</dt>
+                  <dd>{{ detail.summary.matches }}</dd>
+                </div>
+                <div>
+                  <dt>Mapas</dt>
+                  <dd>{{ detail.summary.maps }}</dd>
+                </div>
+                <div>
+                  <dt>Rounds</dt>
+                  <dd>{{ detail.summary.rounds }}</dd>
+                </div>
+                <div>
+                  <dt>Jogadores</dt>
+                  <dd>{{ detail.summary.players }}</dd>
+                </div>
+                <div>
+                  <dt>Último mapa finalizado</dt>
+                  <dd>
+                    @if (toUtcDateTime(detail.summary.lastMapEndedAt); as lastMapEndedAt) {
+                      {{ lastMapEndedAt | date: 'dd/MM/yyyy HH:mm' }}
+                    } @else {
+                      -
+                    }
+                  </dd>
+                </div>
+                <div>
+                  <dt>Gerado em</dt>
+                  <dd>{{ detail.generatedAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
+                </div>
+              </dl>
+            } @else if (competitiveError()) {
+              <p class="seasons-edit-page__muted">
+                Resumo competitivo ainda não disponível para esta season.
+              </p>
+            } @else {
+              <p class="seasons-edit-page__muted">
+                Resumo competitivo ainda não disponível para esta season.
+              </p>
+            }
+          </mat-card-content>
+        </mat-card>
       }
     }
   </section>
