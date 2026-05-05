@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+
+.page-feedback {
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: 12px;
+  padding: 16px;
+  color: var(--mat-sys-on-surface);
+  background: var(--mat-sys-surface);
+}
+
+.page-feedback--error {
+  border-color: var(--mat-sys-error);
+  color: var(--mat-sys-on-error-container);
+  background: var(--mat-sys-error-container);
+}
+
+.page-feedback--success {
+  color: var(--mat-sys-on-secondary-container);
+  background: var(--mat-sys-secondary-container);
+}
+
+.page-feedback--warning {
+  color: var(--mat-sys-on-tertiary-container);
+  background: var(--mat-sys-tertiary-container);
+}
+
+.page-feedback__title {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.page-feedback__content {
+  display: grid;
+  gap: 12px;
+}
+
+.page-feedback__content ::ng-deep > :first-child {
+  margin-top: 0;
+}
+
+.page-feedback__content ::ng-deep > :last-child {
+  margin-bottom: 0;
+}

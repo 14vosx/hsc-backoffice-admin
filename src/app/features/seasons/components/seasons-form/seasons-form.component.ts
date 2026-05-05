@@ -15,6 +15,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
+import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import { AdminSeasonListItem, SeasonFormValue } from '../../data-access/seasons-admin.models';
 import { toSeasonFormValue } from '../../utils/seasons-form.mapper';
 
@@ -30,6 +31,7 @@ const LOCAL_TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
     MatFormFieldModule,
     MatInputModule,
     MatNativeDateModule,
+    PageFeedbackComponent,
   ],
   templateUrl: './seasons-form.component.html',
   styleUrl: './seasons-form.component.scss',

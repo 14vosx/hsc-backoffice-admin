@@ -31,9 +31,9 @@
   }
 
   @if (errorMessage) {
-    <div class="news-form__feedback news-form__feedback--error">
+    <hsc-page-feedback variant="error">
       {{ errorMessage }}
-    </div>
+    </hsc-page-feedback>
   }
 
   <form class="news-form__form" [formGroup]="form" (ngSubmit)="onSubmit()">

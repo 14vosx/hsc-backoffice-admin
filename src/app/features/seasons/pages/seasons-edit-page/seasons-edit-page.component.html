@@ -13,15 +13,15 @@
   </header>
 
   @if (resolutionState() === 'loading') {
-    <div class="seasons-edit-page__feedback">
+    <hsc-page-feedback variant="neutral">
       Carregando season...
-    </div>
+    </hsc-page-feedback>
   } @else {
     @if (pageError()) {
-      <div class="seasons-edit-page__feedback seasons-edit-page__feedback--error">
+      <hsc-page-feedback variant="error">
         <p>{{ pageError() }}</p>
 
-        <div class="seasons-edit-page__feedback-actions">
+        <div class="seasons-edit-page__error-actions">
           <button type="button" class="seasons-edit-page__secondary-action" (click)="retry()">
             Tentar novamente
           </button>
@@ -30,7 +30,7 @@
             Voltar para listagem
           </button>
         </div>
-      </div>
+      </hsc-page-feedback>
     }
 
     @if (canRenderForm()) {

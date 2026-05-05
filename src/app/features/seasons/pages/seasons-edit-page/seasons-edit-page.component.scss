@@ -19,7 +19,6 @@
   color: #4b5563;
 }
 
-.seasons-edit-page__feedback,
 .seasons-edit-page__metadata {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
@@ -27,11 +26,7 @@
   background: #fff;
 }
 
-.seasons-edit-page__feedback--error {
-  border-color: #fecaca;
-}
-
-.seasons-edit-page__feedback-actions {
+.seasons-edit-page__error-actions {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;

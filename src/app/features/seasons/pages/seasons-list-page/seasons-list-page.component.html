@@ -13,20 +13,20 @@
   </header>
 
   @if (error()) {
-    <div class="seasons-list-page__feedback seasons-list-page__feedback--error">
+    <hsc-page-feedback variant="error">
       <p>{{ error() }}</p>
       <button type="button" class="seasons-list-page__secondary-action" (click)="load()">
         Tentar novamente
       </button>
-    </div>
+    </hsc-page-feedback>
   }
 
   @if (loading() && items().length === 0) {
-    <div class="seasons-list-page__feedback">
+    <hsc-page-feedback variant="neutral">
       Carregando seasons...
-    </div>
+    </hsc-page-feedback>
   } @else if (isEmpty()) {
-    <div class="seasons-list-page__feedback">
+    <hsc-page-feedback variant="neutral">
       <p>Nenhuma season cadastrada até o momento.</p>
       <p class="seasons-list-page__hint">
         Quando houver ciclos competitivos oficiais, eles aparecerão aqui para
@@ -35,7 +35,7 @@
       <button type="button" class="seasons-list-page__primary-action" (click)="goToCreate()">
         Criar primeira season
       </button>
-    </div>
+    </hsc-page-feedback>
   } @else {
     <hsc-seasons-table
       [items]="items()"

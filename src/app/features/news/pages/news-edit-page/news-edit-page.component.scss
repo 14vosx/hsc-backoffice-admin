@@ -20,22 +20,17 @@
 }
 
 .news-edit-page__header-actions,
-.news-edit-page__feedback-actions {
+.news-edit-page__error-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
 }
 
-.news-edit-page__feedback,
 .news-edit-page__metadata {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 16px;
   background: #fff;
-}
-
-.news-edit-page__feedback--error {
-  border-color: #fecaca;
 }
 
 .news-edit-page__secondary-action,
