@@ -1,0 +1,22 @@
+<section class="confirmation-dialog" [class.confirmation-dialog--danger]="tone === 'danger'">
+  <h2 mat-dialog-title class="confirmation-dialog__title">{{ data.title }}</h2>
+
+  <mat-dialog-content class="confirmation-dialog__content">
+    <p>{{ data.message }}</p>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="confirmation-dialog__actions">
+    <button type="button" mat-button [mat-dialog-close]="false">
+      {{ cancelLabel }}
+    </button>
+    <button
+      type="button"
+      mat-flat-button
+      class="confirmation-dialog__confirm"
+      [class.confirmation-dialog__confirm--danger]="tone === 'danger'"
+      [mat-dialog-close]="true"
+    >
+      {{ confirmLabel }}
+    </button>
+  </mat-dialog-actions>
+</section>
