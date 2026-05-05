@@ -4,12 +4,15 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
 import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import { SeasonsFormComponent } from '../../components/seasons-form/seasons-form.component';
 import { AdminSeasonListItem, SeasonFormValue } from '../../data-access/seasons-admin.models';
 import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
+import { SeasonsCompetitiveSummaryApiService } from '../../data-access/seasons-competitive-summary-api.service';
+import { SeasonCompetitiveDetailResponse } from '../../data-access/seasons-competitive-summary.models';
 import { seasonItemToFormValue } from '../../utils/seasons-form.mapper';
 
 type EditPageResolutionState = 'loading' | 'ready' | 'invalid-slug' | 'not-found' | 'error';
@@ -32,12 +35,16 @@ type EditPageResolutionState = 'loading' | 'ready' | 'invalid-slug' | 'not-found
 export class SeasonsEditPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly competitiveSummaryApi = inject(SeasonsCompetitiveSummaryApiService);
   readonly store = inject(SeasonsAdminStore);
 
   readonly slug = signal<string | null>(null);
   readonly item = signal<AdminSeasonListItem | null>(null);
   readonly resolutionState = signal<EditPageResolutionState>('loading');
   readonly resolutionMessage = signal<string | null>(null);
+  readonly competitiveDetail = signal<SeasonCompetitiveDetailResponse | null>(null);
+  readonly competitiveLoading = signal(false);
+  readonly competitiveError = signal<string | null>(null);
 
   readonly initialValue = computed(() => {
     const item = this.item();
@@ -97,6 +104,8 @@ export class SeasonsEditPageComponent implements OnInit {
   private async resolveContext(): Promise<void> {
     this.resolutionState.set('loading');
     this.resolutionMessage.set(null);
+    this.competitiveDetail.set(null);
+    this.competitiveError.set(null);
     this.store.resetError();
 
     const slug = this.slug();
@@ -113,6 +122,7 @@ export class SeasonsEditPageComponent implements OnInit {
       this.item.set(item);
       this.resolutionState.set('ready');
       this.resolutionMessage.set(null);
+      void this.loadCompetitiveSummary(slug);
     } catch (error) {
       this.item.set(null);
 
@@ -128,5 +138,24 @@ export class SeasonsEditPageComponent implements OnInit {
 
       this.resolutionState.set('error');
     }
+  }
+
+  private async loadCompetitiveSummary(slug: string): Promise<void> {
+    this.competitiveDetail.set(null);
+    this.competitiveError.set(null);
+    this.competitiveLoading.set(true);
+
+    try {
+      const detail = await firstValueFrom(this.competitiveSummaryApi.detail(slug));
+      this.competitiveDetail.set(detail);
+    } catch {
+      this.competitiveError.set('Resumo competitivo ainda não disponível para esta season.');
+    } finally {
+      this.competitiveLoading.set(false);
+    }
+  }
+
+  protected toUtcDateTime(value: string | null): string | null {
+    return value ? `${value.replace(' ', 'T')}Z` : null;
   }
 }
