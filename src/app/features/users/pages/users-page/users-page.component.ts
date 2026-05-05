@@ -1,10 +1,18 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { BehaviorSubject, catchError, map, of, startWith, switchMap } from 'rxjs';
 
+import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
 import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
 import { InputDialogService } from '../../../../shared/ui/input-dialog/input-dialog.service';
+import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
 import {
   AdminUserListItem,
@@ -22,7 +30,18 @@ type UsersPageVm = {
 @Component({
   selector: 'hsc-users-page',
   standalone: true,
-  imports: [AsyncPipe, ReactiveFormsModule],
+  imports: [
+    AsyncPipe,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatDividerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    PageContainerComponent,
+    PageFeedbackComponent,
+  ],
   templateUrl: './users-page.component.html',
   styleUrl: './users-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
