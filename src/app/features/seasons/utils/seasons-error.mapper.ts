@@ -38,6 +38,10 @@ export function mapSeasonsErrorMessage(error: unknown): string {
       return 'Já existe uma season com este slug.';
     }
 
+    if (error.status === 409 && error.error?.error === 'season_date_overlap') {
+      return 'Já existe uma season cadastrada para esse período. Ajuste as datas para evitar sobreposição.';
+    }
+
     if (error.status === 409 && error.error?.error === 'season_closed') {
       return 'Seasons fechadas não podem ser alteradas.';
     }
