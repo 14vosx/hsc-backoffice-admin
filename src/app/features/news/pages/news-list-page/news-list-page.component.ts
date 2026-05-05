@@ -1,10 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
 
-import { ConfirmationDialogComponent } from '../../../../shared/ui/confirmation-dialog/confirmation-dialog.component';
-import { ConfirmationDialogData } from '../../../../shared/ui/confirmation-dialog/confirmation-dialog.models';
+import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
 import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
 import { NewsAdminStore } from '../../data-access/news-admin.store';
 import { NewsTableComponent } from '../../components/news-table/news-table.component';
@@ -18,7 +15,7 @@ import { NewsTableComponent } from '../../components/news-table/news-table.compo
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewsListPageComponent implements OnInit {
-  private readonly dialog = inject(MatDialog);
+  private readonly confirmation = inject(ConfirmationService);
   private readonly feedback = inject(UiFeedbackService);
   private readonly router = inject(Router);
   readonly store = inject(NewsAdminStore);
@@ -54,7 +51,7 @@ export class NewsListPageComponent implements OnInit {
   }
 
   async publish(id: number): Promise<void> {
-    const confirmed = await this.openConfirmation({
+    const confirmed = await this.confirmation.confirm({
       title: 'Publicar news',
       message: 'Publicar esta news no portal?',
       confirmLabel: 'Publicar',
@@ -74,7 +71,7 @@ export class NewsListPageComponent implements OnInit {
   }
 
   async unpublish(id: number): Promise<void> {
-    const confirmed = await this.openConfirmation({
+    const confirmed = await this.confirmation.confirm({
       title: 'Despublicar news',
       message: 'Despublicar esta news do portal?',
       confirmLabel: 'Despublicar',
@@ -95,7 +92,7 @@ export class NewsListPageComponent implements OnInit {
   }
 
   async remove(id: number): Promise<void> {
-    const confirmed = await this.openConfirmation({
+    const confirmed = await this.confirmation.confirm({
       title: 'Remover news',
       message: 'Deseja remover esta news? Esta ação não pode ser desfeita.',
       confirmLabel: 'Remover',
@@ -113,16 +110,5 @@ export class NewsListPageComponent implements OnInit {
     } catch {
       this.feedback.error(this.store.error() ?? 'Falha ao remover news.');
     }
-  }
-
-  private async openConfirmation(data: ConfirmationDialogData): Promise<boolean> {
-    const dialogRef = this.dialog.open<
-      ConfirmationDialogComponent,
-      ConfirmationDialogData,
-      boolean | null | undefined
-    >(ConfirmationDialogComponent, { data });
-    const result = await firstValueFrom(dialogRef.afterClosed());
-
-    return result === true;
   }
 }

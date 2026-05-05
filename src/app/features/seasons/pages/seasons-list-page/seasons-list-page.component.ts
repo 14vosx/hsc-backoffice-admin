@@ -1,10 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
 
-import { ConfirmationDialogComponent } from '../../../../shared/ui/confirmation-dialog/confirmation-dialog.component';
-import { ConfirmationDialogData } from '../../../../shared/ui/confirmation-dialog/confirmation-dialog.models';
+import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
 import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
 import { SeasonsTableComponent } from '../../components/seasons-table/seasons-table.component';
 import { AdminSeasonListItem } from '../../data-access/seasons-admin.models';
@@ -19,7 +16,7 @@ import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SeasonsListPageComponent implements OnInit {
-  private readonly dialog = inject(MatDialog);
+  private readonly confirmation = inject(ConfirmationService);
   private readonly feedback = inject(UiFeedbackService);
   private readonly router = inject(Router);
   readonly store = inject(SeasonsAdminStore);
@@ -51,7 +48,7 @@ export class SeasonsListPageComponent implements OnInit {
   }
 
   async activateSeason(item: AdminSeasonListItem): Promise<void> {
-    const confirmed = await this.openConfirmation({
+    const confirmed = await this.confirmation.confirm({
       title: 'Ativar season',
       message:
         'Ativar esta season como ciclo competitivo oficial em andamento? Se houver outra season ativa, ela poderá deixar de ser ativa.',
@@ -72,7 +69,7 @@ export class SeasonsListPageComponent implements OnInit {
   }
 
   async closeSeason(item: AdminSeasonListItem): Promise<void> {
-    const confirmed = await this.openConfirmation({
+    const confirmed = await this.confirmation.confirm({
       title: 'Fechar season',
       message: 'Fechar esta season? Seasons fechadas não podem mais ser editadas.',
       confirmLabel: 'Fechar',
@@ -90,16 +87,5 @@ export class SeasonsListPageComponent implements OnInit {
     } catch {
       this.feedback.error(this.store.error() ?? 'Falha ao fechar season.');
     }
-  }
-
-  private async openConfirmation(data: ConfirmationDialogData): Promise<boolean> {
-    const dialogRef = this.dialog.open<
-      ConfirmationDialogComponent,
-      ConfirmationDialogData,
-      boolean | null | undefined
-    >(ConfirmationDialogComponent, { data });
-    const result = await firstValueFrom(dialogRef.afterClosed());
-
-    return result === true;
   }
 }
