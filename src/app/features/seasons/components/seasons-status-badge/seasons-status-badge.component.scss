@@ -5,25 +5,26 @@
   padding: 4px 10px;
   font-size: 12px;
   font-weight: 600;
-  background: #f3f4f6;
+  background: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .seasons-status-badge--draft {
-  background: #f3f4f6;
-  color: #374151;
+  background: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .seasons-status-badge--active {
-  background: #dcfce7;
-  color: #166534;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
 }
 
 .seasons-status-badge--closed {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
 }
 
 .seasons-status-badge--unknown {
-  background: #e0f2fe;
-  color: #075985;
+  background: var(--mat-sys-tertiary-container);
+  color: var(--mat-sys-on-tertiary-container);
 }

@@ -5,9 +5,11 @@
   padding: 4px 10px;
   font-size: 12px;
   font-weight: 600;
-  background: #f3f4f6;
+  background: var(--mat-sys-surface-container);
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .news-status-badge--published {
-  background: #dcfce7;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
 }
