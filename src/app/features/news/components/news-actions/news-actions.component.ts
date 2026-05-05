@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'hsc-news-actions',
   standalone: true,
+  imports: [MatButtonModule],
   templateUrl: './news-actions.component.html',
   styleUrl: './news-actions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

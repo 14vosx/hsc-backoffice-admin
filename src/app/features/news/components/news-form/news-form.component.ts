@@ -10,6 +10,9 @@ import {
   inject,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import {
@@ -23,7 +26,14 @@ export type NewsFormMode = 'create' | 'edit';
 @Component({
   selector: 'hsc-news-form',
   standalone: true,
-  imports: [ReactiveFormsModule, DatePipe, PageFeedbackComponent],
+  imports: [
+    ReactiveFormsModule,
+    DatePipe,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    PageFeedbackComponent,
+  ],
   templateUrl: './news-form.component.html',
   styleUrl: './news-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

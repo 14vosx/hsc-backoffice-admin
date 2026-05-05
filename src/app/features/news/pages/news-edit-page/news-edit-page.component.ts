@@ -1,8 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
 import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
 import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
@@ -16,7 +19,14 @@ type EditPageResolutionState = 'loading' | 'ready' | 'invalid-id' | 'not-found' 
 @Component({
   selector: 'hsc-news-edit-page',
   standalone: true,
-  imports: [DatePipe, NewsFormComponent, PageFeedbackComponent],
+  imports: [
+    DatePipe,
+    MatButtonModule,
+    MatCardModule,
+    PageContainerComponent,
+    NewsFormComponent,
+    PageFeedbackComponent,
+  ],
   templateUrl: './news-edit-page.component.html',
   styleUrl: './news-edit-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
