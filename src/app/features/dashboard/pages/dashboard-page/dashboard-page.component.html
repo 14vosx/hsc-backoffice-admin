@@ -1,62 +1,156 @@
 <hsc-page-container
   title="Backoffice Admin"
-  subtitle="Dashboard técnico inicial do PR-1"
+  subtitle="Painel operacional do HSC Backoffice."
 >
   <div class="dashboard">
-    <section class="dashboard__card">
-      <div class="dashboard__card-header">
-        <h2>Status da sessão</h2>
+    <mat-card class="dashboard__hero" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Bem-vindo ao Backoffice HSC</mat-card-title>
+        <mat-card-subtitle>
+          Operador: {{ operatorName() }} · Role: {{ authSessionStore.role() || 'sem role resolvida' }}
+        </mat-card-subtitle>
+      </mat-card-header>
 
-        <button
-          type="button"
-          (click)="handleRefreshSession()"
-          [disabled]="isRefreshing()"
-        >
-          @if (isRefreshing()) {
-            Recarregando...
+      <mat-card-content>
+        <p>Gerencie seasons, notícias e usuários administrativos do projeto.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <section class="dashboard__grid" aria-label="Visão geral administrativa">
+      <mat-card class="dashboard__card" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>Season em destaque</mat-card-title>
+          <mat-card-subtitle>
+            Season ativa ou última season conhecida no Backoffice.
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          @if (seasonsStore.loading() && seasonsStore.items().length === 0) {
+            <hsc-page-feedback variant="neutral">
+              Carregando seasons...
+            </hsc-page-feedback>
+          } @else if (seasonsStore.error()) {
+            <hsc-page-feedback variant="error">
+              {{ seasonsStore.error() }}
+            </hsc-page-feedback>
+          } @else if (activeOrLatestSeason(); as season) {
+            <article class="dashboard__feature">
+              <div class="dashboard__feature-heading">
+                <h2>{{ season.name }}</h2>
+                <span class="dashboard__status">{{ season.status }}</span>
+              </div>
+
+              @if (season.description) {
+                <p class="dashboard__description">{{ season.description }}</p>
+              }
+
+              <dl class="dashboard__meta">
+                <div>
+                  <dt>Slug</dt>
+                  <dd><code>{{ season.slug }}</code></dd>
+                </div>
+                <div>
+                  <dt>Início</dt>
+                  <dd>{{ season.start_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
+                </div>
+                <div>
+                  <dt>Fim</dt>
+                  <dd>{{ season.end_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
+                </div>
+              </dl>
+            </article>
           } @else {
-            Recarregar sessão
+            <hsc-page-feedback variant="neutral">
+              Nenhuma season cadastrada até o momento.
+            </hsc-page-feedback>
           }
-        </button>
-      </div>
+        </mat-card-content>
 
-      <ul class="dashboard__list">
-        <li>Status: {{ authSessionStore.status() }}</li>
-        <li>Authenticated: {{ authSessionStore.isAuthenticated() }}</li>
-        <li>Admin allowed: {{ authSessionStore.isAdminAreaAllowed() }}</li>
-        <li>Viewer: {{ authSessionStore.isViewer() }}</li>
-        <li>Editor: {{ authSessionStore.isEditor() }}</li>
-        <li>Admin: {{ authSessionStore.isAdmin() }}</li>
-      </ul>
-    </section>
+        <mat-card-actions align="end">
+          <a mat-button routerLink="/seasons">Ver seasons</a>
+          <a mat-stroked-button routerLink="/seasons/new">Nova season</a>
+        </mat-card-actions>
+      </mat-card>
 
-    <section class="dashboard__card">
-      <h2>Operador atual</h2>
+      <mat-card class="dashboard__card" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>Última news</mat-card-title>
+          <mat-card-subtitle>
+            Última publicação ou item de news mais recente.
+          </mat-card-subtitle>
+        </mat-card-header>
 
-      @if (authSessionStore.user(); as user) {
-        <ul class="dashboard__list">
-          <li>ID: {{ user.id }}</li>
-          <li>Nome: {{ user.name }}</li>
-          <li>Email: {{ user.email }}</li>
-          <li>Role: {{ authSessionStore.role() }}</li>
-        </ul>
-      } @else {
-        <p>Nenhum operador autenticado resolvido até o momento.</p>
-      }
+        <mat-card-content>
+          @if (newsStore.loading() && newsStore.items().length === 0) {
+            <hsc-page-feedback variant="neutral">
+              Carregando news...
+            </hsc-page-feedback>
+          } @else if (newsStore.error()) {
+            <hsc-page-feedback variant="error">
+              {{ newsStore.error() }}
+            </hsc-page-feedback>
+          } @else if (featuredNews(); as news) {
+            <article class="dashboard__feature">
+              <div class="dashboard__feature-heading">
+                <h2>{{ news.title }}</h2>
+                <span class="dashboard__status">{{ news.status }}</span>
+              </div>
 
-      @if (authSessionStore.error(); as error) {
-        <p class="dashboard__error">Erro: {{ error }}</p>
-      }
-    </section>
+              <dl class="dashboard__meta">
+                <div>
+                  <dt>Slug</dt>
+                  <dd><code>{{ news.slug }}</code></dd>
+                </div>
+                <div>
+                  <dt>
+                    @if (news.published_at) {
+                      Publicado em
+                    } @else {
+                      Atualizado em
+                    }
+                  </dt>
+                  <dd>
+                    @if (news.published_at) {
+                      {{ news.published_at | date: 'dd/MM/yyyy HH:mm' }}
+                    } @else {
+                      {{ news.updated_at | date: 'dd/MM/yyyy HH:mm' }}
+                    }
+                  </dd>
+                </div>
+              </dl>
+            </article>
+          } @else {
+            <hsc-page-feedback variant="neutral">
+              Nenhuma news cadastrada até o momento.
+            </hsc-page-feedback>
+          }
+        </mat-card-content>
 
-    <section class="dashboard__card">
-      <h2>Áreas previstas</h2>
+        <mat-card-actions align="end">
+          <a mat-button routerLink="/news">Ver news</a>
+          <a mat-stroked-button routerLink="/news/new">Nova news</a>
+        </mat-card-actions>
+      </mat-card>
 
-      <ul class="dashboard__list">
-        <li><a routerLink="/seasons">Seasons</a></li>
-        <li><a routerLink="/news">News</a></li>
-        <li><a routerLink="/events">Events</a></li>
-      </ul>
+      <mat-card class="dashboard__card dashboard__card--actions" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>Ações rápidas</mat-card-title>
+          <mat-card-subtitle>
+            Atalhos para fluxos administrativos frequentes.
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="dashboard__quick-actions">
+            <a mat-flat-button routerLink="/news/new">Nova news</a>
+            <a mat-flat-button routerLink="/seasons/new">Nova season</a>
+            <a mat-stroked-button routerLink="/users">Gerenciar usuários</a>
+            <a mat-button routerLink="/news">Ver news</a>
+            <a mat-button routerLink="/seasons">Ver seasons</a>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </section>
   </div>
 </hsc-page-container>
