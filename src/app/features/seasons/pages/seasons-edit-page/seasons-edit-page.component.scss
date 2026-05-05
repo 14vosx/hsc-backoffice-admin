@@ -16,14 +16,14 @@
 
 .seasons-edit-page__description {
   margin: 0;
-  color: #4b5563;
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .seasons-edit-page__metadata {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--mat-sys-outline-variant);
   border-radius: 12px;
   padding: 16px;
-  background: #fff;
+  background: var(--mat-sys-surface);
 }
 
 .seasons-edit-page__error-actions {
@@ -33,15 +33,15 @@
 }
 
 .seasons-edit-page__secondary-action {
-  border: 1px solid #d1d5db;
-  background: #fff;
+  border: 1px solid var(--mat-sys-outline);
+  background: var(--mat-sys-surface);
   border-radius: 8px;
   padding: 10px 14px;
   cursor: pointer;
 }
 
 .seasons-edit-page__secondary-action:hover {
-  background: #f9fafb;
+  background: var(--mat-sys-surface-container-low);
 }
 
 .seasons-edit-page__secondary-action:disabled {
@@ -52,7 +52,7 @@
 .seasons-edit-page__metadata {
   display: grid;
   gap: 8px;
-  color: #374151;
+  color: var(--mat-sys-on-surface-variant);
   font-size: 14px;
 }
 

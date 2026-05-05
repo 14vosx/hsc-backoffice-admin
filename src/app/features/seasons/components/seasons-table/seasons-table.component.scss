@@ -11,7 +11,7 @@
 .seasons-table td {
   text-align: left;
   padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
   vertical-align: top;
 }
 
@@ -26,7 +26,7 @@
 
 .seasons-table span {
   margin-top: 4px;
-  color: #4b5563;
+  color: var(--mat-sys-on-surface-variant);
   font-size: 13px;
 }
 
@@ -41,20 +41,20 @@
 }
 
 .seasons-table__action {
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--mat-sys-outline);
   border-radius: 8px;
-  background: #fff;
+  background: var(--mat-sys-surface);
   padding: 8px 12px;
   cursor: pointer;
 }
 
 .seasons-table__action--danger {
-  border-color: #fecaca;
-  color: #991b1b;
+  border-color: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
 }
 
 .seasons-table__action:hover:not(:disabled) {
-  background: #f9fafb;
+  background: var(--mat-sys-surface-container-low);
 }
 
 .seasons-table__action:disabled {
