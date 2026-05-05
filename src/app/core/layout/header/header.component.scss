@@ -15,17 +15,17 @@
   gap: 8px;
   flex-wrap: wrap;
   font-size: 14px;
-  color: #6b7280;
+  color: var(--mat-sys-on-surface-variant);
 }
 
 .header__badge {
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--mat-sys-outline);
   border-radius: 999px;
   padding: 4px 10px;
-  background: #f9fafb;
+  background: var(--mat-sys-surface-container-low);
 }
 
 .header__identity {
   font-weight: 500;
-  color: #111827;
+  color: var(--mat-sys-on-surface);
 }
