@@ -70,6 +70,7 @@ export class NewsEditPageComponent implements OnInit {
       slug: item.slug,
       title: item.title,
       content: '',
+      image_url: item.image_url,
       status: item.status,
       published_at: item.published_at,
       created_at: item.created_at,

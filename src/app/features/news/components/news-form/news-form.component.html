@@ -68,6 +68,49 @@
       }
     </mat-form-field>
 
+    <section class="news-form__image">
+      <mat-form-field appearance="outline">
+        <mat-label>URL da imagem</mat-label>
+        <input matInput type="url" formControlName="image_url" />
+        <mat-hint>Opcional. Uploads válidos preenchem este campo automaticamente.</mat-hint>
+      </mat-form-field>
+
+      <div class="news-form__image-tools">
+        <label class="news-form__file-control">
+          <span>Enviar imagem</span>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            [disabled]="submitting || uploadingImage()"
+            (change)="onImageFileSelected($event)"
+          />
+        </label>
+
+        <button
+          type="button"
+          mat-stroked-button
+          [disabled]="submitting || uploadingImage() || !imageUrl"
+          (click)="clearImage()"
+        >
+          Limpar imagem
+        </button>
+      </div>
+
+      @if (uploadingImage()) {
+        <p class="news-form__upload-status">Enviando imagem...</p>
+      }
+
+      @if (uploadErrorMessage()) {
+        <p class="news-form__upload-error">{{ uploadErrorMessage() }}</p>
+      }
+
+      @if (imageUrl; as currentImageUrl) {
+        <figure class="news-form__preview">
+          <img [src]="currentImageUrl" alt="Preview da imagem da news" />
+        </figure>
+      }
+    </section>
+
     <mat-form-field appearance="outline">
       <mat-label>Conteúdo</mat-label>
       <textarea matInput rows="14" formControlName="content"></textarea>
@@ -81,8 +124,8 @@
         Cancelar
       </button>
 
-      <button type="submit" mat-flat-button [disabled]="submitting">
-        {{ submitting ? 'Processando...' : submitLabel }}
+      <button type="submit" mat-flat-button [disabled]="submitting || uploadingImage()">
+        {{ submitting || uploadingImage() ? 'Processando...' : submitLabel }}
       </button>
     </div>
   </form>

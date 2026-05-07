@@ -31,17 +31,20 @@ export type NewsFormValue = {
   slug: string;
   title: string;
   content: string;
+  image_url: string | null;
 };
 
 export type CreateNewsPayload = {
   slug: string;
   title: string;
   content: string;
+  image_url: string | null;
 };
 
 export type UpdateNewsPayload = {
   title?: string;
   content?: string;
+  image_url?: string | null;
 };
 
 export type CreateNewsResponse = {
@@ -66,8 +69,18 @@ export type AdminNewsEditableDraft = {
   slug: string;
   title: string;
   content: string;
+  image_url: string | null;
   status: AdminNewsStatus;
   published_at: string | null;
   created_at: string | null;
   updated_at: string | null;
+};
+
+export type AdminNewsImageUploadResponse = {
+  ok: true;
+  url: string;
+  path: string;
+  filename: string;
+  size: number;
+  mimetype: string;
 };

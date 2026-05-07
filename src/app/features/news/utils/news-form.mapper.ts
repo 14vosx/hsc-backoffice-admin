@@ -11,11 +11,17 @@ function clean(value: string): string {
   return value.trim();
 }
 
+function cleanOptionalUrl(value: string | null | undefined): string | null {
+  const normalized = clean(value ?? '');
+  return normalized ? normalized : null;
+}
+
 export function toNewsFormValue(value?: Partial<NewsFormValue> | null): NewsFormValue {
   return {
     slug: clean(value?.slug ?? ''),
     title: clean(value?.title ?? ''),
     content: value?.content ?? '',
+    image_url: cleanOptionalUrl(value?.image_url),
   };
 }
 
@@ -26,13 +32,19 @@ export function toCreateNewsPayload(value: NewsFormValue): CreateNewsPayload {
     slug: normalized.slug,
     title: normalized.title,
     content: normalized.content,
+    image_url: normalized.image_url,
   };
 }
 
-export function toUpdateNewsPayload(value: Pick<NewsFormValue, 'title' | 'content'>): UpdateNewsPayload {
+export function toUpdateNewsPayload(
+  value: Pick<NewsFormValue, 'title' | 'content' | 'image_url'>,
+): UpdateNewsPayload {
+  const normalized = toNewsFormValue(value);
+
   return {
-    title: clean(value.title),
-    content: value.content,
+    title: normalized.title,
+    content: normalized.content,
+    image_url: normalized.image_url,
   };
 }
 
@@ -47,6 +59,7 @@ export function createEditableDraftFromCreate(
     slug: normalized.slug,
     title: normalized.title,
     content: normalized.content,
+    image_url: normalized.image_url,
     status: 'draft',
     published_at: null,
     created_at: null,
@@ -62,6 +75,7 @@ export function createEditableDraftFromDetail(
     slug: detail.slug,
     title: detail.title,
     content: detail.content,
+    image_url: cleanOptionalUrl(detail.image_url),
     status: detail.status,
     published_at: detail.published_at,
     created_at: detail.created_at,
@@ -78,6 +92,7 @@ export function mergeEditableDraftWithItem(
     id: item.id,
     slug: item.slug,
     title: item.title,
+    image_url: cleanOptionalUrl(item.image_url),
     status: item.status,
     published_at: item.published_at,
     created_at: item.created_at,
