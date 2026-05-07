@@ -7,6 +7,7 @@ import {
   Output,
   SimpleChanges,
   inject,
+  signal,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,9 +15,11 @@ import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { firstValueFrom } from 'rxjs';
 
 import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import { AdminSeasonListItem, SeasonFormValue } from '../../data-access/seasons-admin.models';
+import { SeasonsImageUploadApiService } from '../../data-access/seasons-image-upload-api.service';
 import { toSeasonFormValue } from '../../utils/seasons-form.mapper';
 
 const LOCAL_TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -40,6 +43,8 @@ const LOCAL_TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 })
 export class SeasonsFormComponent implements OnChanges {
   private readonly fb = inject(FormBuilder);
+  private readonly imageUploadApi = inject(SeasonsImageUploadApiService);
+  private readonly acceptedImageTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
   @Input() mode: 'create' | 'edit' = 'create';
   @Input() initialValue: SeasonFormValue | null = null;
@@ -50,11 +55,15 @@ export class SeasonsFormComponent implements OnChanges {
   @Output() formSubmit = new EventEmitter<SeasonFormValue>();
   @Output() cancel = new EventEmitter<void>();
 
+  readonly uploadingImage = signal(false);
+  readonly uploadErrorMessage = signal<string | null>(null);
+
   readonly form = this.fb.nonNullable.group(
     {
       slug: ['', [Validators.required]],
       name: ['', [Validators.required]],
       description: [''],
+      cover_image_url: this.fb.control<string | null>(null),
       startDate: this.fb.control<Date | null>(null, [Validators.required]),
       startTime: ['', [Validators.required, Validators.pattern(LOCAL_TIME_PATTERN)]],
       endDate: this.fb.control<Date | null>(null, [Validators.required]),
@@ -64,7 +73,7 @@ export class SeasonsFormComponent implements OnChanges {
   );
 
   get submitLabel(): string {
-    if (this.submitting) {
+    if (this.submitting || this.uploadingImage()) {
       return 'Processando...';
     }
 
@@ -76,7 +85,11 @@ export class SeasonsFormComponent implements OnChanges {
   }
 
   get isSubmitDisabled(): boolean {
-    return this.submitting || this.isClosed;
+    return this.submitting || this.uploadingImage() || this.isClosed;
+  }
+
+  get coverImageUrl(): string | null {
+    return this.form.controls.cover_image_url.value;
   }
 
   get hasDateRangeError(): boolean {
@@ -91,6 +104,7 @@ export class SeasonsFormComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['initialValue'] && this.initialValue) {
       this.form.reset(toSeasonFormValue(this.initialValue));
+      this.uploadErrorMessage.set(null);
     }
 
     this.syncControlState();
@@ -107,6 +121,49 @@ export class SeasonsFormComponent implements OnChanges {
     }
 
     this.formSubmit.emit(toSeasonFormValue(this.form.getRawValue()));
+  }
+
+  async onCoverFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+
+    if (!file || this.isClosed) {
+      input.value = '';
+      return;
+    }
+
+    if (!this.acceptedImageTypes.has(file.type)) {
+      this.uploadErrorMessage.set('Use uma imagem JPG, PNG ou WebP.');
+      input.value = '';
+      return;
+    }
+
+    this.uploadingImage.set(true);
+    this.uploadErrorMessage.set(null);
+
+    try {
+      const response = await firstValueFrom(this.imageUploadApi.upload(file));
+
+      this.form.controls.cover_image_url.setValue(response.url);
+      this.form.controls.cover_image_url.markAsDirty();
+      this.form.controls.cover_image_url.markAsTouched();
+    } catch {
+      this.uploadErrorMessage.set('Falha ao enviar a capa. Tente novamente.');
+    } finally {
+      this.uploadingImage.set(false);
+      input.value = '';
+    }
+  }
+
+  clearCoverImage(): void {
+    if (this.isClosed) {
+      return;
+    }
+
+    this.form.controls.cover_image_url.setValue(null);
+    this.form.controls.cover_image_url.markAsDirty();
+    this.form.controls.cover_image_url.markAsTouched();
+    this.uploadErrorMessage.set(null);
   }
 
   onCancel(): void {

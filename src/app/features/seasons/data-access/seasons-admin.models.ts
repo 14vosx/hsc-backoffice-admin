@@ -5,6 +5,7 @@ export type AdminSeasonListItem = {
   slug: string;
   name: string;
   description: string | null;
+  cover_image_url: string | null;
   start_at: string;
   end_at: string;
   status: AdminSeasonStatus;
@@ -27,6 +28,7 @@ export type SeasonFormValue = {
   slug: string;
   name: string;
   description: string;
+  cover_image_url: string | null;
   startDate: Date | null;
   startTime: string;
   endDate: Date | null;
@@ -37,6 +39,7 @@ export type CreateSeasonPayload = {
   slug: string;
   name: string;
   description: string | null;
+  cover_image_url: string | null;
   start_at: string;
   end_at: string;
 };
@@ -44,6 +47,7 @@ export type CreateSeasonPayload = {
 export type UpdateSeasonPayload = {
   name?: string;
   description?: string | null;
+  cover_image_url?: string | null;
   start_at?: string;
   end_at?: string;
 };
@@ -65,4 +69,13 @@ export type AdminSeasonLifecycleResponse = {
   ok: true;
   slug: string;
   status: 'active' | 'closed' | string;
+};
+
+export type AdminSeasonImageUploadResponse = {
+  ok: true;
+  url: string;
+  path: string;
+  filename: string;
+  size: number;
+  mimetype: string;
 };

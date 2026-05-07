@@ -35,6 +35,49 @@
       <textarea matInput rows="6" formControlName="description"></textarea>
     </mat-form-field>
 
+    <section class="seasons-form__cover">
+      <mat-form-field appearance="outline">
+        <mat-label>URL da capa</mat-label>
+        <input matInput type="url" formControlName="cover_image_url" />
+        <mat-hint>Opcional. Uploads válidos preenchem este campo automaticamente.</mat-hint>
+      </mat-form-field>
+
+      <div class="seasons-form__cover-tools">
+        <label class="seasons-form__file-control">
+          <span>Enviar capa</span>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            [disabled]="submitting || uploadingImage() || isClosed"
+            (change)="onCoverFileSelected($event)"
+          />
+        </label>
+
+        <button
+          type="button"
+          mat-stroked-button
+          [disabled]="submitting || uploadingImage() || isClosed || !coverImageUrl"
+          (click)="clearCoverImage()"
+        >
+          Limpar capa
+        </button>
+      </div>
+
+      @if (uploadingImage()) {
+        <p class="seasons-form__upload-status">Enviando capa...</p>
+      }
+
+      @if (uploadErrorMessage()) {
+        <p class="seasons-form__upload-error">{{ uploadErrorMessage() }}</p>
+      }
+
+      @if (coverImageUrl; as currentCoverImageUrl) {
+        <figure class="seasons-form__preview">
+          <img [src]="currentCoverImageUrl" alt="Preview da capa da season" />
+        </figure>
+      }
+    </section>
+
     <div class="seasons-form__datetime-grid">
       <mat-form-field appearance="outline">
         <mat-label>Início</mat-label>

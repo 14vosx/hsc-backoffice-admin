@@ -9,6 +9,11 @@ function clean(value: string): string {
   return value.trim();
 }
 
+function cleanOptionalUrl(value: string | null | undefined): string | null {
+  const normalized = clean(value ?? '');
+  return normalized ? normalized : null;
+}
+
 export function toSeasonFormValue(
   value?: Partial<SeasonFormValue> | null,
 ): SeasonFormValue {
@@ -16,6 +21,7 @@ export function toSeasonFormValue(
     slug: clean(value?.slug ?? ''),
     name: clean(value?.name ?? ''),
     description: clean(value?.description ?? ''),
+    cover_image_url: cleanOptionalUrl(value?.cover_image_url),
     startDate: value?.startDate ?? null,
     startTime: clean(value?.startTime ?? ''),
     endDate: value?.endDate ?? null,
@@ -30,6 +36,7 @@ export function toCreateSeasonPayload(value: SeasonFormValue): CreateSeasonPaylo
     slug: normalized.slug,
     name: normalized.name,
     description: normalized.description || null,
+    cover_image_url: normalized.cover_image_url,
     start_at: localDateAndTimeToUtcIso(normalized.startDate, normalized.startTime),
     end_at: localDateAndTimeToUtcIso(normalized.endDate, normalized.endTime),
   };
@@ -41,6 +48,7 @@ export function toUpdateSeasonPayload(value: SeasonFormValue): UpdateSeasonPaylo
   return {
     name: normalized.name,
     description: normalized.description || null,
+    cover_image_url: normalized.cover_image_url,
     start_at: localDateAndTimeToUtcIso(normalized.startDate, normalized.startTime),
     end_at: localDateAndTimeToUtcIso(normalized.endDate, normalized.endTime),
   };
@@ -54,6 +62,7 @@ export function seasonItemToFormValue(item: AdminSeasonListItem): SeasonFormValu
     slug: item.slug,
     name: item.name,
     description: item.description ?? '',
+    cover_image_url: cleanOptionalUrl(item.cover_image_url),
     startDate: start.date,
     startTime: start.time,
     endDate: end.date,

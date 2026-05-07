@@ -24,6 +24,73 @@
   gap: 16px;
 }
 
+.seasons-form__cover {
+  display: grid;
+  gap: 12px;
+}
+
+.seasons-form__cover-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.seasons-form__file-control {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--mat-sys-outline);
+  border-radius: 4px;
+  padding: 0 16px;
+  color: var(--mat-sys-primary);
+  font: var(--mat-sys-label-large);
+  cursor: pointer;
+}
+
+.seasons-form__file-control:has(input:disabled) {
+  color: var(--mat-sys-on-surface);
+  cursor: default;
+  opacity: 0.38;
+}
+
+.seasons-form__file-control input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.seasons-form__upload-status,
+.seasons-form__upload-error {
+  margin: 0;
+  font-size: 14px;
+}
+
+.seasons-form__upload-status {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.seasons-form__upload-error {
+  color: var(--mat-sys-error);
+}
+
+.seasons-form__preview {
+  margin: 0;
+}
+
+.seasons-form__preview img {
+  display: block;
+  width: min(100%, 420px);
+  max-height: 260px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+  object-fit: contain;
+  background: var(--mat-sys-surface-container-low);
+}
+
 .seasons-form__error {
   color: var(--mat-sys-error);
 }
@@ -43,5 +110,10 @@
   .seasons-form__actions {
     justify-content: stretch;
     flex-direction: column-reverse;
+  }
+
+  .seasons-form__cover-tools {
+    align-items: stretch;
+    flex-direction: column;
   }
 }
