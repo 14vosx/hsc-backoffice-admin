@@ -1,59 +1,149 @@
-# BackofficeAdmin
+# hsc-backoffice-admin
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.3.
+Backoffice administrativo Angular do HSC para gestao de conteudo, usuarios, noticias, Seasons e operacoes internas.
 
-## Development server
+## Papel no ecossistema HSC
 
-To start a local development server, run:
+O `hsc-backoffice-admin` e a SPA administrativa do HSC. Ele consome o `hsc-auth-api` e atende fluxos internos/admin relacionados a conteudo, usuarios, noticias, Seasons e operacoes de apoio.
+
+Este repositorio nao e:
+
+- o Portal CS2 player-facing;
+- a Auth API;
+- o ETL;
+- o Brand Hub.
+
+## Escopo
+
+- Autenticacao/admin session;
+- guards e acesso administrativo;
+- dashboard administrativo;
+- gestao de usuarios/admin;
+- gestao de News;
+- uploads de imagem de News;
+- gestao de Seasons;
+- upload de cover image de Seasons;
+- resumo competitivo de Seasons;
+- componentes compartilhados de feedback, confirmacao e input;
+- integracao com Angular Material/design tokens.
+
+## Fora de escopo
+
+- Portal CS2 publico/player-facing;
+- geracao da Static API v2;
+- MatchZy/SQLite/ETL;
+- Auth API backend;
+- deploy de backend;
+- configuracao de Nginx/DNS/TLS;
+- decisoes de RBAC/API contract sem aprovacao.
+
+## Estrutura principal
+
+- `src/app/core/auth`: servicos, estado e fluxos de autenticacao da aplicacao administrativa.
+- `src/app/core/config`: configuracoes centrais usadas pelo frontend.
+- `src/app/core/guards`: guards de rota e acesso administrativo.
+- `src/app/core/layout`: estrutura de layout da SPA administrativa.
+- `src/app/core/theme`: base de tema, tokens e integracao visual.
+- `src/app/features/auth`: telas e fluxos frontend de autenticacao.
+- `src/app/features/dashboard`: dashboard administrativo.
+- `src/app/features/news`: gestao de News e recursos relacionados.
+- `src/app/features/seasons`: gestao de Seasons e informacoes competitivas.
+- `src/app/features/users`: gestao de usuarios/admin.
+- `src/app/shared/ui`: componentes compartilhados de interface e feedback.
+- `proxy.conf.json`: proxy local usado pelo Angular CLI para integracao com APIs durante o desenvolvimento.
+- `angular.json`: configuracao Angular CLI do projeto.
+- `AGENTS.md`: regras operacionais para agentes trabalhando neste repositorio.
+
+## Desenvolvimento local
+
+Instale as dependencias:
 
 ```bash
-ng serve
+npm ci
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Rode o servidor local com proxy:
 
 ```bash
-ng generate component component-name
+npm run start:dev
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+O comando `start:dev` usa `proxy.conf.json` e e o modo preferencial para validar a integracao com a Auth API. O comando `npm start` existe, mas nao e o comando preferencial para integracao real.
+
+A aplicacao normalmente roda em `localhost:4200` quando servida pelo Angular CLI.
+
+## Build
 
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
+O build deve passar antes de finalizar PRs. Warnings devem ser tratados, nao ignorados. Para mudancas comportamentais relevantes, avalie tambem rodar `npm test`.
 
-To build the project run:
+## Testes
 
 ```bash
-ng build
+npm test
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Os testes usam o Angular test runner/Vitest conforme a configuracao do projeto. Eles devem cobrir comportamento, nao detalhes frageis de implementacao.
 
-## Running unit tests
+## Integracao com Auth API
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+O proxy local fica em `proxy.conf.json`.
+
+Os contratos de API pertencem ao `hsc-auth-api`. Se uma feature exigir mudanca de contrato, pare e decida explicitamente antes de alterar a UI. Auth, session, RBAC e admin guards sao areas sensiveis.
+
+## Seguranca
+
+- Nao commitar `.env`.
+- Nao criar `src/environments` com segredos.
+- Nao hardcodar tokens, cookies, credenciais, SMTP ou URLs sensiveis.
+- Nao alterar auth/session/RBAC sem escopo explicito.
+- Nao expor Admin APIs neste README.
+- Respeitar `AGENTS.md`.
+
+## UI e design
+
+Angular Material e a base atual da UI administrativa.
+
+Prefira clareza operacional, estados de loading/error/empty, feedback de salvar/publicar/deletar e confirmacao para acoes destrutivas. Evite decoracao excessiva e alteracoes grandes de layout sem escopo.
+
+Dark mode/toggle de tema nao e prioridade atual; mantenha foco no tema light e nos tokens existentes.
+
+## Relacao com outros repos
+
+- `hsc-auth-api`: backend consumido pelo Backoffice.
+- `hsc-cs2-portal`: portal publico/player-facing separado.
+- `hsc-cs2-etl`: gera Static API v2, separado do Backoffice.
+- `hsc-docs`: documentacao canonica.
+- `hsc-brand-hub`: superficie publica de marca.
+
+## Documentacao relacionada
+
+Docs canonicas em `hsc-docs`:
+
+- `docs/00-governance/hsc-repositories-map.md`
+- `docs/05-backoffice-admin/backoffice-admin-architecture-runtime.md`
+- `docs/05-backoffice-admin/backoffice-admin-frontend-structure.md`
+- `docs/05-backoffice-admin/backoffice-admin-operational-runbooks.md`
+- `docs/05-backoffice-admin/backoffice-ui-material-foundation.md`
+- `docs/05-backoffice-admin/news-admin-api-contracts.md`
+- `docs/05-backoffice-admin/news-admin-frontend-implementation-runtime.md`
+- `docs/05-backoffice-admin/seasons-admin-list-functional-smoke-guide.md`
+
+## Workflow
+
+- Trabalhe em branch.
+- Prefira PRs pequenos.
+- Antes de finalizar:
 
 ```bash
-ng test
+git diff --check
+git diff --stat
+git status --short
+npm run build
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Para comportamento/testes, rode `npm test` quando relevante.
+- Nao faca deploy como parte de PR de README.
