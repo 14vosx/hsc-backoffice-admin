@@ -18,10 +18,13 @@ TypeScript
 SCSS
 Angular Router
 Reactive/typed application services
+Angular Material where already adopted
 Auth API integration through proxy
 ```
 
 The application is an administrative SPA for HSC.
+
+It is not the public CS2 Portal, not the Player Bunker, and not the Brand Hub.
 
 Current important areas:
 
@@ -34,6 +37,7 @@ src/app/features/auth
 src/app/features/dashboard
 src/app/features/error-pages
 src/app/features/news
+src/app/features/seasons
 src/app/features/users
 ```
 
@@ -43,7 +47,56 @@ Codex should act as an implementation assistant for scoped frontend/admin tasks.
 
 Codex may edit Angular components, services, guards, routes, tests, styles, and local documentation when the task is explicit.
 
-Codex must not make product, architecture, authentication, RBAC, API contract, deployment, or infrastructure decisions independently.
+Codex must not make product, architecture, authentication, RBAC, API contract, deployment, infrastructure, Player Auth, Player Bunker, billing, or production-data decisions independently.
+
+## Backoffice vs Player Bunker boundary
+
+The Backoffice Admin is admin/internal.
+
+The Player Bunker is player-facing and belongs to the public Portal/Auth API/ETL integration flow.
+
+Do not implement Player Bunker features in this repository unless the human explicitly starts a Backoffice support/admin task for Bunker operations.
+
+Do not add or modify these concepts here without explicit approval:
+
+```text
+/player/* Portal routes
+Player Auth login
+Steam login flow
+hsc_player_session
+Bunker dashboard UI
+player-facing profile pages
+player-facing stats pages
+billing/subscription UX
+premium/entitlement gates
+public player account settings
+```
+
+If a future task asks for Backoffice support for Bunker, keep it admin-scoped, for example:
+
+```text
+list player accounts
+view linked SteamID
+disable/enable player account
+support/audit view
+subscription support after billing is approved
+```
+
+Do not confuse admin user management with player account management.
+
+## Auth API integration boundary
+
+The Backoffice Admin consumes the HSC Auth API for admin workflows.
+
+Admin Auth and Player Auth are separate concepts.
+
+Do not assume Admin Auth cookies, guards, roles, or session behavior apply to Player Auth.
+
+Do not assume Player Auth cookies or `/player/*` contracts apply to Backoffice Admin.
+
+Do not change or assume changes to Auth API routes, response shapes, auth/session semantics, or RBAC behavior without explicit approval.
+
+If a UI task requires a backend contract change, stop and ask the human.
 
 ## Local development
 
@@ -93,9 +146,19 @@ proxy.conf.json
 
 Do not change proxy behavior unless the task explicitly asks for it.
 
-The Backoffice Admin consumes the HSC Auth API. Treat API contracts as external contracts.
+Treat API contracts as external contracts.
 
-Do not change or assume changes to Auth API routes, response shapes, auth/session semantics, or RBAC behavior without explicit approval.
+Do not alter or assume changes to:
+
+```text
+admin auth routes
+admin session loading
+admin RBAC behavior
+news admin contracts
+seasons admin contracts
+uploads admin contracts
+content/public contracts
+```
 
 If the UI task requires a backend contract change, stop and ask the human.
 
@@ -154,6 +217,9 @@ add a loading or empty state
 fix a build error
 add tests for existing behavior
 improve local UI validation
+improve News admin UX
+improve Seasons admin UX
+improve dashboard/admin operational clarity
 ```
 
 ## Forbidden work without explicit approval
@@ -173,6 +239,9 @@ RBAC policy changes
 new dependencies
 major Angular configuration changes
 environment/secret handling changes
+Player Auth changes
+Player Bunker product changes
+billing/subscription changes
 ```
 
 Do not modify these files unless the task explicitly asks for it:
@@ -203,7 +272,7 @@ src/environments/* with secrets
 
 If configuration is required, use existing public configuration patterns and ask the human before introducing new environment files.
 
-Never hardcode credentials, tokens, cookies, SMTP values, database URLs, or production secrets.
+Never hardcode credentials, tokens, cookies, SMTP values, database URLs, production secrets, Steam API keys, or session values.
 
 ## Feature boundaries
 
@@ -211,6 +280,7 @@ Prefer working inside the relevant feature folder:
 
 ```text
 src/app/features/news/**
+src/app/features/seasons/**
 src/app/features/users/**
 src/app/features/dashboard/**
 src/app/features/auth/**
@@ -219,6 +289,8 @@ src/app/features/auth/**
 Shared/core changes should be made only when reuse or architecture is already clear.
 
 Do not move feature code into shared/core as a speculative abstraction.
+
+Do not introduce Bunker/player-facing feature folders in this repository unless the human explicitly approves a Backoffice admin/support scope.
 
 ## UX rules
 
@@ -235,6 +307,7 @@ confirmation for destructive actions
 readable tables
 simple navigation
 visible save/publish/delete feedback
+clear admin-only language
 ```
 
 Avoid:
@@ -246,7 +319,22 @@ hidden errors
 silent failures
 large layout rewrites
 generic dashboard clutter
+player-facing marketing/portal UI patterns
 ```
+
+Backoffice UX may reuse brand/design tokens where appropriate, but it should remain admin-operational, not a clone of the public Portal or Player Bunker.
+
+## Angular Material and styling
+
+Angular Material is already part of the Backoffice direction.
+
+Use existing Material patterns and project conventions.
+
+Do not start a broad design-system migration unless explicitly requested.
+
+Do not implement dark mode/theme toggle unless explicitly reprioritized.
+
+Prefer incremental cleanup of hardcoded styles when working in touched areas.
 
 ## Validation
 
@@ -313,6 +401,8 @@ Do not assume access to `hsc-docs` from this workspace.
 
 If context from `hsc-docs` is needed, ask the human to provide or open it.
 
+If a task touches Bunker/player-facing concepts, check whether it belongs in `hsc-docs`, `hsc-auth-api`, `hsc-cs2-portal`, or `hsc-cs2-etl` instead.
+
 ## Implementation style
 
 Use existing Angular patterns in this repository.
@@ -342,6 +432,9 @@ Stop and ask the human when the task involves:
 auth architecture
 RBAC policy
 session/cookie behavior
+Player Auth
+Player Bunker
+billing/subscriptions/entitlements
 new backend endpoint
 API contract changes
 deployment
