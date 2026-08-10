@@ -399,4 +399,51 @@ describe('Architecture Boundaries — Lego Angular', () => {
       ).toBe(false);
     }
   });
+
+  it('News presentation should not contain wire-format snake_case fields', () => {
+    const presentationRoots = ['components', 'pages'].map((directory) =>
+      path.join(appRoot, 'features', 'news', directory),
+    );
+    const wireFieldPattern = /\b(?:image_url|published_at|created_at|updated_at)\b/;
+
+    for (const presentationRoot of presentationRoots) {
+      for (const file of getAllTsFiles(presentationRoot)) {
+        const content = fs.readFileSync(file, 'utf-8');
+        expect(
+          wireFieldPattern.test(content),
+          `News presentation file ${file} should use domain camelCase fields`,
+        ).toBe(false);
+      }
+    }
+  });
+
+  it('News state should not import form or edit models', () => {
+    const stateFiles = getAllTsFiles(path.join(appRoot, 'features', 'news', 'state')).filter(
+      (file) => file.endsWith('.ts'),
+    );
+
+    for (const file of stateFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      expect(
+        /from\s+['"].*(?:news-edit|news-form|form\.mapper)/.test(content),
+        `News state file ${file} should only consume domain commands`,
+      ).toBe(false);
+    }
+  });
+
+  it('News presentation should not import wire contracts or DTO models', () => {
+    const presentationFiles = ['components', 'pages'].flatMap((directory) =>
+      getAllTsFiles(path.join(appRoot, 'features', 'news', directory)).filter(
+        (file) => file.endsWith('.ts') && !file.endsWith('.spec.ts'),
+      ),
+    );
+
+    for (const file of presentationFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      expect(
+        /from\s+['"].*\/data-access\/.*(?:\.contract|\.models|\/dto\/)/.test(content),
+        `News presentation file ${file} should not import wire contracts or DTOs`,
+      ).toBe(false);
+    }
+  });
 });

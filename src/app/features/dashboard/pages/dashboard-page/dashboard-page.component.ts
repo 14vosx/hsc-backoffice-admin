@@ -7,7 +7,8 @@ import { PageContainerComponent } from '../../../../layout/page-container/page-c
 import { AuthSessionStore } from '../../../../core/auth/auth-session.store';
 import { UiCard } from '../../../../shared/components/card/card';
 import { InlineFeedback } from '../../../../shared/components/inline-feedback/inline-feedback';
-import { NewsAdminStore } from '../../../news/data-access/news-admin.store';
+import type { AdminNews } from '../../../news/domain/admin-news.model';
+import { NewsAdminStore } from '../../../news/state/news-admin.store';
 import { SeasonsCompetitiveSummaryApiService } from '../../../seasons/data-access/seasons-competitive-summary-api.service';
 import type { AdminSeason } from '../../../seasons/domain/admin-season.model';
 import type { SeasonsCompetitiveIndex } from '../../../seasons/domain/season-competitive.model';
@@ -58,18 +59,19 @@ export class DashboardPageComponent implements OnInit {
     return active ?? this.latestBy(items, (item) => item.updatedAt);
   });
 
-  protected readonly featuredNews = computed(() => {
+  protected readonly featuredNews = computed<AdminNews | null>(() => {
     const items = this.newsStore.items();
 
     if (items.length === 0) {
       return null;
     }
 
-    const published = items
-      .filter((item) => this.normalizedStatus(item.status) === 'published' && !!item.published_at)
-      .sort((a, b) => this.timestamp(b.published_at) - this.timestamp(a.published_at))[0];
+    const published = this.latestBy(
+      items.filter((item) => item.status === 'published' && item.publishedAt !== null),
+      (item) => item.publishedAt,
+    );
 
-    return published ?? this.latestBy(items, (item) => item.updated_at);
+    return published ?? this.latestBy(items, (item) => item.updatedAt);
   });
 
   protected readonly activeOrLatestSeasonCompetitiveSummary = computed(() => {
@@ -114,10 +116,6 @@ export class DashboardPageComponent implements OnInit {
     return [...items].sort(
       (a, b) => this.timestamp(getTimestamp(b)) - this.timestamp(getTimestamp(a)),
     )[0] ?? null;
-  }
-
-  private normalizedStatus(status: string): string {
-    return String(status).toLowerCase();
   }
 
   private timestamp(value: string | null): number {

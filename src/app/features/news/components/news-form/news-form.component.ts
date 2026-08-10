@@ -1,141 +1,93 @@
 import { DatePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-  inject,
-  signal,
-} from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
+import { FormField, disabled, form, required, submit } from '@angular/forms/signals';
 import { firstValueFrom } from 'rxjs';
 
 import { InlineFeedback } from '../../../../shared/components/inline-feedback/inline-feedback';
-import {
-  AdminNewsEditableDraft,
-  NewsFormValue,
-} from '../../data-access/news-admin.models';
 import { NewsImageUploadApiService } from '../../data-access/news-image-upload-api.service';
-import { toNewsFormValue } from '../../utils/news-form.mapper';
+import type { AdminNewsDetail, CreateAdminNewsCommand, UpdateAdminNewsCommand } from '../../domain/admin-news.model';
+import { buildCreateAdminNewsCommand, buildUpdateAdminNewsCommand, createNewsEditModel, type NewsEditModel } from './news-edit.model';
 
 export type NewsFormMode = 'create' | 'edit';
+export type NewsFormCommand = CreateAdminNewsCommand | UpdateAdminNewsCommand;
 
 @Component({
-  selector: 'hsc-news-form',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    DatePipe,
-    InlineFeedback,
-  ],
-  templateUrl: './news-form.component.html',
-  styleUrl: './news-form.component.scss',
+  selector: 'hsc-news-form', standalone: true, imports: [DatePipe, FormField, InlineFeedback],
+  templateUrl: './news-form.component.html', styleUrl: './news-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NewsFormComponent implements OnChanges {
-  private readonly fb = inject(FormBuilder);
+export class NewsFormComponent {
   private readonly imageUploadApi = inject(NewsImageUploadApiService);
   private readonly acceptedImageTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
-  @Input() mode: NewsFormMode = 'create';
-  @Input() initialValue: NewsFormValue | null = null;
-  @Input() submitting = false;
-  @Input() errorMessage: string | null = null;
-  @Input() metadata: AdminNewsEditableDraft | null = null;
+  readonly mode = input<NewsFormMode>('create');
+  readonly initialValue = input<AdminNewsDetail | null>(null);
+  readonly submitting = input(false);
+  readonly errorMessage = input<string | null>(null);
+  readonly formSubmit = output<NewsFormCommand>();
+  readonly cancel = output<void>();
 
-  @Output() formSubmit = new EventEmitter<NewsFormValue>();
-  @Output() cancel = new EventEmitter<void>();
+  protected readonly editModel = signal<NewsEditModel>(createNewsEditModel());
+  protected readonly uploadingImage = signal(false);
+  protected readonly uploadErrorMessage = signal<string | null>(null);
 
-  readonly uploadingImage = signal(false);
-  readonly uploadErrorMessage = signal<string | null>(null);
-
-  readonly form = this.fb.group({
-    slug: this.fb.nonNullable.control('', [Validators.required]),
-    title: this.fb.nonNullable.control('', [Validators.required]),
-    content: this.fb.nonNullable.control('', [Validators.required]),
-    image_url: this.fb.control<string | null>(null),
+  private readonly syncInitialValue = effect(() => {
+    this.editModel.set(createNewsEditModel(this.initialValue()));
+    this.uploadErrorMessage.set(null);
   });
 
-  ngOnChanges(_changes: SimpleChanges): void {
-    this.syncFormState();
+  protected readonly newsForm = form(this.editModel, (fields) => {
+    disabled(fields.slug, { when: () => this.mode() === 'edit' || this.isLocked() });
+    disabled(fields.title, { when: () => this.isLocked() });
+    disabled(fields.content, { when: () => this.isLocked() });
+    disabled(fields.imageUrl, { when: () => this.isLocked() });
+    required(fields.slug, { message: 'Slug é obrigatório.' });
+    required(fields.title, { message: 'Título é obrigatório.' });
+    required(fields.content, { message: 'Conteúdo é obrigatório.' });
+  });
+
+  protected isLocked(): boolean { return this.submitting() || this.uploadingImage(); }
+  protected submitLabel(): string {
+    if (this.isLocked()) return 'Processando...';
+    return this.mode() === 'edit' ? 'Salvar alterações' : 'Criar draft';
   }
 
-  get isEditMode(): boolean {
-    return this.mode === 'edit';
+  protected async onSubmit(event: Event): Promise<void> {
+    event.preventDefault();
+    if (this.isLocked()) return;
+    await submit(this.newsForm, async (field) => {
+      const command = this.mode() === 'edit'
+        ? buildUpdateAdminNewsCommand(field().value())
+        : buildCreateAdminNewsCommand(field().value());
+      this.formSubmit.emit(command);
+    });
   }
 
-  get submitLabel(): string {
-    return this.isEditMode ? 'Salvar alterações' : 'Criar draft';
-  }
-
-  get imageUrl(): string | null {
-    return this.form.controls.image_url.value;
-  }
-
-  onSubmit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    this.formSubmit.emit(toNewsFormValue(this.form.getRawValue()));
-  }
-
-  onCancel(): void {
-    this.cancel.emit();
-  }
-
-  async onImageFileSelected(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0] ?? null;
-
-    if (!file) {
-      return;
-    }
-
+  protected async onImageFileSelected(event: Event): Promise<void> {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    const inputElement = event.target;
+    const file = inputElement.files?.[0] ?? null;
+    if (!file || this.isLocked()) { inputElement.value = ''; return; }
     if (!this.acceptedImageTypes.has(file.type)) {
       this.uploadErrorMessage.set('Use uma imagem JPG, PNG ou WebP.');
-      input.value = '';
+      inputElement.value = '';
       return;
     }
-
     this.uploadingImage.set(true);
     this.uploadErrorMessage.set(null);
-
     try {
-      const response = await firstValueFrom(this.imageUploadApi.upload(file));
-
-      this.form.controls.image_url.setValue(response.url);
-      this.form.controls.image_url.markAsDirty();
-      this.form.controls.image_url.markAsTouched();
+      const result = await firstValueFrom(this.imageUploadApi.upload(file));
+      this.editModel.update((model) => ({ ...model, imageUrl: result.url }));
     } catch {
       this.uploadErrorMessage.set('Falha ao enviar a imagem. Tente novamente.');
     } finally {
       this.uploadingImage.set(false);
-      input.value = '';
+      inputElement.value = '';
     }
   }
 
-  clearImage(): void {
-    this.form.controls.image_url.setValue(null);
-    this.form.controls.image_url.markAsDirty();
-    this.form.controls.image_url.markAsTouched();
+  protected clearImage(): void {
+    if (!this.isLocked()) this.editModel.update((model) => ({ ...model, imageUrl: '' }));
     this.uploadErrorMessage.set(null);
-  }
-
-  private syncFormState(): void {
-    const value = toNewsFormValue(this.initialValue);
-
-    this.form.reset(value, { emitEvent: false });
-    this.uploadErrorMessage.set(null);
-
-    if (this.isEditMode) {
-      this.form.controls.slug.disable({ emitEvent: false });
-    } else {
-      this.form.controls.slug.enable({ emitEvent: false });
-    }
   }
 }

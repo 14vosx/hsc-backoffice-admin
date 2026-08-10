@@ -3,9 +3,8 @@ import { Router } from '@angular/router';
 
 import { PageContainerComponent } from '../../../../layout/page-container/page-container.component';
 import { UiCard } from '../../../../shared/components/card/card';
-import { NewsFormComponent } from '../../components/news-form/news-form.component';
-import { NewsAdminStore } from '../../data-access/news-admin.store';
-import { NewsFormValue } from '../../data-access/news-admin.models';
+import { NewsFormComponent, type NewsFormCommand } from '../../components/news-form/news-form.component';
+import { NewsAdminStore } from '../../state/news-admin.store';
 
 @Component({
   selector: 'hsc-news-create-page',
@@ -26,9 +25,10 @@ export class NewsCreatePageComponent implements OnInit {
     this.store.resetError();
   }
 
-  async submit(value: NewsFormValue): Promise<void> {
+  async submit(command: NewsFormCommand): Promise<void> {
+    if (!('slug' in command)) return;
     try {
-      const response = await this.store.create(value);
+      const response = await this.store.create(command);
 
       await this.router.navigate(['/news', response.id, 'edit']);
     } catch {

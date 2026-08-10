@@ -6,7 +6,7 @@ import { UiCard } from '../../../../shared/components/card/card';
 import { InlineFeedback } from '../../../../shared/components/inline-feedback/inline-feedback';
 import { ConfirmationService } from '../../../../shared/state/confirmation.service';
 import { UiFeedbackService } from '../../../../shared/state/ui-feedback.service';
-import { NewsAdminStore } from '../../data-access/news-admin.store';
+import { NewsAdminStore } from '../../state/news-admin.store';
 import { NewsTableComponent } from '../../components/news-table/news-table.component';
 
 @Component({

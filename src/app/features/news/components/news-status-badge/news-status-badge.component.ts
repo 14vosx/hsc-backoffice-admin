@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import type { AdminNewsStatus } from '../../domain/admin-news.model';
 
 @Component({
   selector: 'hsc-news-status-badge',
@@ -8,13 +9,9 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewsStatusBadgeComponent {
-  @Input({ required: true }) status!: string;
-
-  get normalizedStatus(): string {
-    return (this.status ?? '').toLowerCase();
-  }
+  @Input({ required: true }) status!: AdminNewsStatus;
 
   get label(): string {
-    return this.normalizedStatus === 'published' ? 'Publicado' : 'Draft';
+    return this.status === 'published' ? 'Publicado' : 'Draft';
   }
 }

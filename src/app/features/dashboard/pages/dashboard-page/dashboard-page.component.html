@@ -145,17 +145,17 @@
                 </div>
                 <div>
                   <dt>
-                    @if (news.published_at) {
+                    @if (news.publishedAt) {
                       Publicado em
                     } @else {
                       Atualizado em
                     }
                   </dt>
                   <dd>
-                    @if (news.published_at) {
-                      {{ news.published_at | date: 'dd/MM/yyyy HH:mm' }}
+                    @if (news.publishedAt) {
+                      {{ news.publishedAt | date: 'dd/MM/yyyy HH:mm' }}
                     } @else {
-                      {{ news.updated_at | date: 'dd/MM/yyyy HH:mm' }}
+                      {{ news.updatedAt | date: 'dd/MM/yyyy HH:mm' }}
                     }
                   </dd>
                 </div>

@@ -62,7 +62,6 @@
             <hsc-news-form
               mode="edit"
               [initialValue]="initialValue()"
-              [metadata]="metadata()"
               [submitting]="submitting()"
               [errorMessage]="store.error()"
               (formSubmit)="submit($event)"
@@ -70,7 +69,7 @@
             />
           </div>
         </app-ui-card>
-      } @else if (metadata()) {
+      } @else if (metadata(); as newsMetadata) {
         <app-ui-card class="news-edit-page__metadata-card">
           <header class="news-edit-page__card-header">
             <h2>Resumo administrativo</h2>
@@ -81,21 +80,19 @@
             <dl class="news-edit-page__metadata">
               <div>
                 <dt>Status</dt>
-                <dd>{{ metadata()?.status }}</dd>
+                <dd>{{ newsMetadata.status }}</dd>
               </div>
               <div>
                 <dt>Slug</dt>
                 <dd>
-                  <code>{{ metadata()?.slug }}</code>
+                  <code>{{ newsMetadata.slug }}</code>
                 </dd>
               </div>
               <div>
                 <dt>Publicado em</dt>
                 <dd>
-                  @if (metadata()?.published_at) {
-                    {{
-                      $safeNavigationMigration(metadata()?.published_at) | date: 'dd/MM/yyyy HH:mm'
-                    }}
+                  @if (newsMetadata.publishedAt) {
+                    {{ newsMetadata.publishedAt | date: 'dd/MM/yyyy HH:mm' }}
                   } @else {
                     —
                   }
@@ -104,10 +101,8 @@
               <div>
                 <dt>Criado em</dt>
                 <dd>
-                  @if (metadata()?.created_at) {
-                    {{
-                      $safeNavigationMigration(metadata()?.created_at) | date: 'dd/MM/yyyy HH:mm'
-                    }}
+                  @if (newsMetadata.createdAt) {
+                    {{ newsMetadata.createdAt | date: 'dd/MM/yyyy HH:mm' }}
                   } @else {
                     —
                   }
@@ -116,10 +111,8 @@
               <div>
                 <dt>Atualizado em</dt>
                 <dd>
-                  @if (metadata()?.updated_at) {
-                    {{
-                      $safeNavigationMigration(metadata()?.updated_at) | date: 'dd/MM/yyyy HH:mm'
-                    }}
+                  @if (newsMetadata.updatedAt) {
+                    {{ newsMetadata.updatedAt | date: 'dd/MM/yyyy HH:mm' }}
                   } @else {
                     —
                   }
