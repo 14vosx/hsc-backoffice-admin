@@ -1,25 +1,23 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { PageContainerComponent } from '../../../../layout/page-container/page-container.component';
-import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
-import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
-import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
+import { UiCard } from '../../../../shared/components/card/card';
+import { InlineFeedback } from '../../../../shared/components/inline-feedback/inline-feedback';
+import { ConfirmationService } from '../../../../shared/state/confirmation.service';
+import { UiFeedbackService } from '../../../../shared/state/ui-feedback.service';
 import { SeasonsTableComponent } from '../../components/seasons-table/seasons-table.component';
-import { AdminSeasonListItem } from '../../data-access/seasons-admin.models';
-import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
+import type { AdminSeason } from '../../domain/admin-season.model';
+import { SeasonsAdminStore } from '../../state/seasons-admin.store';
 
 @Component({
   selector: 'hsc-seasons-list-page',
   standalone: true,
   imports: [
-    MatButtonModule,
-    MatCardModule,
     PageContainerComponent,
     SeasonsTableComponent,
-    PageFeedbackComponent,
+    UiCard,
+    InlineFeedback,
   ],
   templateUrl: './seasons-list-page.component.html',
   styleUrl: './seasons-list-page.component.scss',
@@ -36,6 +34,7 @@ export class SeasonsListPageComponent implements OnInit {
   readonly error = this.store.error;
   readonly isEmpty = this.store.isEmpty;
   readonly activeMutation = this.store.activeMutation;
+  readonly actionsDisabled = computed(() => this.loading() || this.activeMutation() !== null);
 
   ngOnInit(): void {
     void this.load();
@@ -53,11 +52,11 @@ export class SeasonsListPageComponent implements OnInit {
     void this.router.navigate(['/seasons/new']);
   }
 
-  goToEdit(item: AdminSeasonListItem): void {
+  goToEdit(item: AdminSeason): void {
     void this.router.navigate(['/seasons', item.slug, 'edit']);
   }
 
-  async activateSeason(item: AdminSeasonListItem): Promise<void> {
+  async activateSeason(item: AdminSeason): Promise<void> {
     const confirmed = await this.confirmation.confirm({
       title: 'Ativar season',
       message:
@@ -78,7 +77,7 @@ export class SeasonsListPageComponent implements OnInit {
     }
   }
 
-  async closeSeason(item: AdminSeasonListItem): Promise<void> {
+  async closeSeason(item: AdminSeason): Promise<void> {
     const confirmed = await this.confirmation.confirm({
       title: 'Fechar season',
       message: 'Fechar esta season? Seasons fechadas não podem mais ser editadas.',

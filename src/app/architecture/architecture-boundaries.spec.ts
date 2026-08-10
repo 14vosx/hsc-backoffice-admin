@@ -1,5 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 
 function getAllTsFiles(dirPath: string): string[] {
@@ -27,6 +28,102 @@ function getAllTsFiles(dirPath: string): string[] {
 
 describe('Architecture Boundaries — Lego Angular', () => {
   const appRoot = path.resolve(__dirname, '..');
+
+  it('application TypeScript files should not contain explicit any types', () => {
+    const typeScriptFiles = getAllTsFiles(appRoot).filter((file) => file.endsWith('.ts'));
+
+    for (const file of typeScriptFiles) {
+      const sourceFile = ts.createSourceFile(
+        file,
+        fs.readFileSync(file, 'utf-8'),
+        ts.ScriptTarget.Latest,
+        true,
+        ts.ScriptKind.TS,
+      );
+      const anyTypeLocations: string[] = [];
+
+      const visit = (node: ts.Node): void => {
+        if (node.kind === ts.SyntaxKind.AnyKeyword) {
+          const { line, character } = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile));
+          anyTypeLocations.push(`${file}:${line + 1}:${character + 1}`);
+        }
+
+        ts.forEachChild(node, visit);
+      };
+
+      visit(sourceFile);
+
+      expect(
+        anyTypeLocations,
+        `Explicit any type found at: ${anyTypeLocations.join(', ')}`,
+      ).toEqual([]);
+    }
+  });
+
+  it('application files should not contain unsafe type suppressions', () => {
+    const applicationFiles = getAllTsFiles(appRoot);
+    const typeScriptFiles = applicationFiles.filter((file) => file.endsWith('.ts'));
+    const templateFiles = applicationFiles.filter((file) => file.endsWith('.html'));
+    const unsafeSuppressions: string[] = [];
+
+    for (const file of typeScriptFiles) {
+      const sourceText = fs.readFileSync(file, 'utf-8');
+      const sourceFile = ts.createSourceFile(
+        file,
+        sourceText,
+        ts.ScriptTarget.Latest,
+        true,
+        ts.ScriptKind.TS,
+      );
+
+      const report = (position: number, suppression: string): void => {
+        const { line, character } = sourceFile.getLineAndCharacterOfPosition(position);
+        unsafeSuppressions.push(`${file}:${line + 1}:${character + 1} (${suppression})`);
+      };
+
+      const isUnknownAssertion = (node: ts.Node): boolean =>
+        (ts.isAsExpression(node) || ts.isTypeAssertionExpression(node)) &&
+        node.type.kind === ts.SyntaxKind.UnknownKeyword;
+
+      const visit = (node: ts.Node): void => {
+        if (
+          (ts.isAsExpression(node) || ts.isTypeAssertionExpression(node)) &&
+          isUnknownAssertion(node.expression)
+        ) {
+          report(node.getStart(sourceFile), 'double assertion through unknown');
+        }
+
+        ts.forEachChild(node, visit);
+      };
+
+      visit(sourceFile);
+
+      for (const match of sourceText.matchAll(/@ts-(?:ignore|expect-error)\b/g)) {
+        if (match.index !== undefined) {
+          report(match.index, match[0]);
+        }
+      }
+    }
+
+    for (const file of templateFiles) {
+      const sourceText = fs.readFileSync(file, 'utf-8');
+
+      for (const match of sourceText.matchAll(/\$any\s*\(/g)) {
+        if (match.index !== undefined) {
+          const beforeMatch = sourceText.slice(0, match.index);
+          const line = beforeMatch.split(/\r?\n/).length;
+          const lineStart = Math.max(beforeMatch.lastIndexOf('\n'), beforeMatch.lastIndexOf('\r'));
+          const character = match.index - lineStart;
+          unsafeSuppressions.push(`${file}:${line}:${character} (Angular $any escape)`);
+        }
+      }
+    }
+
+    expect(
+      unsafeSuppressions,
+      `Unsafe type suppressions found: ${unsafeSuppressions.join(', ')}`,
+    ).toEqual([]);
+  });
 
   it('no component selector should be duplicated across the application', () => {
     const allTsFiles = getAllTsFiles(appRoot).filter((f) => f.endsWith('.ts') && !f.endsWith('.spec.ts'));
@@ -196,7 +293,7 @@ describe('Architecture Boundaries — Lego Angular', () => {
     }
   });
 
-  const c21FeatureRoots = ['auth', 'dashboard', 'news', 'users'].map((feature) =>
+  const c21FeatureRoots = ['auth', 'dashboard', 'news', 'users', 'seasons'].map((feature) =>
     path.join(appRoot, 'features', feature),
   );
 
@@ -253,6 +350,53 @@ describe('Architecture Boundaries — Lego Angular', () => {
           `Feature stylesheet ${file} should not use --mat-sys-* tokens`,
         ).toBe(false);
       }
+    }
+  });
+
+  it('Seasons presentation should not contain wire-format snake_case fields', () => {
+    const presentationRoots = ['components', 'pages'].map((directory) =>
+      path.join(appRoot, 'features', 'seasons', directory),
+    );
+    const wireFieldPattern = /\b(?:cover_image_url|start_at|end_at|created_at|updated_at)\b/;
+
+    for (const presentationRoot of presentationRoots) {
+      for (const file of getAllTsFiles(presentationRoot).filter((candidate) => !candidate.endsWith('.spec.ts'))) {
+        const content = fs.readFileSync(file, 'utf-8');
+        expect(
+          wireFieldPattern.test(content),
+          `Seasons presentation file ${file} should use domain camelCase fields`,
+        ).toBe(false);
+      }
+    }
+  });
+
+  it('Seasons state should not import form or edit models', () => {
+    const stateFiles = getAllTsFiles(path.join(appRoot, 'features', 'seasons', 'state')).filter(
+      (file) => file.endsWith('.ts'),
+    );
+
+    for (const file of stateFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      expect(
+        /from\s+['"].*(?:season-edit|seasons-form|form\.mapper)/.test(content),
+        `Seasons state file ${file} should only consume domain commands`,
+      ).toBe(false);
+    }
+  });
+
+  it('Seasons presentation should not import wire contracts or DTO models', () => {
+    const presentationFiles = ['components', 'pages'].flatMap((directory) =>
+      getAllTsFiles(path.join(appRoot, 'features', 'seasons', directory)).filter(
+        (file) => file.endsWith('.ts') && !file.endsWith('.spec.ts'),
+      ),
+    );
+
+    for (const file of presentationFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      expect(
+        /from\s+['"].*\/data-access\/.*(?:\.contract|\.models|\/dto\/)/.test(content),
+        `Seasons presentation file ${file} should not import wire contracts or DTOs`,
+      ).toBe(false);
     }
   });
 });

@@ -19,7 +19,20 @@ describe('InputDialog', () => {
         // JSDOM has no layout, so CDK's InteractivityChecker needs test-only geometry
         // for native controls that are genuinely focusable in a browser.
         if (this.matches('input:not([disabled]), button:not([disabled])')) {
-          return [new DOMRect(0, 0, 100, 32)] as unknown as DOMRectList;
+      const rect = new DOMRect(0, 0, 100, 32);
+      const rects = [rect];
+      const rectList: DOMRectList = {
+        0: rect,
+        length: rects.length,
+        item(index: number): DOMRect | null {
+          return rects[index] ?? null;
+        },
+        [Symbol.iterator](): ArrayIterator<DOMRect> {
+          return rects.values();
+        },
+      };
+
+      return rectList;
         }
 
         return originalGetClientRects.call(this);

@@ -1,25 +1,22 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 import { CS2_STATIC_API_BASE_URL } from '../../../core/config/api.config';
-import {
-  SeasonCompetitiveDetailResponse,
-  SeasonsCompetitiveIndexResponse,
-} from './seasons-competitive-summary.models';
+import type { SeasonCompetitiveDetail, SeasonsCompetitiveIndex } from '../domain/season-competitive.model';
+import { parseSeasonCompetitiveDetail, parseSeasonsCompetitiveIndex } from './seasons-competitive-summary.contract';
 
 @Injectable({ providedIn: 'root' })
 export class SeasonsCompetitiveSummaryApiService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = CS2_STATIC_API_BASE_URL;
 
-  index(): Observable<SeasonsCompetitiveIndexResponse> {
-    return this.http.get<SeasonsCompetitiveIndexResponse>(`${this.baseUrl}/seasons.json`);
+  index(): Observable<SeasonsCompetitiveIndex> {
+    return this.http.get<unknown>(`${CS2_STATIC_API_BASE_URL}/seasons.json`).pipe(map(parseSeasonsCompetitiveIndex));
   }
 
-  detail(slug: string): Observable<SeasonCompetitiveDetailResponse> {
-    return this.http.get<SeasonCompetitiveDetailResponse>(
-      `${this.baseUrl}/season/${encodeURIComponent(slug)}.json`,
-    );
+  detail(slug: string): Observable<SeasonCompetitiveDetail> {
+    return this.http
+      .get<unknown>(`${CS2_STATIC_API_BASE_URL}/season/${encodeURIComponent(slug)}.json`)
+      .pipe(map(parseSeasonCompetitiveDetail));
   }
 }

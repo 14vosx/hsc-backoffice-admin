@@ -1,119 +1,20 @@
-.seasons-form {
-  display: grid;
-  gap: 16px;
-}
-
-.seasons-form__form {
-  display: grid;
-  gap: 16px;
-}
-
-.seasons-form mat-form-field {
-  width: 100%;
-}
-
-.seasons-form__identity-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.seasons-form__datetime-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(120px, 0.6fr);
-  gap: 16px;
-}
-
-.seasons-form__cover {
-  display: grid;
-  gap: 12px;
-}
-
-.seasons-form__cover-tools {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-}
-
-.seasons-form__file-control {
-  display: inline-flex;
-  min-height: 40px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--mat-sys-outline);
-  border-radius: 4px;
-  padding: 0 16px;
-  color: var(--mat-sys-primary);
-  font: var(--mat-sys-label-large);
-  cursor: pointer;
-}
-
-.seasons-form__file-control:has(input:disabled) {
-  color: var(--mat-sys-on-surface);
-  cursor: default;
-  opacity: 0.38;
-}
-
-.seasons-form__file-control input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-}
-
-.seasons-form__upload-status,
-.seasons-form__upload-error {
-  margin: 0;
-  font-size: 14px;
-}
-
-.seasons-form__upload-status {
-  color: var(--mat-sys-on-surface-variant);
-}
-
-.seasons-form__upload-error {
-  color: var(--mat-sys-error);
-}
-
-.seasons-form__preview {
-  margin: 0;
-}
-
-.seasons-form__preview img {
-  display: block;
-  width: min(100%, 420px);
-  max-height: 260px;
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 8px;
-  object-fit: contain;
-  background: var(--mat-sys-surface-container-low);
-}
-
-.seasons-form__error {
-  color: var(--mat-sys-error);
-}
-
-.seasons-form__actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-@media (max-width: 720px) {
-  .seasons-form__identity-grid,
-  .seasons-form__datetime-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .seasons-form__actions {
-    justify-content: stretch;
-    flex-direction: column-reverse;
-  }
-
-  .seasons-form__cover-tools {
-    align-items: stretch;
-    flex-direction: column;
-  }
-}
+.seasons-form,.seasons-form__form,.seasons-form__field,.seasons-form__image{display:grid;gap:var(--space-4)}
+.seasons-form__grid,.seasons-form__date-group{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}
+.seasons-form__field{gap:var(--space-2)}
+.seasons-form__field--full{grid-column:1/-1}
+label,legend,h3{font-weight:600}
+input,textarea{box-sizing:border-box;width:100%;border:1px solid var(--color-border-default);border-radius:var(--radius-md);padding:var(--space-3);background:var(--color-bg-base);color:var(--color-text-main)}
+input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px}
+.seasons-form__dates{margin:0;border:1px solid var(--color-border-default);border-radius:var(--radius-lg);padding:var(--space-4)}
+.seasons-form__image-tools,.seasons-form__actions{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
+.seasons-form__actions{justify-content:flex-end}
+.seasons-form__button,.seasons-form__file-control{border:1px solid transparent;border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);font:inherit;font-weight:600;cursor:pointer}
+.seasons-form__button--primary,.seasons-form__file-control{border-color:var(--color-accent-cyan-border);background:var(--color-bg-base);color:var(--color-accent-cyan)}
+.seasons-form__button--secondary{border-color:var(--color-border-default);background:var(--color-bg-base);color:var(--color-text-main)}
+.seasons-form__button--quiet{background:transparent;color:var(--color-text-main)}
+.seasons-form__button:disabled{cursor:not-allowed;opacity:.6}
+.seasons-form__file-control input{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.seasons-form__hint{margin:0;color:var(--color-text-muted);font-size:.875rem}
+.seasons-form__error{margin:0;color:var(--color-status-error);font-size:.875rem}
+.seasons-form__preview{margin:0;max-width:28rem}.seasons-form__preview img{display:block;width:100%;border-radius:var(--radius-md)}
+@media(max-width:640px){.seasons-form__grid,.seasons-form__date-group{grid-template-columns:1fr}}

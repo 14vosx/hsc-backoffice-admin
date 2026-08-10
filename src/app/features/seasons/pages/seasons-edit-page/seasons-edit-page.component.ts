@@ -1,19 +1,17 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { PageContainerComponent } from '../../../../layout/page-container/page-container.component';
-import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
-import { SeasonsFormComponent } from '../../components/seasons-form/seasons-form.component';
-import { AdminSeasonListItem, SeasonFormValue } from '../../data-access/seasons-admin.models';
-import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
+import { UiCard } from '../../../../shared/components/card/card';
+import { InlineFeedback } from '../../../../shared/components/inline-feedback/inline-feedback';
+import { SeasonsFormComponent, type SeasonFormCommand } from '../../components/seasons-form/seasons-form.component';
 import { SeasonsCompetitiveSummaryApiService } from '../../data-access/seasons-competitive-summary-api.service';
-import { SeasonCompetitiveDetailResponse } from '../../data-access/seasons-competitive-summary.models';
-import { seasonItemToFormValue } from '../../utils/seasons-form.mapper';
+import type { AdminSeason } from '../../domain/admin-season.model';
+import type { SeasonCompetitiveDetail } from '../../domain/season-competitive.model';
+import { SeasonsAdminStore } from '../../state/seasons-admin.store';
 
 type EditPageResolutionState = 'loading' | 'ready' | 'invalid-slug' | 'not-found' | 'error';
 
@@ -22,11 +20,10 @@ type EditPageResolutionState = 'loading' | 'ready' | 'invalid-slug' | 'not-found
   standalone: true,
   imports: [
     DatePipe,
-    MatButtonModule,
-    MatCardModule,
     PageContainerComponent,
     SeasonsFormComponent,
-    PageFeedbackComponent,
+    UiCard,
+    InlineFeedback,
   ],
   templateUrl: './seasons-edit-page.component.html',
   styleUrl: './seasons-edit-page.component.scss',
@@ -39,22 +36,17 @@ export class SeasonsEditPageComponent implements OnInit {
   readonly store = inject(SeasonsAdminStore);
 
   readonly slug = signal<string | null>(null);
-  readonly item = signal<AdminSeasonListItem | null>(null);
+  readonly item = signal<AdminSeason | null>(null);
   readonly resolutionState = signal<EditPageResolutionState>('loading');
   readonly resolutionMessage = signal<string | null>(null);
-  readonly competitiveDetail = signal<SeasonCompetitiveDetailResponse | null>(null);
+  readonly competitiveDetail = signal<SeasonCompetitiveDetail | null>(null);
   readonly competitiveLoading = signal(false);
   readonly competitiveError = signal<string | null>(null);
-
-  readonly initialValue = computed(() => {
-    const item = this.item();
-    return item ? seasonItemToFormValue(item) : null;
-  });
 
   readonly pageError = computed(() => this.resolutionMessage() ?? this.store.error());
   readonly submitting = computed(() => this.store.activeMutation() === 'update');
   readonly canRenderForm = computed(
-    () => this.resolutionState() === 'ready' && this.initialValue() !== null,
+    () => this.resolutionState() === 'ready' && this.item() !== null,
   );
 
   ngOnInit(): void {
@@ -65,15 +57,15 @@ export class SeasonsEditPageComponent implements OnInit {
     await this.resolveContext();
   }
 
-  async submit(value: SeasonFormValue): Promise<void> {
+  async submit(command: SeasonFormCommand): Promise<void> {
     const slug = this.slug();
 
-    if (!slug) {
+    if (!slug || 'slug' in command) {
       return;
     }
 
     try {
-      await this.store.update(slug, value);
+      await this.store.update(slug, command);
       await this.router.navigate(['/seasons']);
     } catch {
       // erro já refletido na store
@@ -153,9 +145,5 @@ export class SeasonsEditPageComponent implements OnInit {
     } finally {
       this.competitiveLoading.set(false);
     }
-  }
-
-  protected toUtcDateTime(value: string | null): string | null {
-    return value ? `${value.replace(' ', 'T')}Z` : null;
   }
 }

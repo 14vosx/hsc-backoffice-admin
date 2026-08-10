@@ -1,3 +1,5 @@
+import type { AdminSeasonStatus } from './admin-season.model';
+
 export type SeasonCompetitiveSummary = {
   matches: number;
   maps: number;
@@ -10,22 +12,22 @@ export type SeasonCompetitiveInfo = {
   slug: string;
   name: string;
   description: string | null;
-  status: string;
-  start_at: string;
-  end_at: string;
+  status: AdminSeasonStatus;
+  startAt: string;
+  endAt: string;
 };
 
 export type SeasonCompetitiveIndexItem = SeasonCompetitiveInfo & {
   summary: SeasonCompetitiveSummary;
 };
 
-export type SeasonsCompetitiveIndexResponse = {
+export type SeasonsCompetitiveIndex = {
   generatedAt: string;
   activeSeasonSlug: string | null;
   seasons: SeasonCompetitiveIndexItem[];
 };
 
-export type SeasonCompetitiveDetailResponse = {
+export type SeasonCompetitiveDetail = {
   generatedAt: string;
   season: SeasonCompetitiveInfo;
   summary: SeasonCompetitiveSummary;

@@ -1,17 +1,3 @@
-<hsc-page-container
-  title="Nova season"
-  subtitle="Crie um novo draft para um ciclo competitivo oficial do servidor HSC."
->
-  <section class="seasons-create-page">
-    <mat-card class="seasons-create-page__card" appearance="outlined">
-      <mat-card-content>
-        <hsc-seasons-form
-          [submitting]="submitting()"
-          [errorMessage]="error()"
-          (formSubmit)="submit($event)"
-          (cancel)="cancel()"
-        />
-      </mat-card-content>
-    </mat-card>
-  </section>
+<hsc-page-container title="Nova season" subtitle="Crie um novo draft para um ciclo competitivo oficial do servidor HSC.">
+  <section class="seasons-create-page"><app-ui-card><div class="seasons-create-page__content"><hsc-seasons-form [submitting]="submitting()" [errorMessage]="error()" (formSubmit)="submit($event)" (cancel)="cancel()" /></div></app-ui-card></section>
 </hsc-page-container>

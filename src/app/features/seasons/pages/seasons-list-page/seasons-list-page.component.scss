@@ -1,36 +1,6 @@
-.seasons-list-page {
-  display: grid;
-  gap: 16px;
-}
-
-.seasons-list-page__card {
-  background: var(--mat-sys-surface);
-}
-
-.seasons-list-page mat-card-header {
-  padding-bottom: 16px;
-}
-
-.seasons-list-page mat-card-content {
-  display: grid;
-  gap: 16px;
-}
-
-.seasons-list-page__card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
-  gap: 16px;
-}
-
-.seasons-list-page__hint {
-  margin: 0;
-  color: var(--mat-sys-on-surface-variant);
-}
-
-@media (max-width: 640px) {
-  .seasons-list-page__card-header {
-    flex-direction: column;
-  }
-}
+.seasons-list-page__header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-4);padding:var(--space-4);border-bottom:1px solid var(--color-border-subtle)}
+.seasons-list-page__header h2,.seasons-list-page__header p{margin:0}.seasons-list-page__header p{margin-top:var(--space-2);color:var(--color-text-muted)}
+.seasons-list-page__content{display:grid;gap:var(--space-4);padding:var(--space-4)}
+.seasons-list-page__action{border:1px solid var(--color-border-default);border-radius:var(--radius-sm);padding:var(--space-2) var(--space-4);background:var(--color-bg-base);color:var(--color-text-main);font:inherit;cursor:pointer}
+.seasons-list-page__action--primary{border-color:var(--color-accent-cyan-border);color:var(--color-accent-cyan)}
+@media(max-width:640px){.seasons-list-page__header{flex-direction:column}}
