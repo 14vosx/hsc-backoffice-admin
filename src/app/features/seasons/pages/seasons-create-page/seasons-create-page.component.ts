@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@a
 import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 
-import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
+import { PageContainerComponent } from '../../../../layout/page-container/page-container.component';
 import { SeasonsFormComponent } from '../../components/seasons-form/seasons-form.component';
 import { SeasonFormValue } from '../../data-access/seasons-admin.models';
 import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';

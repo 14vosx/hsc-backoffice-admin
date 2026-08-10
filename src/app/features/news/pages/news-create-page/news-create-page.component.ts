@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@a
 import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 
-import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
+import { PageContainerComponent } from '../../../../layout/page-container/page-container.component';
 import { NewsFormComponent } from '../../components/news-form/news-form.component';
 import { NewsAdminStore } from '../../data-access/news-admin.store';
 import { NewsFormValue } from '../../data-access/news-admin.models';

@@ -131,4 +131,55 @@ describe('Architecture Boundaries — Lego Angular', () => {
       expect(hasSharedUiImport, `Shared component file ${file} should not import shared/ui`).toBe(false);
     }
   });
+
+  it('layout directory should exist', () => {
+    expect(fs.existsSync(path.join(appRoot, 'layout')), 'src/app/layout must exist').toBe(true);
+  });
+
+  it('core/layout directory should not exist', () => {
+    expect(fs.existsSync(path.join(appRoot, 'core', 'layout')), 'src/app/core/layout must not exist').toBe(false);
+  });
+
+  it('layout should not import features', () => {
+    const layoutFiles = getAllTsFiles(path.join(appRoot, 'layout')).filter((f) => f.endsWith('.ts'));
+
+    for (const file of layoutFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const hasFeatureImport = /from\s+['"].*\/features\//.test(content);
+      expect(hasFeatureImport, `Layout file ${file} should not import features`).toBe(false);
+    }
+  });
+
+  it('layout should not import DTOs', () => {
+    const layoutFiles = getAllTsFiles(path.join(appRoot, 'layout')).filter((f) => f.endsWith('.ts'));
+
+    for (const file of layoutFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const hasDtoImport = /from\s+['"].*(?:\/dto\/|\.dto['"])/.test(content);
+      expect(hasDtoImport, `Layout file ${file} should not import DTOs`).toBe(false);
+    }
+  });
+
+  it('layout should not import Angular Material', () => {
+    const layoutFiles = getAllTsFiles(path.join(appRoot, 'layout')).filter((f) => f.endsWith('.ts'));
+
+    for (const file of layoutFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const hasMaterialImport = /from\s+['"]@angular\/material(?:\/|['"])/.test(content);
+      expect(hasMaterialImport, `Layout file ${file} should not import Angular Material`).toBe(false);
+    }
+  });
+
+  it('layout should only import Angular CDK from @angular/cdk/a11y', () => {
+    const layoutFiles = getAllTsFiles(path.join(appRoot, 'layout')).filter((f) => f.endsWith('.ts'));
+
+    for (const file of layoutFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const cdkImports = [...content.matchAll(/from\s+['"](@angular\/cdk(?:\/[^'"]*)?)['"]/g)];
+
+      for (const cdkImport of cdkImports) {
+        expect(cdkImport[1], `Layout file ${file} uses a disallowed Angular CDK entrypoint`).toBe('@angular/cdk/a11y');
+      }
+    }
+  });
 });

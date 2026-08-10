@@ -1,0 +1,47 @@
+<header class="app-header" role="banner">
+  <div class="app-header__container">
+    <a routerLink="/dashboard" class="app-header__logo-link" aria-label="HSC Backoffice - Dashboard">
+      <span class="app-header__badge">HSC</span>
+      <span class="app-header__title">BACKOFFICE</span>
+    </a>
+
+    <div class="app-header__session" aria-label="Sessão administrativa">
+      <span class="app-header__session-badge">status: {{ authSessionStore.status() }}</span>
+
+      @if (authSessionStore.role(); as role) {
+        <span class="app-header__session-badge">role: {{ role }}</span>
+      }
+
+      @if (authSessionStore.user(); as user) {
+        @if (user.name) {
+          <span class="app-header__identity">{{ user.name }}</span>
+        }
+      }
+    </div>
+
+    <button
+      type="button"
+      class="app-header__toggle"
+      [attr.aria-expanded]="isDrawerOpen()"
+      aria-controls="mobile-drawer"
+      [attr.aria-label]="isDrawerOpen() ? 'Fechar menu de navegação' : 'Abrir menu de navegação'"
+      (click)="onToggle()"
+    >
+      <svg
+        class="app-header__toggle-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+</header>

@@ -5,7 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
-import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
+import { PageContainerComponent } from '../../../../layout/page-container/page-container.component';
 import { AuthSessionStore } from '../../../../core/auth/auth-session.store';
 import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import { NewsAdminStore } from '../../../news/data-access/news-admin.store';

@@ -1,0 +1,113 @@
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  height: var(--header-height);
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border-subtle);
+  backdrop-filter: blur(12px);
+}
+
+.app-header__container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  height: 100%;
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+}
+
+.app-header__logo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+}
+
+.app-header__logo-link:hover .app-header__title {
+  color: var(--color-accent-cyan);
+}
+
+.app-header__badge {
+  padding: var(--space-0-5) var(--space-2);
+  background: var(--color-accent-cyan-soft);
+  color: var(--color-accent-cyan);
+  border: 1px solid var(--color-accent-cyan-border);
+  border-radius: var(--radius-xs);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.app-header__title {
+  color: var(--color-text-main);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  transition: color var(--transition-fast);
+}
+
+.app-header__session {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.app-header__session-badge {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-subtle);
+}
+
+.app-header__identity {
+  overflow: hidden;
+  color: var(--color-text-main);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-header__toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  flex-shrink: 0;
+  background: transparent;
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.app-header__toggle:hover {
+  background: var(--color-surface-subtle);
+  border-color: var(--color-border-strong);
+}
+
+.app-header__toggle-icon {
+  width: 22px;
+  height: 22px;
+}
+
+@media (max-width: 991px) {
+  .app-header__toggle {
+    display: flex;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-header__session-badge {
+    display: none;
+  }
+}

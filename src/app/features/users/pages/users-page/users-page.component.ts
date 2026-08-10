@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { BehaviorSubject, catchError, map, of, startWith, switchMap } from 'rxjs';
 
-import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
+import { PageContainerComponent } from '../../../../layout/page-container/page-container.component';
 import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
 import { InputDialogService } from '../../../../shared/ui/input-dialog/input-dialog.service';
 import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';

@@ -6,7 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
-import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
+import { PageContainerComponent } from '../../../../layout/page-container/page-container.component';
 import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
 import { SeasonsFormComponent } from '../../components/seasons-form/seasons-form.component';
 import { AdminSeasonListItem, SeasonFormValue } from '../../data-access/seasons-admin.models';
