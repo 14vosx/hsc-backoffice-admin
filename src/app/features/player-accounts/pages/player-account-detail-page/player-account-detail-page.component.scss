@@ -1,0 +1,134 @@
+:host {
+  display: block;
+}
+
+.detail-page {
+  display: grid;
+  gap: var(--space-4);
+  color: var(--color-text-main);
+}
+
+.detail-page > a {
+  width: fit-content;
+  color: var(--color-accent-cyan);
+  font-weight: 700;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.detail-page > a:hover {
+  color: var(--color-text-brand);
+}
+
+.detail-page > a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 3px;
+}
+
+.detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+section {
+  padding: var(--space-4);
+  color: var(--color-text-main);
+  background: var(--color-surface-base);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-panel);
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+h2 {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-main);
+}
+
+header h2 {
+  margin-bottom: 0;
+}
+
+h2 small {
+  display: inline-block;
+  margin-left: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+dl {
+  display: grid;
+  gap: 0;
+  margin: var(--space-4) 0;
+}
+
+dl div {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) minmax(0, 2fr);
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+dl div:last-child {
+  border-bottom: 0;
+}
+
+dt {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+dd {
+  margin: 0;
+  color: var(--color-text-main);
+  overflow-wrap: anywhere;
+}
+
+button {
+  min-height: 2.625rem;
+  padding: var(--space-2) var(--space-4);
+  color: var(--color-text-main);
+  background: var(--color-status-error);
+  border: 1px solid var(--color-status-error);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    filter var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+button:disabled {
+  color: var(--color-text-muted);
+  background: var(--color-surface-strong);
+  border-color: var(--color-border-default);
+  opacity: 1;
+  cursor: wait;
+}
+
+@media (max-width: 560px) {
+  dl div {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+  }
+
+  header {
+    align-items: flex-start;
+  }
+}

@@ -24,6 +24,7 @@ export class PrimaryNav {
     { id: 'seasons', label: 'Seasons', path: '/seasons' },
     { id: 'news', label: 'News', path: '/news' },
     { id: 'users', label: 'Users', path: '/users' },
+    { id: 'player-accounts', label: 'Player Accounts', path: '/player-accounts' },
     { id: 'events', label: 'Events', path: '/events' },
   ];
 

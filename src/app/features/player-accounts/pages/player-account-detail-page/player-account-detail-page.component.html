@@ -1,0 +1,19 @@
+<div class="detail-page">
+  <app-page-header title="Detalhe da conta" description="Dados administrativos da conta de jogador." />
+  <a routerLink="/player-accounts">← Voltar para Player Accounts</a>
+  @if (vm$ | async; as vm) {
+    @if (vm.loading) { <app-inline-feedback variant="neutral">Carregando conta de jogador...</app-inline-feedback> }
+    @else if (vm.error) { <app-inline-feedback variant="error">{{ vm.error }}</app-inline-feedback> }
+    @else if (vm.item; as item) {
+      <div class="detail">
+        <section><header><h2>Conta</h2><app-status-badge [label]="item.status" [tone]="item.status === 'active' ? 'success' : 'danger'" /></header>
+          <dl><div><dt>Display name</dt><dd>{{ item.displayName || 'Não informado' }}</dd></div><div><dt>ID</dt><dd>{{ item.id }}</dd></div><div><dt>Criada em</dt><dd>{{ item.createdAt | date:'dd/MM/yyyy HH:mm' }}</dd></div><div><dt>Atualizada em</dt><dd>{{ item.updatedAt | date:'dd/MM/yyyy HH:mm' }}</dd></div><div><dt>Desativada em</dt><dd>{{ item.disabledAt ? (item.disabledAt | date:'dd/MM/yyyy HH:mm') : '—' }}</dd></div></dl>
+          <button type="button" [disabled]="pending()" (click)="changeStatus(item)">{{ pending() ? 'Alterando status...' : item.status === 'active' ? 'Desativar conta' : 'Reativar conta' }}</button>
+        </section>
+        <section><h2>Identidades</h2><dl><div><dt>Email vinculado</dt><dd>{{ item.identities.email.linked ? 'Sim' : 'Não' }}</dd></div><div><dt>Email</dt><dd>{{ item.identities.email.email || '—' }}</dd></div><div><dt>Email verificado</dt><dd>{{ item.identities.email.verified ? 'Sim' : 'Não' }}</dd></div><div><dt>Steam vinculada</dt><dd>{{ item.identities.steam.linked ? 'Sim' : 'Não' }}</dd></div><div><dt>SteamID64</dt><dd>{{ item.identities.steam.steamid64 || '—' }}</dd></div></dl></section>
+        <section><h2>Profile</h2><dl><div><dt>Existe</dt><dd>{{ item.profile.exists ? 'Sim' : 'Não' }}</dd></div><div><dt>Display name</dt><dd>{{ item.profile.displayName || '—' }}</dd></div><div><dt>Slug</dt><dd>{{ item.profile.slug || '—' }}</dd></div><div><dt>Visibilidade</dt><dd>{{ item.profile.visibility || '—' }}</dd></div><div><dt>Avatar URL</dt><dd>{{ item.profile.avatarUrl || '—' }}</dd></div></dl></section>
+        <section><h2>Membership <small>Somente leitura</small></h2><dl><div><dt>Existe</dt><dd>{{ item.membership.exists ? 'Sim' : 'Não' }}</dd></div><div><dt>Status efetivo</dt><dd>{{ item.membership.status || '—' }}</dd></div><div><dt>Plano</dt><dd>{{ item.membership.planCode || '—' }}</dd></div><div><dt>Início</dt><dd>{{ item.membership.startedAt ? (item.membership.startedAt | date:'dd/MM/yyyy HH:mm') : '—' }}</dd></div><div><dt>Expira em</dt><dd>{{ item.membership.expiresAt ? (item.membership.expiresAt | date:'dd/MM/yyyy HH:mm') : '—' }}</dd></div></dl></section>
+      </div>
+    }
+  }
+</div>
