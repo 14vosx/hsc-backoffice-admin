@@ -1,0 +1,134 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { describe, expect, it } from 'vitest';
+
+function getAllTsFiles(dirPath: string): string[] {
+  let files: string[] = [];
+  if (!fs.existsSync(dirPath)) {
+    return files;
+  }
+
+  const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const fullPath = path.join(dirPath, entry.name);
+    if (entry.isDirectory()) {
+      files = files.concat(getAllTsFiles(fullPath));
+    } else if (entry.isFile() && (entry.name.endsWith('.ts') || entry.name.endsWith('.html'))) {
+      files.push(fullPath);
+    }
+  }
+
+  return files;
+}
+
+describe('Architecture Boundaries — Lego Angular', () => {
+  const appRoot = path.resolve(__dirname, '..');
+
+  it('no component selector should be duplicated across the application', () => {
+    const allTsFiles = getAllTsFiles(appRoot).filter((f) => f.endsWith('.ts') && !f.endsWith('.spec.ts'));
+    const selectorMap = new Map<string, string[]>();
+
+    for (const file of allTsFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const match = /selector:\s*['"]([^'"]+)['"]/.exec(content);
+      if (match) {
+        const selector = match[1];
+        const existing = selectorMap.get(selector) || [];
+        existing.push(file);
+        selectorMap.set(selector, existing);
+      }
+    }
+
+    for (const [selector, files] of selectorMap.entries()) {
+      expect(
+        files.length,
+        `Selector "${selector}" is defined in multiple files: ${files.join(', ')}`,
+      ).toBe(1);
+    }
+  });
+
+  it('shared layer should not import features', () => {
+    const sharedFiles = getAllTsFiles(path.join(appRoot, 'shared')).filter((f) => f.endsWith('.ts'));
+
+    for (const file of sharedFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const hasFeatureImport = /from\s+['"].*\/features\//.test(content);
+      expect(hasFeatureImport, `File ${file} should not import features`).toBe(false);
+    }
+  });
+
+  it('core layer should not import features', () => {
+    const coreFiles = getAllTsFiles(path.join(appRoot, 'core')).filter((f) => f.endsWith('.ts'));
+
+    for (const file of coreFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const hasFeatureImport = /from\s+['"].*\/features\//.test(content);
+      expect(hasFeatureImport, `File ${file} should not import features`).toBe(false);
+    }
+  });
+
+  it('domain modules should not import Angular', () => {
+    const domainFiles = getAllTsFiles(appRoot).filter(
+      (f) => f.includes(`${path.sep}domain${path.sep}`) && f.endsWith('.ts') && !f.endsWith('.spec.ts'),
+    );
+
+    for (const file of domainFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const hasAngularImport = /from\s+['"]@angular\//.test(content);
+      expect(hasAngularImport, `Domain file ${file} should not import @angular/*`).toBe(false);
+    }
+  });
+
+  it('domain modules should not reference DOM globals', () => {
+    const domainFiles = getAllTsFiles(appRoot).filter(
+      (f) => f.includes(`${path.sep}domain${path.sep}`) && f.endsWith('.ts') && !f.endsWith('.spec.ts'),
+    );
+
+    for (const file of domainFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const hasDomUsage = /\b(window|document|localStorage|sessionStorage)\b/.test(content);
+      expect(hasDomUsage, `Domain file ${file} should not reference DOM globals`).toBe(false);
+    }
+  });
+
+  it('shared/components should not import DTOs', () => {
+    const sharedComponentFiles = getAllTsFiles(path.join(appRoot, 'shared', 'components')).filter((f) => f.endsWith('.ts'));
+
+    for (const file of sharedComponentFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const hasDtoImport = /from\s+['"].*(?:\/dto\/|\.dto['"])/.test(content);
+      expect(hasDtoImport, `Shared component file ${file} should not import DTOs`).toBe(false);
+    }
+  });
+
+  it('shared/components should not import HttpClient', () => {
+    const sharedComponentFiles = getAllTsFiles(path.join(appRoot, 'shared', 'components')).filter((f) => f.endsWith('.ts'));
+
+    for (const file of sharedComponentFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const hasHttpClientImport = /import[\s\S]*?HttpClient[\s\S]*?from\s+['"]@angular\/common\/http['"]/.test(content);
+      expect(hasHttpClientImport, `Shared component file ${file} should not import HttpClient`).toBe(false);
+    }
+  });
+
+  it('shared/components should not import Angular Material', () => {
+    const sharedComponentFiles = getAllTsFiles(path.join(appRoot, 'shared', 'components')).filter((f) => f.endsWith('.ts'));
+
+    for (const file of sharedComponentFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const hasMaterialImport = /from\s+['"]@angular\/material(?:\/|['"])/.test(content);
+      expect(hasMaterialImport, `Shared component file ${file} should not import Angular Material`).toBe(false);
+    }
+  });
+
+  it('shared/components should not import shared/ui', () => {
+    const sharedComponentFiles = getAllTsFiles(path.join(appRoot, 'shared', 'components')).filter((f) => f.endsWith('.ts'));
+
+    for (const file of sharedComponentFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const hasSharedUiImport = /from\s+['"].*\/shared\/ui/.test(content);
+      expect(hasSharedUiImport, `Shared component file ${file} should not import shared/ui`).toBe(false);
+    }
+  });
+});
