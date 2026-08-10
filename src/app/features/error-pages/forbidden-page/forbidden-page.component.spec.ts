@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { ForbiddenPageComponent } from './forbidden-page.component';
 
@@ -9,6 +10,7 @@ describe('ForbiddenPageComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ForbiddenPageComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ForbiddenPageComponent);

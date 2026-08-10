@@ -13,6 +13,7 @@ describe('PageContainerComponent', () => {
 
     fixture = TestBed.createComponent(PageContainerComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('title', 'Test page');
     fixture.detectChanges();
   });
 

@@ -1,17 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
-import { AuthCallbackPage } from './auth-callback-page.component';
+import { AuthCallbackPageComponent } from './auth-callback-page.component';
 
-describe('AuthCallbackPage', () => {
-  let component: AuthCallbackPage;
-  let fixture: ComponentFixture<AuthCallbackPage>;
+describe('AuthCallbackPageComponent', () => {
+  let component: AuthCallbackPageComponent;
+  let fixture: ComponentFixture<AuthCallbackPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AuthCallbackPage],
+      imports: [AuthCallbackPageComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AuthCallbackPage);
+    fixture = TestBed.createComponent(AuthCallbackPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
