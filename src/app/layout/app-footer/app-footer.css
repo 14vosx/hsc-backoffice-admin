@@ -9,9 +9,9 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  max-width: var(--page-max);
-  margin: 0 auto;
-  padding: var(--space-4) var(--space-5);
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--space-4) var(--space-6);
 }
 
 .app-footer__brand {
@@ -43,9 +43,16 @@
   font-size: 0.825rem;
 }
 
+@media (max-width: 1199px) {
+  .app-footer__container {
+    padding-inline: var(--space-5);
+  }
+}
+
 @media (max-width: 640px) {
   .app-footer__container {
     align-items: flex-start;
     flex-direction: column;
+    padding-inline: var(--space-4);
   }
 }
