@@ -12,18 +12,14 @@
     </mat-card>
 
     @if (resolutionState() === 'loading') {
-      <hsc-page-feedback variant="neutral">
-        Carregando season...
-      </hsc-page-feedback>
+      <hsc-page-feedback variant="neutral"> Carregando season... </hsc-page-feedback>
     } @else {
       @if (pageError()) {
         <hsc-page-feedback variant="error">
           <p>{{ pageError() }}</p>
 
           <div class="seasons-edit-page__error-actions">
-            <button type="button" mat-button (click)="retry()">
-              Tentar novamente
-            </button>
+            <button type="button" mat-button (click)="retry()">Tentar novamente</button>
 
             <button type="button" mat-stroked-button (click)="cancel()">
               Voltar para listagem
@@ -51,9 +47,7 @@
           <mat-card class="seasons-edit-page__metadata-card" appearance="outlined">
             <mat-card-header>
               <mat-card-title>Resumo administrativo</mat-card-title>
-              <mat-card-subtitle>
-                Dados de controle da season selecionada.
-              </mat-card-subtitle>
+              <mat-card-subtitle> Dados de controle da season selecionada. </mat-card-subtitle>
             </mat-card-header>
 
             <mat-card-content>
@@ -64,15 +58,21 @@
                 </div>
                 <div>
                   <dt>Slug</dt>
-                  <dd><code>{{ item()?.slug }}</code></dd>
+                  <dd>
+                    <code>{{ item()?.slug }}</code>
+                  </dd>
                 </div>
                 <div>
                   <dt>Criada em</dt>
-                  <dd>{{ item()?.created_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
+                  <dd>
+                    {{ $safeNavigationMigration(item()?.created_at) | date: 'dd/MM/yyyy HH:mm' }}
+                  </dd>
                 </div>
                 <div>
                   <dt>Atualizada em</dt>
-                  <dd>{{ item()?.updated_at | date: 'dd/MM/yyyy HH:mm' }}</dd>
+                  <dd>
+                    {{ $safeNavigationMigration(item()?.updated_at) | date: 'dd/MM/yyyy HH:mm' }}
+                  </dd>
                 </div>
               </dl>
             </mat-card-content>

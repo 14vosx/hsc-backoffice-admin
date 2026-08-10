@@ -12,12 +12,7 @@
 
           @if (canRunLifecycle()) {
             @if (!isPublished()) {
-              <button
-                type="button"
-                mat-flat-button
-                [disabled]="submitting()"
-                (click)="publish()"
-              >
+              <button type="button" mat-flat-button [disabled]="submitting()" (click)="publish()">
                 Publicar
               </button>
             } @else {
@@ -46,18 +41,14 @@
     </mat-card>
 
     @if (resolutionState() === 'loading') {
-      <hsc-page-feedback variant="neutral">
-        Carregando contexto de edição...
-      </hsc-page-feedback>
+      <hsc-page-feedback variant="neutral"> Carregando contexto de edição... </hsc-page-feedback>
     } @else {
       @if (pageError()) {
         <hsc-page-feedback variant="error">
           <p>{{ pageError() }}</p>
 
           <div class="news-edit-page__error-actions">
-            <button type="button" mat-button (click)="retry()">
-              Tentar novamente
-            </button>
+            <button type="button" mat-button (click)="retry()">Tentar novamente</button>
 
             <button type="button" mat-stroked-button (click)="cancel()">
               Voltar para listagem
@@ -84,9 +75,7 @@
         <mat-card class="news-edit-page__metadata-card" appearance="outlined">
           <mat-card-header>
             <mat-card-title>Resumo administrativo</mat-card-title>
-            <mat-card-subtitle>
-              Dados conhecidos para este item de news.
-            </mat-card-subtitle>
+            <mat-card-subtitle> Dados conhecidos para este item de news. </mat-card-subtitle>
           </mat-card-header>
 
           <mat-card-content>
@@ -97,13 +86,17 @@
               </div>
               <div>
                 <dt>Slug</dt>
-                <dd><code>{{ metadata()?.slug }}</code></dd>
+                <dd>
+                  <code>{{ metadata()?.slug }}</code>
+                </dd>
               </div>
               <div>
                 <dt>Publicado em</dt>
                 <dd>
                   @if (metadata()?.published_at) {
-                    {{ metadata()?.published_at | date: 'dd/MM/yyyy HH:mm' }}
+                    {{
+                      $safeNavigationMigration(metadata()?.published_at) | date: 'dd/MM/yyyy HH:mm'
+                    }}
                   } @else {
                     —
                   }
@@ -113,7 +106,9 @@
                 <dt>Criado em</dt>
                 <dd>
                   @if (metadata()?.created_at) {
-                    {{ metadata()?.created_at | date: 'dd/MM/yyyy HH:mm' }}
+                    {{
+                      $safeNavigationMigration(metadata()?.created_at) | date: 'dd/MM/yyyy HH:mm'
+                    }}
                   } @else {
                     —
                   }
@@ -123,7 +118,9 @@
                 <dt>Atualizado em</dt>
                 <dd>
                   @if (metadata()?.updated_at) {
-                    {{ metadata()?.updated_at | date: 'dd/MM/yyyy HH:mm' }}
+                    {{
+                      $safeNavigationMigration(metadata()?.updated_at) | date: 'dd/MM/yyyy HH:mm'
+                    }}
                   } @else {
                     —
                   }

@@ -6,7 +6,7 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { ThemeService } from './core/theme/theme.service';
@@ -17,6 +17,6 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => inject(ThemeService).initialize()),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withXhr()),
   ],
 };
