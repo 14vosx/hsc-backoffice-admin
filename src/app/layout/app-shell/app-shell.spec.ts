@@ -47,6 +47,9 @@ describe('AppShell', () => {
     expect(native.querySelector('.app-shell__sidebar-desktop app-sidebar')).toBeTruthy();
     expect(native.querySelector('main#main-content')).toBeTruthy();
     expect(native.querySelector('app-footer')).toBeTruthy();
+    expect(native.querySelector('app-confirmation-dialog')).toBeTruthy();
+    expect(native.querySelector('app-input-dialog')).toBeTruthy();
+    expect(native.querySelector('app-feedback-center')).toBeTruthy();
   });
 
   it('should open and close the accessible drawer while restoring scroll', () => {

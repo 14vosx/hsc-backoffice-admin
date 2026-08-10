@@ -11,13 +11,25 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 
+import { ConfirmationDialog } from '../../shared/components/confirmation-dialog/confirmation-dialog';
+import { FeedbackCenter } from '../../shared/components/feedback-center/feedback-center';
+import { InputDialog } from '../../shared/components/input-dialog/input-dialog';
 import { AppFooter } from '../app-footer/app-footer';
 import { AppHeader } from '../app-header/app-header';
 import { AppSidebar } from '../app-sidebar/app-sidebar';
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, AppHeader, AppSidebar, AppFooter, CdkTrapFocus],
+  imports: [
+    RouterOutlet,
+    AppHeader,
+    AppSidebar,
+    AppFooter,
+    CdkTrapFocus,
+    ConfirmationDialog,
+    InputDialog,
+    FeedbackCenter,
+  ],
   templateUrl: './app-shell.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app-shell.css',

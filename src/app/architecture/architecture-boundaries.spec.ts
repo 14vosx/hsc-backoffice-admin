@@ -182,4 +182,14 @@ describe('Architecture Boundaries — Lego Angular', () => {
       }
     }
   });
+
+  it('shared/state should not import Angular Material', () => {
+    const sharedStateFiles = getAllTsFiles(path.join(appRoot, 'shared', 'state')).filter((f) => f.endsWith('.ts'));
+
+    for (const file of sharedStateFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const hasMaterialImport = /from\s+['"]@angular\/material(?:\/|['"])/.test(content);
+      expect(hasMaterialImport, `Shared state file ${file} should not import Angular Material`).toBe(false);
+    }
+  });
 });

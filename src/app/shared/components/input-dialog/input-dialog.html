@@ -1,0 +1,50 @@
+@if (inputDialog.activeRequest(); as request) {
+  <div class="input-dialog__backdrop" (click)="cancel()">
+    <section
+      class="input-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="input-dialog-title"
+      cdkTrapFocus
+      [cdkTrapFocusAutoCapture]="true"
+      (click)="stopPropagation($event)"
+    >
+      <h2 id="input-dialog-title" class="input-dialog__title">{{ request.title }}</h2>
+
+      <div class="input-dialog__field">
+        <label class="input-dialog__label" for="input-dialog-control">{{ request.label }}</label>
+        <input
+          id="input-dialog-control"
+          class="input-dialog__control"
+          [type]="request.inputType ?? 'text'"
+          [formControl]="control"
+          [attr.aria-required]="request.required || null"
+          [attr.aria-invalid]="control.hasError('required')"
+          [attr.aria-describedby]="describedBy(request)"
+          cdkFocusInitial
+        />
+
+        @if (request.hint) {
+          <p id="input-dialog-hint" class="input-dialog__hint">{{ request.hint }}</p>
+        }
+
+        @if (control.hasError('required')) {
+          <p id="input-dialog-error" class="input-dialog__error" role="alert">Informe um valor.</p>
+        }
+      </div>
+
+      <div class="input-dialog__actions">
+        <button type="button" class="input-dialog__button" (click)="cancel()">
+          {{ request.cancelLabel ?? 'Cancelar' }}
+        </button>
+        <button
+          type="button"
+          class="input-dialog__button input-dialog__confirm"
+          (click)="confirm()"
+        >
+          {{ request.confirmLabel ?? 'Confirmar' }}
+        </button>
+      </div>
+    </section>
+  </div>
+}
