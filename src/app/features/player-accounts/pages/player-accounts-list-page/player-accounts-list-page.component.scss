@@ -1,0 +1,232 @@
+.accounts-page,
+.accounts {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.accounts-page {
+  color: var(--color-text-main);
+}
+
+.accounts__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  color: var(--color-text-main);
+  background: var(--color-surface-base);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-panel);
+}
+
+label {
+  display: grid;
+  gap: var(--space-2);
+  color: var(--color-text-main);
+  font-weight: 600;
+}
+
+input {
+  min-width: min(28rem, 70vw);
+}
+
+input,
+select,
+button {
+  min-height: 2.625rem;
+  box-sizing: border-box;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-main);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+input:hover,
+select:hover {
+  border-color: var(--color-border-strong);
+}
+
+input:focus-visible,
+select:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+button {
+  color: var(--color-bg-base);
+  background: var(--color-accent-cyan);
+  border-color: var(--color-accent-cyan-border);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--color-primary-strong);
+}
+
+button:disabled {
+  color: var(--color-text-muted);
+  background: var(--color-surface-strong);
+  border-color: var(--color-border-default);
+  cursor: default;
+}
+
+.accounts__count {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.accounts__table-wrap {
+  overflow-x: auto;
+  background: var(--color-surface-base);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-panel);
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+  color: var(--color-text-main);
+  background: var(--color-surface-base);
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+th,
+td {
+  padding: 0.625rem 0.5rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--color-border-subtle);
+  overflow-wrap: anywhere;
+}
+
+th {
+  color: var(--color-text-muted);
+  background: var(--color-surface-strong);
+  border-bottom-color: var(--color-border-strong);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+th:nth-child(1),
+td:nth-child(1) {
+  width: 22%;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+  width: 11%;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+  width: 25%;
+}
+
+th:nth-child(4),
+td:nth-child(4) {
+  width: 12%;
+}
+
+th:nth-child(5),
+td:nth-child(5) {
+  width: 16%;
+}
+
+th:nth-child(6),
+td:nth-child(6) {
+  width: 14%;
+}
+
+tbody tr {
+  transition: background var(--transition-fast);
+}
+
+tbody tr:hover {
+  background: var(--color-surface-subtle);
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+td strong {
+  display: block;
+  color: var(--color-text-main);
+}
+
+.accounts__player,
+.accounts__identities,
+.accounts__updated {
+  min-width: 0;
+}
+
+.accounts__player a {
+  display: inline-block;
+  margin-top: var(--space-2);
+}
+
+.accounts__identities span {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.accounts__updated span,
+.accounts__updated small {
+  white-space: nowrap;
+}
+
+small {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+a {
+  color: var(--color-accent-cyan);
+  font-weight: 700;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  white-space: nowrap;
+}
+
+a:hover {
+  color: var(--color-text-brand);
+}
+
+@media (max-width: 640px) {
+  .accounts__filters {
+    align-items: stretch;
+  }
+
+  .accounts__filters label,
+  .accounts__filters input,
+  .accounts__filters select,
+  .accounts__filters button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  table {
+    min-width: 48rem;
+  }
+}

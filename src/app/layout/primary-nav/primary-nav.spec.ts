@@ -36,6 +36,8 @@ describe('PrimaryNav', () => {
           { path: 'news', component: TestRouteComponent },
           { path: 'news/:id/edit', component: TestRouteComponent },
           { path: 'users', component: TestRouteComponent },
+          { path: 'player-accounts', component: TestRouteComponent },
+          { path: 'player-accounts/:id', component: TestRouteComponent },
           { path: 'events', component: TestRouteComponent },
         ]),
       ],
@@ -53,8 +55,16 @@ describe('PrimaryNav', () => {
       'Seasons',
       'News',
       'Users',
+      'Player Accounts',
       'Events',
     ]);
+  });
+
+  it('should keep Player Accounts active on list and detail routes', async () => {
+    await router.navigateByUrl('/player-accounts/account-id');
+    fixture.detectChanges();
+    const link = fixture.nativeElement.querySelector('a[href="/player-accounts"]');
+    expect(link.classList.contains('primary-nav__link--active')).toBe(true);
   });
 
   it('should keep Dashboard exact', async () => {

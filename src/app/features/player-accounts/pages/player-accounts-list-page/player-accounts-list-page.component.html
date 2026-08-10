@@ -1,0 +1,31 @@
+<div class="accounts-page">
+  <app-page-header title="Player Accounts" description="Consulta e suporte de contas de jogadores." />
+  <section class="accounts">
+    <form class="accounts__filters" role="search" (submit)="search($event)">
+      <label>Busca <input name="query" type="search" placeholder="Nome, email, Steam ID ou account ID" /></label>
+      <label>Status
+        <select (change)="changeStatus($event)">
+          <option value="">Todos</option><option value="active">Active</option><option value="disabled">Disabled</option>
+        </select>
+      </label>
+      <button type="submit">Buscar</button>
+    </form>
+    @if (vm$ | async; as vm) {
+      @if (vm.loading) { <app-inline-feedback variant="neutral">Carregando contas de jogadores...</app-inline-feedback> }
+      @else if (vm.error) { <app-inline-feedback variant="error">{{ vm.error }}</app-inline-feedback> }
+      @else if (vm.items.length === 0) { <app-inline-feedback variant="neutral">Nenhuma conta de jogador encontrada.</app-inline-feedback> }
+      @else {
+        <p class="accounts__count">{{ vm.count }} conta{{ vm.count === 1 ? '' : 's' }} encontrada{{ vm.count === 1 ? '' : 's' }}.</p>
+        <div class="accounts__table-wrap"><table><thead><tr><th>Jogador</th><th>Status</th><th>Identidades</th><th>Profile</th><th>Membership</th><th>Atualizado</th></tr></thead>
+          <tbody>@for (item of vm.items; track item.id) { <tr>
+            <td class="accounts__player"><strong>{{ item.displayName || 'Sem nome' }}</strong><small [title]="item.id">{{ compactIdentifier(item.id) }}</small><a [routerLink]="['/player-accounts', item.id]">Detalhes</a></td>
+            <td><app-status-badge [label]="item.status" [tone]="item.status === 'active' ? 'success' : 'danger'" /></td>
+            <td class="accounts__identities"><span>{{ item.identities.email.email || 'Email não vinculado' }}</span><small [title]="item.identities.steam.steamid64 || null">{{ item.identities.steam.steamid64 ? compactIdentifier(item.identities.steam.steamid64) : 'Steam não vinculada' }}</small></td>
+            <td>{{ item.profile.exists ? (item.profile.visibility || 'Sem visibilidade') : 'Não criado' }}</td>
+            <td>{{ item.membership.exists ? item.membership.status : 'Sem membership' }}</td>
+            <td class="accounts__updated"><span>{{ item.updatedAt | date:'dd/MM/yyyy' }}</span><small>{{ item.updatedAt | date:'HH:mm' }}</small></td>
+          </tr> }</tbody></table></div>
+      }
+    }
+  </section>
+</div>

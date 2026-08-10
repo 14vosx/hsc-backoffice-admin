@@ -97,6 +97,16 @@ export const routes: Routes = [
         title: 'Usuários | HSC Backoffice',
       },
       {
+        path: 'player-accounts',
+        loadComponent: () => import('./features/player-accounts/pages/player-accounts-list-page/player-accounts-list-page.component').then((m) => m.PlayerAccountsListPageComponent),
+        title: 'Player Accounts | HSC Backoffice',
+      },
+      {
+        path: 'player-accounts/:id',
+        loadComponent: () => import('./features/player-accounts/pages/player-account-detail-page/player-account-detail-page.component').then((m) => m.PlayerAccountDetailPageComponent),
+        title: 'Detalhe da conta | HSC Backoffice',
+      },
+      {
         path: 'events',
         redirectTo: 'dashboard',
         pathMatch: 'full',
