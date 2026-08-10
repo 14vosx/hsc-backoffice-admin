@@ -12,7 +12,7 @@ export const routes: Routes = [
     title: 'Login | HSC Backoffice',
   },
   {
-    path: 'auth/callback',
+    path: 'login/callback',
     loadComponent: () =>
       import('./features/auth/pages/auth-callback-page/auth-callback-page.component').then(
         (m) => m.AuthCallbackPageComponent,

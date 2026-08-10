@@ -28,6 +28,7 @@ function getAllTsFiles(dirPath: string): string[] {
 
 describe('Architecture Boundaries — Lego Angular', () => {
   const appRoot = path.resolve(__dirname, '..');
+  const srcRoot = path.resolve(appRoot, '..');
 
   it('application TypeScript files should not contain explicit any types', () => {
     const typeScriptFiles = getAllTsFiles(appRoot).filter((file) => file.endsWith('.ts'));
@@ -212,13 +213,77 @@ describe('Architecture Boundaries — Lego Angular', () => {
     }
   });
 
-  it('shared/components should not import Angular Material', () => {
-    const sharedComponentFiles = getAllTsFiles(path.join(appRoot, 'shared', 'components')).filter((f) => f.endsWith('.ts'));
+  it('application source should not import Angular Material', () => {
+    const typeScriptFiles = getAllTsFiles(appRoot).filter((file) => file.endsWith('.ts'));
+    const materialImports: string[] = [];
 
-    for (const file of sharedComponentFiles) {
+    for (const file of typeScriptFiles) {
+      const sourceFile = ts.createSourceFile(
+        file,
+        fs.readFileSync(file, 'utf-8'),
+        ts.ScriptTarget.Latest,
+        true,
+        ts.ScriptKind.TS,
+      );
+
+      const inspectModulePath = (modulePath: ts.Expression | undefined): void => {
+        if (
+          modulePath &&
+          ts.isStringLiteralLike(modulePath) &&
+          (modulePath.text === '@angular/material' || modulePath.text.startsWith('@angular/material/'))
+        ) {
+          const { line, character } = sourceFile.getLineAndCharacterOfPosition(modulePath.getStart(sourceFile));
+          materialImports.push(`${file}:${line + 1}:${character + 1}`);
+        }
+      };
+
+      const visit = (node: ts.Node): void => {
+        if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
+          inspectModulePath(node.moduleSpecifier);
+        } else if (
+          ts.isImportEqualsDeclaration(node) &&
+          ts.isExternalModuleReference(node.moduleReference)
+        ) {
+          inspectModulePath(node.moduleReference.expression);
+        } else if (
+          ts.isCallExpression(node) &&
+          (node.expression.kind === ts.SyntaxKind.ImportKeyword ||
+            (ts.isIdentifier(node.expression) && node.expression.text === 'require'))
+        ) {
+          inspectModulePath(node.arguments[0]);
+        }
+        ts.forEachChild(node, visit);
+      };
+
+      visit(sourceFile);
+    }
+
+    expect(materialImports, `Angular Material imports found: ${materialImports.join(', ')}`).toEqual([]);
+  });
+
+  it('application templates should not use Angular Material syntax', () => {
+    const templateFiles = getAllTsFiles(appRoot).filter((file) => file.endsWith('.html'));
+    const materialTemplatePattern = /<mat-|\bmat[A-Z][\w-]*\b|\bmat-[\w-]+\b/;
+
+    for (const file of templateFiles) {
       const content = fs.readFileSync(file, 'utf-8');
-      const hasMaterialImport = /from\s+['"]@angular\/material(?:\/|['"])/.test(content);
-      expect(hasMaterialImport, `Shared component file ${file} should not import Angular Material`).toBe(false);
+      expect(
+        materialTemplatePattern.test(content),
+        `Application template ${file} should not use Angular Material elements or directives`,
+      ).toBe(false);
+    }
+  });
+
+  it('application styles should not use Angular Material APIs or tokens', () => {
+    const styleFiles = getAllTsFiles(srcRoot).filter((file) => file.endsWith('.scss'));
+    const materialStylePattern = /@angular\/material|--mat-[\w-]+|@include\s+mat\.|\bmat\.(?:define-|all-component|theme|typography|density)|\bmat\.\$/;
+
+    for (const file of styleFiles) {
+      const content = fs.readFileSync(file, 'utf-8');
+      expect(
+        materialStylePattern.test(content),
+        `Application stylesheet ${file} should not use Angular Material APIs or tokens`,
+      ).toBe(false);
     }
   });
 
@@ -304,16 +369,6 @@ describe('Architecture Boundaries — Lego Angular', () => {
     }
   });
 
-  it('layout should not import Angular Material', () => {
-    const layoutFiles = getAllTsFiles(path.join(appRoot, 'layout')).filter((f) => f.endsWith('.ts'));
-
-    for (const file of layoutFiles) {
-      const content = fs.readFileSync(file, 'utf-8');
-      const hasMaterialImport = /from\s+['"]@angular\/material(?:\/|['"])/.test(content);
-      expect(hasMaterialImport, `Layout file ${file} should not import Angular Material`).toBe(false);
-    }
-  });
-
   it('layout should only import Angular CDK from @angular/cdk/a11y', () => {
     const layoutFiles = getAllTsFiles(path.join(appRoot, 'layout')).filter((f) => f.endsWith('.ts'));
 
@@ -324,55 +379,6 @@ describe('Architecture Boundaries — Lego Angular', () => {
       for (const cdkImport of cdkImports) {
         expect(cdkImport[1], `Layout file ${file} uses a disallowed Angular CDK entrypoint`).toBe('@angular/cdk/a11y');
       }
-    }
-  });
-
-  it('shared/state should not import Angular Material', () => {
-    const sharedStateFiles = getAllTsFiles(path.join(appRoot, 'shared', 'state')).filter((f) => f.endsWith('.ts'));
-
-    for (const file of sharedStateFiles) {
-      const content = fs.readFileSync(file, 'utf-8');
-      const hasMaterialImport = /from\s+['"]@angular\/material(?:\/|['"])/.test(content);
-      expect(hasMaterialImport, `Shared state file ${file} should not import Angular Material`).toBe(false);
-    }
-  });
-
-  const featuresRoot = path.join(appRoot, 'features');
-
-  it('features should not import Angular Material', () => {
-    const files = getAllTsFiles(featuresRoot).filter((file) => file.endsWith('.ts'));
-    for (const file of files) {
-      const content = fs.readFileSync(file, 'utf-8');
-      expect(
-        /from\s+['"]@angular\/material(?:\/|['"])/.test(content),
-        `Feature file ${file} should not import Angular Material`,
-      ).toBe(false);
-    }
-  });
-
-  it('features should not contain Angular Material templates', () => {
-    const materialTemplatePattern = /<mat-|\bmat-(?:button|flat-button|stroked-button|raised-button|icon-button)\b/;
-
-    const files = getAllTsFiles(featuresRoot).filter(
-      (file) => file.endsWith('.html') || file.endsWith('.ts'),
-    );
-    for (const file of files) {
-      const content = fs.readFileSync(file, 'utf-8');
-      expect(
-        materialTemplatePattern.test(content),
-        `Feature template ${file} should not use Angular Material elements or directives`,
-      ).toBe(false);
-    }
-  });
-
-  it('feature styles should not use Material system tokens', () => {
-    const files = getAllTsFiles(featuresRoot).filter((file) => file.endsWith('.scss'));
-    for (const file of files) {
-      const content = fs.readFileSync(file, 'utf-8');
-      expect(
-        content.includes('--mat-sys-'),
-        `Feature stylesheet ${file} should not use --mat-sys-* tokens`,
-      ).toBe(false);
     }
   });
 
