@@ -1,139 +1,71 @@
 <section class="seasons-form">
-  @if (errorMessage) {
-    <hsc-page-feedback variant="error">
-      {{ errorMessage }}
-    </hsc-page-feedback>
+  @if (errorMessage()) {
+    <app-inline-feedback variant="error">{{ errorMessage() }}</app-inline-feedback>
+  }
+  @if (isClosed()) {
+    <app-inline-feedback variant="warning">Seasons fechadas são somente leitura.</app-inline-feedback>
   }
 
-  <form class="seasons-form__form" [formGroup]="form" (ngSubmit)="onSubmit()">
-    @if (isClosed) {
-      <hsc-page-feedback variant="neutral">
-        Seasons fechadas não podem ser alteradas.
-      </hsc-page-feedback>
-    }
-
-    <div class="seasons-form__identity-grid">
-      <mat-form-field appearance="outline">
-        <mat-label>Slug</mat-label>
-        <input matInput type="text" formControlName="slug" [readonly]="mode === 'edit'" />
-        @if (form.controls.slug.hasError('required')) {
-          <mat-error>Slug é obrigatório.</mat-error>
+  <form class="seasons-form__form" novalidate (submit)="onSubmit($event)">
+    <div class="seasons-form__grid">
+      <div class="seasons-form__field">
+        <label for="season-slug">Slug</label>
+        <input id="season-slug" type="text" [formField]="seasonForm.slug" />
+        @if (mode() === 'edit') { <p class="seasons-form__hint">Slug somente leitura.</p> }
+        @if (seasonForm.slug().touched() && seasonForm.slug().errors().length) {
+          <p class="seasons-form__error" role="alert">{{ seasonForm.slug().errors()[0].message }}</p>
         }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Nome</mat-label>
-        <input matInput type="text" formControlName="name" />
-        @if (form.controls.name.hasError('required')) {
-          <mat-error>Nome da season é obrigatório.</mat-error>
+      </div>
+      <div class="seasons-form__field">
+        <label for="season-name">Nome</label>
+        <input id="season-name" type="text" [formField]="seasonForm.name" />
+        @if (seasonForm.name().touched() && seasonForm.name().errors().length) {
+          <p class="seasons-form__error" role="alert">{{ seasonForm.name().errors()[0].message }}</p>
         }
-      </mat-form-field>
+      </div>
+      <div class="seasons-form__field seasons-form__field--full">
+        <label for="season-description">Descrição</label>
+        <textarea id="season-description" rows="4" [formField]="seasonForm.description"></textarea>
+      </div>
     </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Narrativa / descrição</mat-label>
-      <textarea matInput rows="6" formControlName="description"></textarea>
-    </mat-form-field>
-
-    <section class="seasons-form__cover">
-      <mat-form-field appearance="outline">
-        <mat-label>URL da capa</mat-label>
-        <input matInput type="url" formControlName="cover_image_url" />
-        <mat-hint>Opcional. Uploads válidos preenchem este campo automaticamente.</mat-hint>
-      </mat-form-field>
-
-      <div class="seasons-form__cover-tools">
-        <label class="seasons-form__file-control">
-          <span>Enviar capa</span>
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            [disabled]="submitting || uploadingImage() || isClosed"
-            (change)="onCoverFileSelected($event)"
-          />
-        </label>
-
-        <button
-          type="button"
-          mat-stroked-button
-          [disabled]="submitting || uploadingImage() || isClosed || !coverImageUrl"
-          (click)="clearCoverImage()"
-        >
-          Limpar capa
-        </button>
+    <section class="seasons-form__image" aria-labelledby="season-cover-title">
+      <h3 id="season-cover-title">Capa</h3>
+      <div class="seasons-form__field">
+        <label for="season-cover-url">URL da capa</label>
+        <input id="season-cover-url" type="url" [formField]="seasonForm.coverImageUrl" />
       </div>
-
-      @if (uploadingImage()) {
-        <p class="seasons-form__upload-status">Enviando capa...</p>
-      }
-
-      @if (uploadErrorMessage()) {
-        <p class="seasons-form__upload-error">{{ uploadErrorMessage() }}</p>
-      }
-
-      @if (coverImageUrl; as currentCoverImageUrl) {
-        <figure class="seasons-form__preview">
-          <img [src]="currentCoverImageUrl" alt="Preview da capa da season" />
-        </figure>
+      <div class="seasons-form__image-tools">
+        <label class="seasons-form__file-control">
+          <span>Enviar imagem</span>
+          <input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isLocked()" (change)="onCoverFileSelected($event)" />
+        </label>
+        <button type="button" class="seasons-form__button seasons-form__button--secondary" [disabled]="isLocked() || !editModel().coverImageUrl" (click)="clearCoverImage()">Limpar capa</button>
+      </div>
+      @if (uploadingImage()) { <p class="seasons-form__hint">Enviando imagem...</p> }
+      @if (uploadErrorMessage()) { <p class="seasons-form__error" role="alert">{{ uploadErrorMessage() }}</p> }
+      @if (editModel().coverImageUrl; as coverImageUrl) {
+        <figure class="seasons-form__preview"><img [src]="coverImageUrl" alt="Prévia da capa da season" /></figure>
       }
     </section>
 
-    <div class="seasons-form__datetime-grid">
-      <mat-form-field appearance="outline">
-        <mat-label>Início</mat-label>
-        <input matInput [matDatepicker]="startPicker" formControlName="startDate" />
-        <mat-hint>Use o horário local do operador. A API receberá UTC.</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="startPicker" />
-        <mat-datepicker #startPicker />
-        @if (form.controls.startDate.hasError('required')) {
-          <mat-error>Data de início é obrigatória.</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Horário de início</mat-label>
-        <input matInput type="text" placeholder="00:00" formControlName="startTime" />
-        @if (form.controls.startTime.hasError('required')) {
-          <mat-error>Horário de início é obrigatório.</mat-error>
-        } @else if (form.controls.startTime.hasError('pattern')) {
-          <mat-error>Use HH:mm entre 00:00 e 23:59.</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Fim</mat-label>
-        <input matInput [matDatepicker]="endPicker" formControlName="endDate" />
-        <mat-hint>Use o horário local do operador. A API receberá UTC.</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="endPicker" />
-        <mat-datepicker #endPicker />
-        @if (form.controls.endDate.hasError('required')) {
-          <mat-error>Data de fim é obrigatória.</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Horário de fim</mat-label>
-        <input matInput type="text" placeholder="23:59" formControlName="endTime" />
-        @if (form.controls.endTime.hasError('required')) {
-          <mat-error>Horário de fim é obrigatório.</mat-error>
-        } @else if (form.controls.endTime.hasError('pattern')) {
-          <mat-error>Use HH:mm entre 00:00 e 23:59.</mat-error>
-        }
-      </mat-form-field>
-    </div>
-
-    @if (hasDateRangeError) {
-      <div class="seasons-form__error">A data de fim deve ser depois da data de início.</div>
-    }
+    <fieldset class="seasons-form__dates">
+      <legend>Janela competitiva</legend>
+      <p id="season-datetime-hint" class="seasons-form__hint">Informe datas e horários locais; o envio para a API será convertido para UTC.</p>
+      <div class="seasons-form__date-group">
+        <div class="seasons-form__field"><label for="season-start-date">Data inicial</label><input id="season-start-date" type="date" [formField]="seasonForm.startDate" aria-describedby="season-datetime-hint season-datetime-error" /></div>
+        <div class="seasons-form__field"><label for="season-start-time">Horário inicial</label><input id="season-start-time" type="time" [formField]="seasonForm.startTime" aria-describedby="season-datetime-hint season-datetime-error" /></div>
+        <div class="seasons-form__field"><label for="season-end-date">Data final</label><input id="season-end-date" type="date" [formField]="seasonForm.endDate" aria-describedby="season-datetime-hint season-datetime-error" /></div>
+        <div class="seasons-form__field"><label for="season-end-time">Horário final</label><input id="season-end-time" type="time" [formField]="seasonForm.endTime" aria-describedby="season-datetime-hint season-datetime-error" /></div>
+      </div>
+      @if (seasonForm().touched() && seasonForm().invalid()) {
+        <p id="season-datetime-error" class="seasons-form__error" role="alert">Preencha uma janela válida; o término deve ser posterior ao início.</p>
+      }
+    </fieldset>
 
     <div class="seasons-form__actions">
-      <button mat-button type="button" [disabled]="submitting" (click)="onCancel()">
-        Cancelar
-      </button>
-
-      <button mat-flat-button type="submit" [disabled]="isSubmitDisabled">
-        {{ submitLabel }}
-      </button>
+      <button type="button" class="seasons-form__button seasons-form__button--quiet" [disabled]="submitting()" (click)="cancel.emit()">Cancelar</button>
+      <button type="submit" class="seasons-form__button seasons-form__button--primary" [disabled]="isLocked()">{{ submitLabel() }}</button>
     </div>
   </form>
 </section>

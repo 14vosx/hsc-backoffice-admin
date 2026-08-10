@@ -1,17 +1,18 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
-import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
+import { PageContainerComponent } from '../../../../layout/page-container/page-container.component';
 import { AuthSessionStore } from '../../../../core/auth/auth-session.store';
-import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
-import { NewsAdminStore } from '../../../news/data-access/news-admin.store';
+import { UiCard } from '../../../../shared/components/card/card';
+import { InlineFeedback } from '../../../../shared/components/inline-feedback/inline-feedback';
+import type { AdminNews } from '../../../news/domain/admin-news.model';
+import { NewsAdminStore } from '../../../news/state/news-admin.store';
 import { SeasonsCompetitiveSummaryApiService } from '../../../seasons/data-access/seasons-competitive-summary-api.service';
-import { SeasonsCompetitiveIndexResponse } from '../../../seasons/data-access/seasons-competitive-summary.models';
-import { SeasonsAdminStore } from '../../../seasons/data-access/seasons-admin.store';
+import type { AdminSeason } from '../../../seasons/domain/admin-season.model';
+import type { SeasonsCompetitiveIndex } from '../../../seasons/domain/season-competitive.model';
+import { SeasonsAdminStore } from '../../../seasons/state/seasons-admin.store';
 
 @Component({
   selector: 'hsc-dashboard-page',
@@ -19,10 +20,9 @@ import { SeasonsAdminStore } from '../../../seasons/data-access/seasons-admin.st
   imports: [
     DatePipe,
     RouterLink,
-    MatButtonModule,
-    MatCardModule,
     PageContainerComponent,
-    PageFeedbackComponent,
+    UiCard,
+    InlineFeedback,
   ],
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.scss',
@@ -34,7 +34,7 @@ export class DashboardPageComponent implements OnInit {
   protected readonly seasonsStore = inject(SeasonsAdminStore);
   private readonly competitiveSummaryApi = inject(SeasonsCompetitiveSummaryApiService);
 
-  protected readonly competitiveIndex = signal<SeasonsCompetitiveIndexResponse | null>(null);
+  protected readonly competitiveIndex = signal<SeasonsCompetitiveIndex | null>(null);
   protected readonly competitiveLoading = signal(false);
   protected readonly competitiveError = signal<string | null>(null);
 
@@ -44,32 +44,34 @@ export class DashboardPageComponent implements OnInit {
     return user?.name || user?.email || 'operador';
   });
 
-  protected readonly activeOrLatestSeason = computed(() => {
+  protected readonly activeOrLatestSeason = computed<AdminSeason | null>(() => {
     const items = this.seasonsStore.items();
 
     if (items.length === 0) {
       return null;
     }
 
-    const active = items
-      .filter((item) => this.normalizedStatus(item.status) === 'active')
-      .sort((a, b) => this.timestamp(b.updated_at) - this.timestamp(a.updated_at))[0];
+    const active = this.latestBy(
+      items.filter((item) => item.status === 'active'),
+      (item) => item.updatedAt,
+    );
 
-    return active ?? this.latestByUpdatedAt(items);
+    return active ?? this.latestBy(items, (item) => item.updatedAt);
   });
 
-  protected readonly featuredNews = computed(() => {
+  protected readonly featuredNews = computed<AdminNews | null>(() => {
     const items = this.newsStore.items();
 
     if (items.length === 0) {
       return null;
     }
 
-    const published = items
-      .filter((item) => this.normalizedStatus(item.status) === 'published' && !!item.published_at)
-      .sort((a, b) => this.timestamp(b.published_at) - this.timestamp(a.published_at))[0];
+    const published = this.latestBy(
+      items.filter((item) => item.status === 'published' && item.publishedAt !== null),
+      (item) => item.publishedAt,
+    );
 
-    return published ?? this.latestByUpdatedAt(items);
+    return published ?? this.latestBy(items, (item) => item.updatedAt);
   });
 
   protected readonly activeOrLatestSeasonCompetitiveSummary = computed(() => {
@@ -110,12 +112,10 @@ export class DashboardPageComponent implements OnInit {
     }
   }
 
-  private latestByUpdatedAt<T extends { updated_at: string }>(items: T[]): T | null {
-    return [...items].sort((a, b) => this.timestamp(b.updated_at) - this.timestamp(a.updated_at))[0] ?? null;
-  }
-
-  private normalizedStatus(status: string): string {
-    return String(status).toLowerCase();
+  private latestBy<T>(items: readonly T[], getTimestamp: (item: T) => string | null): T | null {
+    return [...items].sort(
+      (a, b) => this.timestamp(getTimestamp(b)) - this.timestamp(getTimestamp(a)),
+    )[0] ?? null;
   }
 
   private timestamp(value: string | null): number {

@@ -1,0 +1,76 @@
+.app-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--space-4);
+  background: var(--color-surface-base);
+  border-right: 1px solid var(--color-border-subtle);
+}
+
+.app-sidebar--mobile {
+  background: var(--color-bg-elevated);
+  border-right: none;
+}
+
+.app-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  padding: 0 var(--space-2);
+}
+
+.app-sidebar__brand-badge {
+  color: var(--color-accent-cyan);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.app-sidebar__brand-title {
+  color: var(--color-text-main);
+}
+
+.app-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.app-sidebar__title {
+  color: var(--color-text-main);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.app-sidebar__close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.app-sidebar__close-btn:hover {
+  color: var(--color-text-main);
+  background: var(--color-surface-subtle);
+}
+
+.app-sidebar__close-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.app-sidebar__content {
+  flex: 1;
+  overflow-y: auto;
+}

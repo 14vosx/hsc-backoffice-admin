@@ -6,7 +6,7 @@
 .news-edit-page__actions-card,
 .news-edit-page__form-card,
 .news-edit-page__metadata-card {
-  background: var(--mat-sys-surface);
+  display: block;
 }
 
 .news-edit-page__actions,
@@ -17,11 +17,21 @@
 }
 
 .news-edit-page__danger-action {
-  color: var(--mat-sys-error);
+  color: var(--color-status-error);
 }
 
-.news-edit-page__metadata-card mat-card-header {
-  padding-bottom: 16px;
+.news-edit-page__card-header {
+  padding-bottom: var(--space-4);
+}
+
+.news-edit-page__card-header h2,
+.news-edit-page__card-header p {
+  margin: 0;
+}
+
+.news-edit-page__card-header p {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
 }
 
 .news-edit-page__metadata {
@@ -34,26 +44,56 @@
 .news-edit-page__metadata div {
   display: grid;
   gap: 4px;
-  border: 1px solid var(--mat-sys-outline-variant);
-  border-radius: 8px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
   padding: 12px;
-  background: var(--mat-sys-surface-container-low);
+  background: var(--color-surface-subtle);
 }
 
 .news-edit-page__metadata dt {
-  color: var(--mat-sys-on-surface-variant);
+  color: var(--color-text-muted);
   font-size: 14px;
 }
 
 .news-edit-page__metadata dd {
   margin: 0;
-  color: var(--mat-sys-on-surface);
+  color: var(--color-text-main);
   font-weight: 600;
   overflow-wrap: anywhere;
 }
 
 .news-edit-page__metadata code {
   font-weight: 500;
+}
+
+.news-edit-page__action {
+  min-height: 40px;
+  padding: var(--space-2) var(--space-4);
+  color: var(--color-text-main);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.news-edit-page__action--primary {
+  color: var(--color-bg-base);
+  background: var(--color-accent-cyan);
+  border-color: var(--color-accent-cyan-border);
+}
+
+.news-edit-page__action--secondary {
+  border-color: var(--color-border-default);
+}
+
+.news-edit-page__action--quiet:hover,
+.news-edit-page__action--secondary:hover {
+  background: var(--color-surface-subtle);
+}
+
+.news-edit-page__action:disabled {
+  cursor: default;
+  opacity: 0.5;
 }
 
 @media (max-width: 1080px) {

@@ -1,59 +1,19 @@
-<hsc-page-container
-  title="Seasons"
-  subtitle="Acompanhe os ciclos competitivos oficiais do servidor HSC."
->
+<hsc-page-container title="Seasons" subtitle="Acompanhe os ciclos competitivos oficiais do servidor HSC.">
   <section class="seasons-list-page">
-    <mat-card class="seasons-list-page__card" appearance="outlined">
-      <mat-card-header>
-        <div class="seasons-list-page__card-header">
-          <div>
-            <mat-card-title>Ciclos competitivos</mat-card-title>
-            <mat-card-subtitle>
-              Gerencie drafts, ativações e encerramentos das seasons oficiais.
-            </mat-card-subtitle>
-          </div>
-
-          <button type="button" mat-flat-button (click)="goToCreate()">
-            Nova season
-          </button>
-        </div>
-      </mat-card-header>
-
-      <mat-card-content>
+    <app-ui-card>
+      <header class="seasons-list-page__header"><div><h2>Ciclos competitivos</h2><p>Gerencie drafts, ativações e encerramentos das seasons oficiais.</p></div><button type="button" class="seasons-list-page__action seasons-list-page__action--primary" (click)="goToCreate()">Nova season</button></header>
+      <div class="seasons-list-page__content">
+        @if (activeMutation()) { <app-inline-feedback variant="neutral">Processando ação administrativa...</app-inline-feedback> }
         @if (error()) {
-          <hsc-page-feedback variant="error">
-            <p>{{ error() }}</p>
-            <button type="button" mat-button (click)="load()">
-              Tentar novamente
-            </button>
-          </hsc-page-feedback>
-        }
-
-        @if (loading() && items().length === 0) {
-          <hsc-page-feedback variant="neutral">
-            Carregando seasons...
-          </hsc-page-feedback>
+          <app-inline-feedback variant="error"><p>{{ error() }}</p><button type="button" class="seasons-list-page__action" (click)="load()">Tentar novamente</button></app-inline-feedback>
+        } @else if (loading() && items().length === 0) {
+          <app-inline-feedback variant="neutral">Carregando seasons...</app-inline-feedback>
         } @else if (isEmpty()) {
-          <hsc-page-feedback variant="neutral">
-            <p>Nenhuma season cadastrada até o momento.</p>
-            <p class="seasons-list-page__hint">
-              Quando houver ciclos competitivos oficiais, eles aparecerão aqui para
-              acompanhamento administrativo.
-            </p>
-            <button type="button" mat-flat-button (click)="goToCreate()">
-              Criar primeira season
-            </button>
-          </hsc-page-feedback>
+          <app-inline-feedback variant="neutral"><p>Nenhuma season cadastrada até o momento.</p><button type="button" class="seasons-list-page__action seasons-list-page__action--primary" (click)="goToCreate()">Criar primeira season</button></app-inline-feedback>
         } @else {
-          <hsc-seasons-table
-            [items]="items()"
-            [activeMutation]="activeMutation()"
-            (edit)="goToEdit($event)"
-            (activate)="activateSeason($event)"
-            (close)="closeSeason($event)"
-          />
+          <hsc-seasons-table [items]="items()" [actionsDisabled]="actionsDisabled()" (edit)="goToEdit($event)" (activate)="activateSeason($event)" (close)="closeSeason($event)" />
         }
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </app-ui-card>
   </section>
 </hsc-page-container>

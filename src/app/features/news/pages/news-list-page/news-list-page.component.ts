@@ -1,24 +1,22 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 
-import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
-import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
-import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
-import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
-import { NewsAdminStore } from '../../data-access/news-admin.store';
+import { PageContainerComponent } from '../../../../layout/page-container/page-container.component';
+import { UiCard } from '../../../../shared/components/card/card';
+import { InlineFeedback } from '../../../../shared/components/inline-feedback/inline-feedback';
+import { ConfirmationService } from '../../../../shared/state/confirmation.service';
+import { UiFeedbackService } from '../../../../shared/state/ui-feedback.service';
+import { NewsAdminStore } from '../../state/news-admin.store';
 import { NewsTableComponent } from '../../components/news-table/news-table.component';
 
 @Component({
   selector: 'hsc-news-list-page',
   standalone: true,
   imports: [
-    MatButtonModule,
-    MatCardModule,
     PageContainerComponent,
     NewsTableComponent,
-    PageFeedbackComponent,
+    UiCard,
+    InlineFeedback,
   ],
   templateUrl: './news-list-page.component.html',
   styleUrl: './news-list-page.component.scss',

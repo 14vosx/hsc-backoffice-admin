@@ -1,0 +1,105 @@
+:root {
+  /* Primitive HSC Color Palette (Preserved) */
+  --hsc-dark-04: #05080b;
+  --hsc-dark-06: #080c10;
+  --hsc-dark-08: #0b1015;
+  --hsc-dark-10: #10161c;
+  --hsc-dark-12: #141b22;
+  --hsc-dark-15: #1a232d;
+  --hsc-cyan-70: #7fe2ff;
+  --hsc-cyan-80: #32d1ff;
+  --hsc-cyan-90: #1da7f2;
+  --hsc-cyan-95: #0e7fd1;
+  --hsc-purple-70: #c9adff;
+  --hsc-purple-80: #9f63ff;
+  --hsc-lime-70: #d8f89a;
+  --hsc-lime-80: #b2d15f;
+  --hsc-warm-80: #f6c85f;
+  --hsc-white: #f3f8fb;
+  --hsc-grey-50: #6f7d89;
+  --hsc-grey-60: #8896a2;
+  --hsc-grey-70: #a2afb8;
+  --hsc-grey-80: #c1cbd2;
+  --hsc-grey-90: #dce3e8;
+
+  /* Semantic Tokens — Lego Angular Foundation */
+  --color-bg-base: var(--hsc-dark-04);
+  --color-bg-elevated: var(--hsc-dark-08);
+  --color-surface-base: var(--hsc-dark-10);
+  --color-surface-subtle: var(--hsc-dark-12);
+  --color-surface-strong: var(--hsc-dark-15);
+  --color-border-subtle: rgba(193, 203, 210, 0.08);
+  --color-border-default: rgba(193, 203, 210, 0.16);
+  --color-border-strong: rgba(193, 203, 210, 0.28);
+  --color-border-focus: var(--hsc-cyan-80);
+
+  /* Typography Colors */
+  --color-text-main: var(--hsc-white);
+  --color-text-muted: var(--hsc-grey-70);
+  --color-text-subtle: var(--hsc-grey-50);
+  --color-text-brand: var(--hsc-cyan-70);
+
+  /* Action & Accent Colors */
+  --color-accent-cyan: var(--hsc-cyan-80);
+  --color-accent-cyan-soft: rgba(29, 167, 242, 0.14);
+  --color-accent-cyan-border: rgba(50, 209, 255, 0.34);
+  --color-accent-purple: var(--hsc-purple-80);
+  --color-accent-purple-strong: var(--hsc-purple-70);
+  --color-accent-purple-soft: rgba(159, 99, 255, 0.12);
+  --color-accent-purple-border: rgba(159, 99, 255, 0.42);
+  --color-accent-lime: var(--hsc-lime-80);
+  --color-accent-lime-strong: var(--hsc-lime-70);
+  --color-accent-lime-soft: rgba(178, 209, 95, 0.12);
+  --color-accent-lime-border: rgba(178, 209, 95, 0.45);
+  --color-accent-warm: var(--hsc-warm-80);
+  --color-accent-warm-soft: rgba(246, 200, 95, 0.14);
+  --color-accent-warm-border: rgba(246, 200, 95, 0.42);
+
+  --color-primary: var(--hsc-cyan-90);
+  --color-primary-strong: var(--hsc-cyan-80);
+  --color-status-active: var(--hsc-lime-80);
+  --color-status-closed: var(--hsc-grey-60);
+  --color-status-error: #ff5c5c;
+
+  /* Spacing Scale */
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-soft: 0 18px 60px rgba(0, 0, 0, 0.32);
+  --shadow-panel: 0 14px 36px rgba(0, 0, 0, 0.24);
+  --shadow-drawer: -8px 0 32px rgba(0, 0, 0, 0.5);
+
+  /* Layout Containers & Dimensions */
+  --page-max: 1200px;
+  --sidebar-width: 260px;
+  --header-height: 64px;
+
+  /* Z-Index Layers */
+  --z-header: 100;
+  --z-drawer-backdrop: 200;
+  --z-drawer-modal: 210;
+  --z-skip-link: 300;
+
+  /* Fonts */
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  /* Transitions & Motion */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}

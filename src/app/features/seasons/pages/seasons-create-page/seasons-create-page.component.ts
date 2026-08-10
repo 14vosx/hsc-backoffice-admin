@@ -1,16 +1,15 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 
-import { PageContainerComponent } from '../../../../core/layout/page-container/page-container.component';
-import { SeasonsFormComponent } from '../../components/seasons-form/seasons-form.component';
-import { SeasonFormValue } from '../../data-access/seasons-admin.models';
-import { SeasonsAdminStore } from '../../data-access/seasons-admin.store';
+import { PageContainerComponent } from '../../../../layout/page-container/page-container.component';
+import { UiCard } from '../../../../shared/components/card/card';
+import { SeasonsFormComponent, type SeasonFormCommand } from '../../components/seasons-form/seasons-form.component';
+import { SeasonsAdminStore } from '../../state/seasons-admin.store';
 
 @Component({
   selector: 'hsc-seasons-create-page',
   standalone: true,
-  imports: [MatCardModule, PageContainerComponent, SeasonsFormComponent],
+  imports: [PageContainerComponent, SeasonsFormComponent, UiCard],
   templateUrl: './seasons-create-page.component.html',
   styleUrl: './seasons-create-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,9 +25,10 @@ export class SeasonsCreatePageComponent implements OnInit {
     this.store.resetError();
   }
 
-  async submit(value: SeasonFormValue): Promise<void> {
+  async submit(command: SeasonFormCommand): Promise<void> {
+    if (!('slug' in command)) return;
     try {
-      await this.store.create(value);
+      await this.store.create(command);
       await this.router.navigate(['/seasons']);
     } catch {
       // erro já refletido na store

@@ -1,132 +1,49 @@
 <section class="news-form">
-  @if (metadata) {
+  @if (initialValue(); as metadata) {
     <dl class="news-form__meta">
-      <div>
-        <dt>Status</dt>
-        <dd>{{ metadata.status }}</dd>
-      </div>
-      <div>
-        <dt>Slug</dt>
-        <dd><code>{{ metadata.slug }}</code></dd>
-      </div>
-      <div>
-        <dt>Publicado em</dt>
-        <dd>
-          @if (metadata.published_at) {
-            {{ metadata.published_at | date: 'dd/MM/yyyy HH:mm' }}
-          } @else {
-            —
-          }
-        </dd>
-      </div>
-      <div>
-        <dt>Criado em</dt>
-        <dd>
-          @if (metadata.created_at) {
-            {{ metadata.created_at | date: 'dd/MM/yyyy HH:mm' }}
-          } @else {
-            —
-          }
-        </dd>
-      </div>
-      <div>
-        <dt>Atualizado em</dt>
-        <dd>
-          @if (metadata.updated_at) {
-            {{ metadata.updated_at | date: 'dd/MM/yyyy HH:mm' }}
-          } @else {
-            —
-          }
-        </dd>
-      </div>
+      <div><dt>Status</dt><dd>{{ metadata.status }}</dd></div>
+      <div><dt>Slug</dt><dd><code>{{ metadata.slug }}</code></dd></div>
+      <div><dt>Publicado em</dt><dd>{{ metadata.publishedAt ? (metadata.publishedAt | date: 'dd/MM/yyyy HH:mm') : '—' }}</dd></div>
+      <div><dt>Criado em</dt><dd>{{ metadata.createdAt | date: 'dd/MM/yyyy HH:mm' }}</dd></div>
+      <div><dt>Atualizado em</dt><dd>{{ metadata.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</dd></div>
     </dl>
   }
+  @if (errorMessage()) { <app-inline-feedback variant="error">{{ errorMessage() }}</app-inline-feedback> }
 
-  @if (errorMessage) {
-    <hsc-page-feedback variant="error">
-      {{ errorMessage }}
-    </hsc-page-feedback>
-  }
-
-  <form class="news-form__form" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <mat-form-field appearance="outline">
-      <mat-label>Slug</mat-label>
-      <input matInput type="text" formControlName="slug" />
-      @if (isEditMode) {
-        <mat-hint>Slug somente leitura neste checkpoint.</mat-hint>
-      }
-      @if (form.controls.slug.touched && form.controls.slug.invalid) {
-        <mat-error>Slug é obrigatório.</mat-error>
-      }
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Título</mat-label>
-      <input matInput type="text" formControlName="title" />
-      @if (form.controls.title.touched && form.controls.title.invalid) {
-        <mat-error>Título é obrigatório.</mat-error>
-      }
-    </mat-form-field>
-
+  <form class="news-form__form" novalidate (submit)="onSubmit($event)">
+    <div class="news-form__field">
+      <label for="news-slug">Slug</label>
+      <input id="news-slug" type="text" [formField]="newsForm.slug" />
+      @if (mode() === 'edit') { <p class="news-form__hint">Slug somente leitura neste checkpoint.</p> }
+      @if (newsForm.slug().touched() && newsForm.slug().errors().length) { <p class="news-form__error" role="alert">{{ newsForm.slug().errors()[0].message }}</p> }
+    </div>
+    <div class="news-form__field">
+      <label for="news-title">Título</label>
+      <input id="news-title" type="text" [formField]="newsForm.title" />
+      @if (newsForm.title().touched() && newsForm.title().errors().length) { <p class="news-form__error" role="alert">{{ newsForm.title().errors()[0].message }}</p> }
+    </div>
     <section class="news-form__image">
-      <mat-form-field appearance="outline">
-        <mat-label>URL da imagem</mat-label>
-        <input matInput type="url" formControlName="image_url" />
-        <mat-hint>Opcional. Uploads válidos preenchem este campo automaticamente.</mat-hint>
-      </mat-form-field>
-
-      <div class="news-form__image-tools">
-        <label class="news-form__file-control">
-          <span>Enviar imagem</span>
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            [disabled]="submitting || uploadingImage()"
-            (change)="onImageFileSelected($event)"
-          />
-        </label>
-
-        <button
-          type="button"
-          mat-stroked-button
-          [disabled]="submitting || uploadingImage() || !imageUrl"
-          (click)="clearImage()"
-        >
-          Limpar imagem
-        </button>
+      <div class="news-form__field">
+        <label for="news-image-url">URL da imagem</label>
+        <input id="news-image-url" type="url" [formField]="newsForm.imageUrl" aria-describedby="news-image-url-hint" />
+        <p id="news-image-url-hint" class="news-form__hint">Opcional. Uploads válidos preenchem este campo automaticamente.</p>
       </div>
-
-      @if (uploadingImage()) {
-        <p class="news-form__upload-status">Enviando imagem...</p>
-      }
-
-      @if (uploadErrorMessage()) {
-        <p class="news-form__upload-error">{{ uploadErrorMessage() }}</p>
-      }
-
-      @if (imageUrl; as currentImageUrl) {
-        <figure class="news-form__preview">
-          <img [src]="currentImageUrl" alt="Preview da imagem da news" />
-        </figure>
-      }
+      <div class="news-form__image-tools">
+        <label class="news-form__file-control"><span>Enviar imagem</span><input type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isLocked()" (change)="onImageFileSelected($event)" /></label>
+        <button type="button" class="news-form__action news-form__action--secondary" [disabled]="isLocked() || !editModel().imageUrl" (click)="clearImage()">Limpar imagem</button>
+      </div>
+      @if (uploadingImage()) { <p class="news-form__upload-status">Enviando imagem...</p> }
+      @if (uploadErrorMessage()) { <p class="news-form__upload-error" role="alert">{{ uploadErrorMessage() }}</p> }
+      @if (editModel().imageUrl; as imageUrl) { <figure class="news-form__preview"><img [src]="imageUrl" alt="Preview da imagem da news" /></figure> }
     </section>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Conteúdo</mat-label>
-      <textarea matInput rows="14" formControlName="content"></textarea>
-      @if (form.controls.content.touched && form.controls.content.invalid) {
-        <mat-error>Conteúdo é obrigatório.</mat-error>
-      }
-    </mat-form-field>
-
+    <div class="news-form__field">
+      <label for="news-content">Conteúdo</label>
+      <textarea id="news-content" rows="14" [formField]="newsForm.content"></textarea>
+      @if (newsForm.content().touched() && newsForm.content().errors().length) { <p class="news-form__error" role="alert">{{ newsForm.content().errors()[0].message }}</p> }
+    </div>
     <div class="news-form__actions">
-      <button type="button" mat-button [disabled]="submitting" (click)="onCancel()">
-        Cancelar
-      </button>
-
-      <button type="submit" mat-flat-button [disabled]="submitting || uploadingImage()">
-        {{ submitting || uploadingImage() ? 'Processando...' : submitLabel }}
-      </button>
+      <button type="button" class="news-form__action news-form__action--quiet" [disabled]="submitting()" (click)="cancel.emit()">Cancelar</button>
+      <button type="submit" class="news-form__action news-form__action--primary" [disabled]="isLocked()">{{ submitLabel() }}</button>
     </div>
   </form>
 </section>

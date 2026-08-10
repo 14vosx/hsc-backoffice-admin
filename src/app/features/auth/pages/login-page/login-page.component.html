@@ -1,13 +1,13 @@
 <main class="login-page">
-  <mat-card class="login-page__card" appearance="outlined">
-    <mat-card-header>
-      <mat-card-title>HSC Backoffice Admin</mat-card-title>
-      <mat-card-subtitle>
+  <app-ui-card class="login-page__card">
+    <header class="login-page__header">
+      <h1>HSC Backoffice Admin</h1>
+      <p>
         Entre com seu email para receber um link mágico de acesso.
-      </mat-card-subtitle>
-    </mat-card-header>
+      </p>
+    </header>
 
-    <mat-card-content>
+    <div class="login-page__content">
       <div class="login-page__status">
         <p><strong>Status:</strong> {{ authSessionStore.status() }}</p>
 
@@ -24,28 +24,28 @@
         }
       </div>
 
-      <div class="login-page__form">
-        <mat-form-field appearance="outline">
-          <mat-label>Email</mat-label>
+      <form class="login-page__form" novalidate (submit)="submit($event)">
+        <div class="login-page__field">
+          <label for="email">Email</label>
           <input
-            matInput
             id="email"
             type="email"
             [value]="email()"
-            (input)="updateEmail(($any($event.target).value ?? '').toString())"
-            [disabled]="isRequestingLink() || isResolving()"
+            (input)="updateEmail($event)"
+            [disabled]="pending() || isResolving()"
             placeholder="admin@haxixesmokeclub.com"
             autocomplete="email"
+            [attr.aria-invalid]="requestError() ? 'true' : 'false'"
+            [attr.aria-describedby]="requestError() ? 'login-email-error' : null"
           />
-        </mat-form-field>
+        </div>
 
         <button
-          type="button"
-          mat-flat-button
-          (click)="handleRequestMagicLink()"
-          [disabled]="isRequestingLink() || isResolving()"
+          type="submit"
+          class="login-page__action login-page__action--primary"
+          [disabled]="pending() || isResolving()"
         >
-          @if (isRequestingLink()) {
+          @if (pending()) {
             Enviando link...
           } @else {
             Enviar link mágico
@@ -57,16 +57,16 @@
         }
 
         @if (requestError(); as error) {
-          <p class="login-page__error">{{ error }}</p>
+          <p id="login-email-error" class="login-page__error" role="alert">{{ error }}</p>
         }
-      </div>
+      </form>
 
       <div class="login-page__actions">
         <button
           type="button"
-          mat-stroked-button
+          class="login-page__action login-page__action--secondary"
           (click)="handleResolveCurrentSession()"
-          [disabled]="isRequestingLink() || isResolving()"
+          [disabled]="pending() || isResolving()"
         >
           @if (isResolving()) {
             Resolvendo sessão...
@@ -75,6 +75,6 @@
           }
         </button>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </app-ui-card>
 </main>

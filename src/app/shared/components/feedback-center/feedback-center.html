@@ -1,0 +1,13 @@
+@if (feedback.activeMessage(); as item) {
+  <div
+    class="feedback-center"
+    [class]="'feedback-center feedback-center--' + item.tone"
+    [attr.role]="item.tone === 'error' ? 'alert' : 'status'"
+    [attr.aria-live]="item.tone === 'error' ? 'assertive' : 'polite'"
+  >
+    <p class="feedback-center__message">{{ item.message }}</p>
+    <button type="button" class="feedback-center__close" (click)="dismiss()">
+      Fechar
+    </button>
+  </div>
+}

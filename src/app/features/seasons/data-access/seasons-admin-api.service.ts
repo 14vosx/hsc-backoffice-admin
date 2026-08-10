@@ -1,74 +1,66 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, map } from 'rxjs';
 
 import { API_BASE_URL } from '../../../core/config/api.config';
+import type {
+  AdminSeason,
+  AdminSeasonCreateResult,
+  AdminSeasonLifecycleResult,
+  AdminSeasonUpdateResult,
+  CreateAdminSeasonCommand,
+  UpdateAdminSeasonCommand,
+} from '../domain/admin-season.model';
 import {
-  AdminSeasonDetailResponse,
-  AdminSeasonLifecycleResponse,
-  AdminSeasonListResponse,
-  AdminSeasonListItem,
-  AdminSeasonUpdateResponse,
-  CreateSeasonPayload,
-  CreateSeasonResponse,
-  UpdateSeasonPayload,
-} from './seasons-admin.models';
+  parseSeasonCreateResult,
+  parseSeasonDetail,
+  parseSeasonLifecycleResult,
+  parseSeasonList,
+  parseSeasonUpdateResult,
+  toCreateSeasonPayload,
+  toUpdateSeasonPayload,
+} from './seasons-admin.contract';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class SeasonsAdminApiService {
   private readonly http = inject(HttpClient);
   private readonly seasonsEndpoint = `${API_BASE_URL}/admin/seasons`;
 
-  list(): Observable<AdminSeasonListResponse> {
-    return this.http.get<AdminSeasonListResponse>(this.seasonsEndpoint, {
-      withCredentials: true,
-    });
+  list(): Observable<AdminSeason[]> {
+    return this.http.get<unknown>(this.seasonsEndpoint, { withCredentials: true }).pipe(map(parseSeasonList));
   }
 
-  get(slug: string): Observable<AdminSeasonListItem> {
+  get(slug: string): Observable<AdminSeason> {
     return this.http
-      .get<AdminSeasonDetailResponse>(`${this.seasonsEndpoint}/${encodeURIComponent(slug)}`, {
+      .get<unknown>(`${this.seasonsEndpoint}/${encodeURIComponent(slug)}`, { withCredentials: true })
+      .pipe(map(parseSeasonDetail));
+  }
+
+  create(command: CreateAdminSeasonCommand): Observable<AdminSeasonCreateResult> {
+    return this.http
+      .post<unknown>(this.seasonsEndpoint, toCreateSeasonPayload(command), { withCredentials: true })
+      .pipe(map(parseSeasonCreateResult));
+  }
+
+  update(slug: string, command: UpdateAdminSeasonCommand): Observable<AdminSeasonUpdateResult> {
+    return this.http
+      .patch<unknown>(`${this.seasonsEndpoint}/${encodeURIComponent(slug)}`, toUpdateSeasonPayload(command), {
         withCredentials: true,
       })
-      .pipe(map((response) => response.item));
+      .pipe(map(parseSeasonUpdateResult));
   }
 
-  create(payload: CreateSeasonPayload): Observable<CreateSeasonResponse> {
-    return this.http.post<CreateSeasonResponse>(this.seasonsEndpoint, payload, {
-      withCredentials: true,
-    });
+  activate(slug: string): Observable<AdminSeasonLifecycleResult> {
+    return this.lifecycle(slug, 'activate');
   }
 
-  update(slug: string, payload: UpdateSeasonPayload): Observable<AdminSeasonUpdateResponse> {
-    return this.http.patch<AdminSeasonUpdateResponse>(
-      `${this.seasonsEndpoint}/${encodeURIComponent(slug)}`,
-      payload,
-      {
-        withCredentials: true,
-      },
-    );
+  close(slug: string): Observable<AdminSeasonLifecycleResult> {
+    return this.lifecycle(slug, 'close');
   }
 
-  activate(slug: string): Observable<AdminSeasonLifecycleResponse> {
-    return this.http.post<AdminSeasonLifecycleResponse>(
-      `${this.seasonsEndpoint}/${encodeURIComponent(slug)}/activate`,
-      {},
-      {
-        withCredentials: true,
-      },
-    );
-  }
-
-  close(slug: string): Observable<AdminSeasonLifecycleResponse> {
-    return this.http.post<AdminSeasonLifecycleResponse>(
-      `${this.seasonsEndpoint}/${encodeURIComponent(slug)}/close`,
-      {},
-      {
-        withCredentials: true,
-      },
-    );
+  private lifecycle(slug: string, action: 'activate' | 'close'): Observable<AdminSeasonLifecycleResult> {
+    return this.http
+      .post<unknown>(`${this.seasonsEndpoint}/${encodeURIComponent(slug)}/${action}`, {}, { withCredentials: true })
+      .pipe(map(parseSeasonLifecycleResult));
   }
 }

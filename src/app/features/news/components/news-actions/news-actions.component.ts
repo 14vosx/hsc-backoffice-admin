@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import type { AdminNewsStatus } from '../../domain/admin-news.model';
 
 @Component({
   selector: 'hsc-news-actions',
   standalone: true,
-  imports: [MatButtonModule],
+  imports: [],
   templateUrl: './news-actions.component.html',
   styleUrl: './news-actions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewsActionsComponent {
   @Input({ required: true }) itemId!: number;
-  @Input({ required: true }) status!: string;
+  @Input({ required: true }) status!: AdminNewsStatus;
   @Input() disabled = false;
 
   @Output() edit = new EventEmitter<number>();
@@ -20,7 +20,7 @@ export class NewsActionsComponent {
   @Output() remove = new EventEmitter<number>();
 
   get isPublished(): boolean {
-    return (this.status ?? '').toLowerCase() === 'published';
+    return this.status === 'published';
   }
 
   onEdit(): void {

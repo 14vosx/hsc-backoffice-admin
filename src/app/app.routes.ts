@@ -12,7 +12,7 @@ export const routes: Routes = [
     title: 'Login | HSC Backoffice',
   },
   {
-    path: 'auth/callback',
+    path: 'login/callback',
     loadComponent: () =>
       import('./features/auth/pages/auth-callback-page/auth-callback-page.component').then(
         (m) => m.AuthCallbackPageComponent,
@@ -22,8 +22,8 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./core/layout/admin-shell/admin-shell.component').then(
-        (m) => m.AdminShellComponent,
+      import('./layout/app-shell/app-shell').then(
+        (m) => m.AppShell,
       ),
     canActivate: [authGuard, adminAccessGuard],
     children: [

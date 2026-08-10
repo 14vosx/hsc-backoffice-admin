@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
-import { AdminNewsListItem } from '../../data-access/news-admin.models';
+import type { AdminNews } from '../../domain/admin-news.model';
 import { NewsActionsComponent } from '../news-actions/news-actions.component';
 import { NewsStatusBadgeComponent } from '../news-status-badge/news-status-badge.component';
 
@@ -14,7 +14,7 @@ import { NewsStatusBadgeComponent } from '../news-status-badge/news-status-badge
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewsTableComponent {
-  @Input({ required: true }) items: AdminNewsListItem[] = [];
+  @Input({ required: true }) items: AdminNews[] = [];
   @Input() actionsDisabled = false;
 
   @Output() edit = new EventEmitter<number>();
@@ -22,7 +22,7 @@ export class NewsTableComponent {
   @Output() unpublish = new EventEmitter<number>();
   @Output() remove = new EventEmitter<number>();
 
-  trackById(_index: number, item: AdminNewsListItem): number {
+  trackById(_index: number, item: AdminNews): number {
     return item.id;
   }
 

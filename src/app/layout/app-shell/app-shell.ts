@@ -1,0 +1,102 @@
+import { CdkTrapFocus } from '@angular/cdk/a11y';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  HostListener,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
+
+import { ConfirmationDialog } from '../../shared/components/confirmation-dialog/confirmation-dialog';
+import { FeedbackCenter } from '../../shared/components/feedback-center/feedback-center';
+import { InputDialog } from '../../shared/components/input-dialog/input-dialog';
+import { AppFooter } from '../app-footer/app-footer';
+import { AppHeader } from '../app-header/app-header';
+import { AppSidebar } from '../app-sidebar/app-sidebar';
+
+@Component({
+  selector: 'app-shell',
+  imports: [
+    RouterOutlet,
+    AppHeader,
+    AppSidebar,
+    AppFooter,
+    CdkTrapFocus,
+    ConfirmationDialog,
+    InputDialog,
+    FeedbackCenter,
+  ],
+  templateUrl: './app-shell.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrl: './app-shell.css',
+})
+export class AppShell {
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+  protected readonly isDrawerOpen = signal(false);
+
+  private previousActiveElement: HTMLElement | null = null;
+  private previousBodyOverflow = '';
+
+  constructor() {
+    this.router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        if (this.isDrawerOpen()) {
+          this.closeDrawer();
+        }
+      });
+
+    this.destroyRef.onDestroy(() => {
+      this.restoreScroll();
+    });
+  }
+
+  @HostListener('window:keydown.escape')
+  protected onEscape(): void {
+    if (this.isDrawerOpen()) {
+      this.closeDrawer();
+    }
+  }
+
+  protected toggleDrawer(): void {
+    if (this.isDrawerOpen()) {
+      this.closeDrawer();
+    } else {
+      this.openDrawer();
+    }
+  }
+
+  protected openDrawer(): void {
+    if (typeof document !== 'undefined') {
+      this.previousActiveElement = document.activeElement as HTMLElement | null;
+      this.previousBodyOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+    }
+
+    this.isDrawerOpen.set(true);
+  }
+
+  protected closeDrawer(): void {
+    this.isDrawerOpen.set(false);
+    this.restoreScroll();
+
+    if (this.previousActiveElement && typeof this.previousActiveElement.focus === 'function') {
+      this.previousActiveElement.focus();
+      this.previousActiveElement = null;
+    }
+  }
+
+  private restoreScroll(): void {
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = this.previousBodyOverflow;
+    }
+  }
+}

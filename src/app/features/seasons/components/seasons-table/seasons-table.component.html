@@ -1,70 +1,20 @@
 <div class="seasons-table-wrapper">
   <table class="seasons-table">
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Slug</th>
-        <th>Status</th>
-        <th>Início</th>
-        <th>Fim</th>
-        <th>Atualizado em</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-
+    <thead><tr><th>Nome</th><th>Slug</th><th>Status</th><th>Início</th><th>Fim</th><th>Atualizado em</th><th>Ações</th></tr></thead>
     <tbody>
-      @for (item of items; track trackById($index, item)) {
+      @for (item of items(); track item.id) {
         <tr>
-          <td>
-            <strong>{{ item.name }}</strong>
-            @if (item.description) {
-              <span>{{ item.description }}</span>
-            }
-          </td>
+          <td><strong>{{ item.name }}</strong>@if (item.description) { <span>{{ item.description }}</span> }</td>
           <td><code>{{ item.slug }}</code></td>
-          <td>
-            <hsc-seasons-status-badge [status]="item.status" />
-          </td>
-          <td>{{ item.start_at | date: 'dd/MM/yyyy HH:mm' }}</td>
-          <td>{{ item.end_at | date: 'dd/MM/yyyy HH:mm' }}</td>
-          <td>{{ item.updated_at | date: 'dd/MM/yyyy HH:mm' }}</td>
-          <td>
-            <div class="seasons-table__actions">
-              @if (canEdit(item)) {
-                <button
-                  mat-button
-                  type="button"
-                  [disabled]="activeMutation !== null"
-                  (click)="editItem(item)"
-                >
-                  Editar
-                </button>
-              }
-
-              @if (canActivate(item)) {
-                <button
-                  mat-flat-button
-                  type="button"
-                  [disabled]="activeMutation !== null"
-                  (click)="activateItem(item)"
-                >
-                  Ativar
-                </button>
-              }
-
-              @if (canClose(item)) {
-                <button
-                  mat-stroked-button
-                  type="button"
-                  class="seasons-table__action--danger"
-                  [disabled]="activeMutation !== null"
-                  (click)="closeItem(item)"
-                >
-                  Fechar
-                </button>
-              }
-            </div>
-          </td>
+          <td><app-status-badge [label]="statusLabel(item.status)" [status]="statusTone(item.status)" /></td>
+          <td>{{ item.startAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ item.endAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ item.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+          <td><div class="seasons-table__actions">
+            @if (canEdit(item)) { <button type="button" [disabled]="actionsDisabled()" (click)="edit.emit(item)">Editar</button> }
+            @if (canActivate(item)) { <button type="button" class="seasons-table__action--primary" [disabled]="actionsDisabled()" (click)="activate.emit(item)">Ativar</button> }
+            @if (canClose(item)) { <button type="button" class="seasons-table__action--danger" [disabled]="actionsDisabled()" (click)="close.emit(item)">Fechar</button> }
+          </div></td>
         </tr>
       }
     </tbody>

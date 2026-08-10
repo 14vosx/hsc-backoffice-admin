@@ -3,81 +3,118 @@
   subtitle="Gestão administrativa de usuários do Backoffice."
 >
   <section class="users-page">
-    <mat-card class="users-page__create-card" appearance="outlined">
-      <mat-card-header>
-        <mat-card-title>Criar usuário</mat-card-title>
-        <mat-card-subtitle>
+    <app-ui-card class="users-page__create-card">
+      <header class="users-page__card-header">
+        <h2>Criar usuário</h2>
+        <p>
           Cadastre operadores e defina a role inicial de acesso.
-        </mat-card-subtitle>
-      </mat-card-header>
+        </p>
+      </header>
 
-      <mat-card-content>
-        <form class="users-page__form" [formGroup]="createForm" (ngSubmit)="submitCreate()">
+      <div class="users-page__card-content">
+        <form class="users-page__form" novalidate (submit)="submitCreate($event)">
           <div class="users-page__form-grid">
-            <mat-form-field appearance="outline">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email" />
-              @if (createForm.controls.email.hasError('required')) {
-                <mat-error>Email é obrigatório.</mat-error>
-              } @else if (createForm.controls.email.hasError('email')) {
-                <mat-error>Use um email válido.</mat-error>
+            <div class="users-page__field">
+              <label for="create-user-email">Email</label>
+              <input
+                id="create-user-email"
+                type="email"
+                autocomplete="email"
+                required
+                [value]="email()"
+                [disabled]="createPending()"
+                (input)="updateEmail($event)"
+                [attr.aria-invalid]="createSubmitted() && createValidation().email !== null"
+                [attr.aria-describedby]="createSubmitted() && createValidation().email ? 'create-user-email-error' : null"
+              />
+              @if (createSubmitted() && createValidation().email === 'required') {
+                <p id="create-user-email-error" class="users-page__field-error">Email é obrigatório.</p>
+              } @else if (createSubmitted() && createValidation().email === 'invalid') {
+                <p id="create-user-email-error" class="users-page__field-error">Use um email válido.</p>
               }
-            </mat-form-field>
+            </div>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Nome</mat-label>
-              <input matInput type="text" formControlName="display_name" />
-              @if (createForm.controls.display_name.hasError('required')) {
-                <mat-error>Nome é obrigatório.</mat-error>
+            <div class="users-page__field">
+              <label for="create-user-name">Nome</label>
+              <input
+                id="create-user-name"
+                type="text"
+                required
+                [value]="displayName()"
+                [disabled]="createPending()"
+                (input)="updateDisplayName($event)"
+                [attr.aria-invalid]="createSubmitted() && createValidation().displayName !== null"
+                [attr.aria-describedby]="createSubmitted() && createValidation().displayName ? 'create-user-name-error' : null"
+              />
+              @if (createSubmitted() && createValidation().displayName === 'required') {
+                <p id="create-user-name-error" class="users-page__field-error">Nome é obrigatório.</p>
               }
-            </mat-form-field>
+            </div>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Role</mat-label>
-              <mat-select formControlName="role">
-                <mat-option value="admin">admin</mat-option>
-                <mat-option value="editor">editor</mat-option>
-                <mat-option value="viewer">viewer</mat-option>
-              </mat-select>
-              @if (createForm.controls.role.hasError('required')) {
-                <mat-error>Role é obrigatória.</mat-error>
+            <div class="users-page__field">
+              <label for="create-user-role">Role</label>
+              <select
+                id="create-user-role"
+                required
+                [value]="role()"
+                [disabled]="createPending()"
+                (change)="updateRole($event)"
+                [attr.aria-invalid]="createSubmitted() && createValidation().role !== null"
+                [attr.aria-describedby]="createSubmitted() && createValidation().role ? 'create-user-role-error' : null"
+              >
+                @for (roleOption of roleOptions; track roleOption) {
+                  <option [value]="roleOption">{{ roleOption }}</option>
+                }
+              </select>
+              @if (createSubmitted() && createValidation().role === 'invalid') {
+                <p id="create-user-role-error" class="users-page__field-error">Role é obrigatória.</p>
               }
-            </mat-form-field>
+            </div>
           </div>
 
           <div class="users-page__form-actions">
-            <button mat-flat-button type="submit">Criar usuário</button>
+            <button
+              class="users-page__action users-page__action--primary"
+              type="submit"
+              [disabled]="createPending()"
+            >
+              {{ createPending() ? 'Criando usuário...' : 'Criar usuário' }}
+            </button>
           </div>
+
+          @if (createError()) {
+            <p class="users-page__field-error" role="alert">{{ createError() }}</p>
+          }
         </form>
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </app-ui-card>
 
     @if (vm$ | async; as vm) {
-      <mat-card class="users-page__list-card" appearance="outlined">
-        <mat-card-header>
+      <app-ui-card class="users-page__list-card">
+        <header class="users-page__card-header">
           <div class="users-page__list-header">
             <div>
-              <mat-card-title>Usuários cadastrados</mat-card-title>
-              <mat-card-subtitle>
+              <h2>Usuários cadastrados</h2>
+              <p>
                 {{ vm.count }} usuário{{ vm.count === 1 ? '' : 's' }} encontrado{{ vm.count === 1 ? '' : 's' }}.
-              </mat-card-subtitle>
+              </p>
             </div>
           </div>
-        </mat-card-header>
+        </header>
 
-        <mat-card-content>
+        <div class="users-page__card-content">
           @if (vm.loading) {
-            <hsc-page-feedback variant="neutral">
+            <app-inline-feedback variant="neutral">
               Carregando usuários...
-            </hsc-page-feedback>
+            </app-inline-feedback>
           } @else if (vm.error) {
-            <hsc-page-feedback variant="error">
+            <app-inline-feedback variant="error">
               {{ vm.error }}
-            </hsc-page-feedback>
+            </app-inline-feedback>
           } @else if (vm.items.length === 0) {
-            <hsc-page-feedback variant="neutral">
+            <app-inline-feedback variant="neutral">
               Nenhum usuário cadastrado.
-            </hsc-page-feedback>
+            </app-inline-feedback>
           } @else {
             <div class="users-page__rows" role="list">
               @for (item of vm.items; track item.id) {
@@ -85,7 +122,7 @@
                   <div class="users-page__identity">
                     <span class="users-page__id">#{{ item.id }}</span>
                     <div class="users-page__person">
-                      <strong>{{ item.display_name || 'Sem nome' }}</strong>
+                      <strong>{{ item.displayName || 'Sem nome' }}</strong>
                       <span>{{ item.email }}</span>
                     </div>
                   </div>
@@ -94,17 +131,17 @@
                     {{ item.role }}
                   </div>
 
-                  <mat-divider class="users-page__mobile-divider" />
+                  <hr class="users-page__mobile-divider" />
 
                   <div class="users-page__actions" aria-label="Ações do usuário">
-                    <button mat-button type="button" (click)="renameUser(item)">
+                    <button class="users-page__action users-page__action--quiet" type="button" (click)="renameUser(item)">
                       Renomear
                     </button>
-                    <button mat-button type="button" (click)="changeEmail(item)">
+                    <button class="users-page__action users-page__action--quiet" type="button" (click)="changeEmail(item)">
                       Alterar email
                     </button>
                     <button
-                      mat-stroked-button
+                      class="users-page__action users-page__action--secondary"
                       type="button"
                       [disabled]="item.role === 'admin'"
                       (click)="changeRole(item, 'admin')"
@@ -112,7 +149,7 @@
                       admin
                     </button>
                     <button
-                      mat-stroked-button
+                      class="users-page__action users-page__action--secondary"
                       type="button"
                       [disabled]="item.role === 'editor'"
                       (click)="changeRole(item, 'editor')"
@@ -120,7 +157,7 @@
                       editor
                     </button>
                     <button
-                      mat-stroked-button
+                      class="users-page__action users-page__action--secondary"
                       type="button"
                       [disabled]="item.role === 'viewer'"
                       (click)="changeRole(item, 'viewer')"
@@ -132,8 +169,8 @@
               }
             </div>
           }
-        </mat-card-content>
-      </mat-card>
+        </div>
+      </app-ui-card>
     }
   </section>
 </hsc-page-container>

@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { AuthSessionStore } from '../../../../core/auth/auth-session.store';
+import { UiCard } from '../../../../shared/components/card/card';
 
 @Component({
   selector: 'hsc-auth-callback-page',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule],
+  imports: [UiCard],
   templateUrl: './auth-callback-page.component.html',
   styleUrl: './auth-callback-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

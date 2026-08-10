@@ -1,139 +1,24 @@
-<hsc-page-container
-  title="Editar season"
-  subtitle="Atualize metadados e janela do ciclo competitivo oficial do servidor HSC."
->
+<hsc-page-container title="Editar season" subtitle="Atualize metadados e janela do ciclo competitivo oficial do servidor HSC.">
   <section class="seasons-edit-page">
-    <mat-card class="seasons-edit-page__actions-card" appearance="outlined">
-      <mat-card-content>
-        <button type="button" mat-stroked-button [disabled]="submitting()" (click)="cancel()">
-          Voltar
-        </button>
-      </mat-card-content>
-    </mat-card>
-
+    <app-ui-card><div class="seasons-edit-page__card-content"><button type="button" class="seasons-edit-page__action" [disabled]="submitting()" (click)="cancel()">Voltar</button></div></app-ui-card>
     @if (resolutionState() === 'loading') {
-      <hsc-page-feedback variant="neutral"> Carregando season... </hsc-page-feedback>
+      <app-inline-feedback variant="neutral">Carregando season...</app-inline-feedback>
     } @else {
       @if (pageError()) {
-        <hsc-page-feedback variant="error">
-          <p>{{ pageError() }}</p>
-
-          <div class="seasons-edit-page__error-actions">
-            <button type="button" mat-button (click)="retry()">Tentar novamente</button>
-
-            <button type="button" mat-stroked-button (click)="cancel()">
-              Voltar para listagem
-            </button>
-          </div>
-        </hsc-page-feedback>
+        <app-inline-feedback variant="error"><p>{{ pageError() }}</p><div class="seasons-edit-page__actions"><button type="button" class="seasons-edit-page__action" (click)="retry()">Tentar novamente</button><button type="button" class="seasons-edit-page__action" (click)="cancel()">Voltar para listagem</button></div></app-inline-feedback>
       }
-
       @if (canRenderForm()) {
-        <mat-card class="seasons-edit-page__form-card" appearance="outlined">
-          <mat-card-content>
-            <hsc-seasons-form
-              mode="edit"
-              [initialValue]="initialValue()"
-              [metadata]="item()"
-              [submitting]="submitting()"
-              [errorMessage]="store.error()"
-              (formSubmit)="submit($event)"
-              (cancel)="cancel()"
-            />
-          </mat-card-content>
-        </mat-card>
-
-        @if (item()) {
-          <mat-card class="seasons-edit-page__metadata-card" appearance="outlined">
-            <mat-card-header>
-              <mat-card-title>Resumo administrativo</mat-card-title>
-              <mat-card-subtitle> Dados de controle da season selecionada. </mat-card-subtitle>
-            </mat-card-header>
-
-            <mat-card-content>
-              <dl class="seasons-edit-page__metadata">
-                <div>
-                  <dt>Status</dt>
-                  <dd>{{ item()?.status }}</dd>
-                </div>
-                <div>
-                  <dt>Slug</dt>
-                  <dd>
-                    <code>{{ item()?.slug }}</code>
-                  </dd>
-                </div>
-                <div>
-                  <dt>Criada em</dt>
-                  <dd>
-                    {{ $safeNavigationMigration(item()?.created_at) | date: 'dd/MM/yyyy HH:mm' }}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Atualizada em</dt>
-                  <dd>
-                    {{ $safeNavigationMigration(item()?.updated_at) | date: 'dd/MM/yyyy HH:mm' }}
-                  </dd>
-                </div>
-              </dl>
-            </mat-card-content>
-          </mat-card>
+        <app-ui-card><div class="seasons-edit-page__card-content"><hsc-seasons-form mode="edit" [initialValue]="item()" [submitting]="submitting()" [errorMessage]="store.error()" (formSubmit)="submit($event)" (cancel)="cancel()" /></div></app-ui-card>
+        @if (item(); as season) {
+          <app-ui-card><header class="seasons-edit-page__header"><h2>Resumo administrativo</h2><p>Dados de controle da season selecionada.</p></header><div class="seasons-edit-page__card-content"><dl class="seasons-edit-page__metadata">
+            <div><dt>Status</dt><dd>{{ season.status }}</dd></div><div><dt>Slug</dt><dd><code>{{ season.slug }}</code></dd></div><div><dt>Criada em</dt><dd>{{ season.createdAt | date: 'dd/MM/yyyy HH:mm' }}</dd></div><div><dt>Atualizada em</dt><dd>{{ season.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</dd></div>
+          </dl></div></app-ui-card>
         }
-
-        <mat-card class="seasons-edit-page__competitive-card" appearance="outlined">
-          <mat-card-header>
-            <mat-card-title>Resumo competitivo</mat-card-title>
-            <mat-card-subtitle>
-              Dados públicos gerados pela Static API v2 de Seasons.
-            </mat-card-subtitle>
-          </mat-card-header>
-
-          <mat-card-content>
-            @if (competitiveLoading()) {
-              <p class="seasons-edit-page__muted">Carregando resumo competitivo...</p>
-            } @else if (competitiveDetail(); as detail) {
-              <dl class="seasons-edit-page__metadata seasons-edit-page__metadata--competitive">
-                <div>
-                  <dt>Partidas</dt>
-                  <dd>{{ detail.summary.matches }}</dd>
-                </div>
-                <div>
-                  <dt>Mapas</dt>
-                  <dd>{{ detail.summary.maps }}</dd>
-                </div>
-                <div>
-                  <dt>Rounds</dt>
-                  <dd>{{ detail.summary.rounds }}</dd>
-                </div>
-                <div>
-                  <dt>Jogadores</dt>
-                  <dd>{{ detail.summary.players }}</dd>
-                </div>
-                <div>
-                  <dt>Último mapa finalizado</dt>
-                  <dd>
-                    @if (toUtcDateTime(detail.summary.lastMapEndedAt); as lastMapEndedAt) {
-                      {{ lastMapEndedAt | date: 'dd/MM/yyyy HH:mm' }}
-                    } @else {
-                      -
-                    }
-                  </dd>
-                </div>
-                <div>
-                  <dt>Gerado em</dt>
-                  <dd>{{ detail.generatedAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
-                </div>
-              </dl>
-            } @else if (competitiveError()) {
-              <p class="seasons-edit-page__muted">
-                Resumo competitivo ainda não disponível para esta season.
-              </p>
-            } @else {
-              <p class="seasons-edit-page__muted">
-                Resumo competitivo ainda não disponível para esta season.
-              </p>
-            }
-          </mat-card-content>
-        </mat-card>
+        <app-ui-card><header class="seasons-edit-page__header"><h2>Resumo competitivo</h2><p>Dados públicos gerados pela Static API v2 de Seasons.</p></header><div class="seasons-edit-page__card-content">
+          @if (competitiveLoading()) { <p class="seasons-edit-page__muted">Carregando resumo competitivo...</p> }
+          @else if (competitiveDetail(); as detail) { <dl class="seasons-edit-page__metadata seasons-edit-page__metadata--competitive"><div><dt>Partidas</dt><dd>{{ detail.summary.matches }}</dd></div><div><dt>Mapas</dt><dd>{{ detail.summary.maps }}</dd></div><div><dt>Rounds</dt><dd>{{ detail.summary.rounds }}</dd></div><div><dt>Jogadores</dt><dd>{{ detail.summary.players }}</dd></div><div><dt>Último mapa finalizado</dt><dd>@if (detail.summary.lastMapEndedAt; as endedAt) { {{ endedAt | date: 'dd/MM/yyyy HH:mm' }} } @else { — }</dd></div><div><dt>Gerado em</dt><dd>{{ detail.generatedAt | date: 'dd/MM/yyyy HH:mm' }}</dd></div></dl> }
+          @else { <p class="seasons-edit-page__muted">Resumo competitivo ainda não disponível para esta season.</p> }
+        </div></app-ui-card>
       }
     }
   </section>
