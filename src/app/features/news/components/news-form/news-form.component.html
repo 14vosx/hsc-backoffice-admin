@@ -43,37 +43,54 @@
   }
 
   @if (errorMessage) {
-    <hsc-page-feedback variant="error">
+    <app-inline-feedback variant="error">
       {{ errorMessage }}
-    </hsc-page-feedback>
+    </app-inline-feedback>
   }
 
   <form class="news-form__form" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <mat-form-field appearance="outline">
-      <mat-label>Slug</mat-label>
-      <input matInput type="text" formControlName="slug" />
+    <div class="news-form__field">
+      <label for="news-slug">Slug</label>
+      <input
+        id="news-slug"
+        type="text"
+        formControlName="slug"
+        [attr.aria-invalid]="form.controls.slug.touched && form.controls.slug.invalid"
+        [attr.aria-describedby]="isEditMode ? 'news-slug-hint' : form.controls.slug.touched && form.controls.slug.invalid ? 'news-slug-error' : null"
+      />
       @if (isEditMode) {
-        <mat-hint>Slug somente leitura neste checkpoint.</mat-hint>
+        <p id="news-slug-hint" class="news-form__hint">Slug somente leitura neste checkpoint.</p>
       }
       @if (form.controls.slug.touched && form.controls.slug.invalid) {
-        <mat-error>Slug é obrigatório.</mat-error>
+        <p id="news-slug-error" class="news-form__error">Slug é obrigatório.</p>
       }
-    </mat-form-field>
+    </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Título</mat-label>
-      <input matInput type="text" formControlName="title" />
+    <div class="news-form__field">
+      <label for="news-title">Título</label>
+      <input
+        id="news-title"
+        type="text"
+        formControlName="title"
+        [attr.aria-invalid]="form.controls.title.touched && form.controls.title.invalid"
+        [attr.aria-describedby]="form.controls.title.touched && form.controls.title.invalid ? 'news-title-error' : null"
+      />
       @if (form.controls.title.touched && form.controls.title.invalid) {
-        <mat-error>Título é obrigatório.</mat-error>
+        <p id="news-title-error" class="news-form__error">Título é obrigatório.</p>
       }
-    </mat-form-field>
+    </div>
 
     <section class="news-form__image">
-      <mat-form-field appearance="outline">
-        <mat-label>URL da imagem</mat-label>
-        <input matInput type="url" formControlName="image_url" />
-        <mat-hint>Opcional. Uploads válidos preenchem este campo automaticamente.</mat-hint>
-      </mat-form-field>
+      <div class="news-form__field">
+        <label for="news-image-url">URL da imagem</label>
+        <input
+          id="news-image-url"
+          type="url"
+          formControlName="image_url"
+          aria-describedby="news-image-url-hint"
+        />
+        <p id="news-image-url-hint" class="news-form__hint">Opcional. Uploads válidos preenchem este campo automaticamente.</p>
+      </div>
 
       <div class="news-form__image-tools">
         <label class="news-form__file-control">
@@ -88,7 +105,7 @@
 
         <button
           type="button"
-          mat-stroked-button
+          class="news-form__action news-form__action--secondary"
           [disabled]="submitting || uploadingImage() || !imageUrl"
           (click)="clearImage()"
         >
@@ -101,7 +118,7 @@
       }
 
       @if (uploadErrorMessage()) {
-        <p class="news-form__upload-error">{{ uploadErrorMessage() }}</p>
+        <p class="news-form__upload-error" role="alert">{{ uploadErrorMessage() }}</p>
       }
 
       @if (imageUrl; as currentImageUrl) {
@@ -111,20 +128,26 @@
       }
     </section>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Conteúdo</mat-label>
-      <textarea matInput rows="14" formControlName="content"></textarea>
+    <div class="news-form__field">
+      <label for="news-content">Conteúdo</label>
+      <textarea
+        id="news-content"
+        rows="14"
+        formControlName="content"
+        [attr.aria-invalid]="form.controls.content.touched && form.controls.content.invalid"
+        [attr.aria-describedby]="form.controls.content.touched && form.controls.content.invalid ? 'news-content-error' : null"
+      ></textarea>
       @if (form.controls.content.touched && form.controls.content.invalid) {
-        <mat-error>Conteúdo é obrigatório.</mat-error>
+        <p id="news-content-error" class="news-form__error">Conteúdo é obrigatório.</p>
       }
-    </mat-form-field>
+    </div>
 
     <div class="news-form__actions">
-      <button type="button" mat-button [disabled]="submitting" (click)="onCancel()">
+      <button type="button" class="news-form__action news-form__action--quiet" [disabled]="submitting" (click)="onCancel()">
         Cancelar
       </button>
 
-      <button type="submit" mat-flat-button [disabled]="submitting || uploadingImage()">
+      <button type="submit" class="news-form__action news-form__action--primary" [disabled]="submitting || uploadingImage()">
         {{ submitting || uploadingImage() ? 'Processando...' : submitLabel }}
       </button>
     </div>

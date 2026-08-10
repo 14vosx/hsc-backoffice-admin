@@ -14,7 +14,10 @@ function getAllTsFiles(dirPath: string): string[] {
     const fullPath = path.join(dirPath, entry.name);
     if (entry.isDirectory()) {
       files = files.concat(getAllTsFiles(fullPath));
-    } else if (entry.isFile() && (entry.name.endsWith('.ts') || entry.name.endsWith('.html'))) {
+    } else if (
+      entry.isFile() &&
+      (entry.name.endsWith('.ts') || entry.name.endsWith('.html') || entry.name.endsWith('.scss'))
+    ) {
       files.push(fullPath);
     }
   }
@@ -190,6 +193,66 @@ describe('Architecture Boundaries — Lego Angular', () => {
       const content = fs.readFileSync(file, 'utf-8');
       const hasMaterialImport = /from\s+['"]@angular\/material(?:\/|['"])/.test(content);
       expect(hasMaterialImport, `Shared state file ${file} should not import Angular Material`).toBe(false);
+    }
+  });
+
+  const c21FeatureRoots = ['auth', 'dashboard', 'news', 'users'].map((feature) =>
+    path.join(appRoot, 'features', feature),
+  );
+
+  it('C2.1 features should not import Angular Material', () => {
+    for (const featureRoot of c21FeatureRoots) {
+      const files = getAllTsFiles(featureRoot).filter((file) => file.endsWith('.ts'));
+      for (const file of files) {
+        const content = fs.readFileSync(file, 'utf-8');
+        expect(
+          /from\s+['"]@angular\/material(?:\/|['"])/.test(content),
+          `Feature file ${file} should not import Angular Material`,
+        ).toBe(false);
+      }
+    }
+  });
+
+  it('C2.1 features should not import shared/ui', () => {
+    for (const featureRoot of c21FeatureRoots) {
+      const files = getAllTsFiles(featureRoot).filter((file) => file.endsWith('.ts'));
+      for (const file of files) {
+        const content = fs.readFileSync(file, 'utf-8');
+        expect(
+          /from\s+['"].*\/shared\/ui\//.test(content),
+          `Feature file ${file} should not import shared/ui`,
+        ).toBe(false);
+      }
+    }
+  });
+
+  it('C2.1 features should not contain Angular Material templates', () => {
+    const materialTemplatePattern = /<mat-|\bmat-(?:button|flat-button|stroked-button|raised-button|icon-button)\b/;
+
+    for (const featureRoot of c21FeatureRoots) {
+      const files = getAllTsFiles(featureRoot).filter(
+        (file) => file.endsWith('.html') || file.endsWith('.ts'),
+      );
+      for (const file of files) {
+        const content = fs.readFileSync(file, 'utf-8');
+        expect(
+          materialTemplatePattern.test(content),
+          `Feature template ${file} should not use Angular Material elements or directives`,
+        ).toBe(false);
+      }
+    }
+  });
+
+  it('C2.1 feature styles should not use Material system tokens', () => {
+    for (const featureRoot of c21FeatureRoots) {
+      const files = getAllTsFiles(featureRoot).filter((file) => file.endsWith('.scss'));
+      for (const file of files) {
+        const content = fs.readFileSync(file, 'utf-8');
+        expect(
+          content.includes('--mat-sys-'),
+          `Feature stylesheet ${file} should not use --mat-sys-* tokens`,
+        ).toBe(false);
+      }
     }
   });
 });

@@ -3,8 +3,8 @@
   subtitle="Crie um novo draft administrativo para o domínio de news."
 >
   <section class="news-create-page">
-    <mat-card class="news-create-page__card" appearance="outlined">
-      <mat-card-content>
+    <app-ui-card class="news-create-page__card">
+      <div class="news-create-page__content">
         <hsc-news-form
           mode="create"
           [submitting]="submitting()"
@@ -12,7 +12,7 @@
           (formSubmit)="submit($event)"
           (cancel)="cancel()"
         />
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </app-ui-card>
   </section>
 </hsc-page-container>

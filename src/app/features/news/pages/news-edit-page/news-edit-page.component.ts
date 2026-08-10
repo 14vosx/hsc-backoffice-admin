@@ -1,14 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { PageContainerComponent } from '../../../../layout/page-container/page-container.component';
-import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
-import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
-import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
+import { UiCard } from '../../../../shared/components/card/card';
+import { InlineFeedback } from '../../../../shared/components/inline-feedback/inline-feedback';
+import { ConfirmationService } from '../../../../shared/state/confirmation.service';
+import { UiFeedbackService } from '../../../../shared/state/ui-feedback.service';
 import { NewsFormComponent } from '../../components/news-form/news-form.component';
 import { NewsAdminStore } from '../../data-access/news-admin.store';
 import { AdminNewsEditableDraft, NewsFormValue } from '../../data-access/news-admin.models';
@@ -21,11 +20,10 @@ type EditPageResolutionState = 'loading' | 'ready' | 'invalid-id' | 'not-found' 
   standalone: true,
   imports: [
     DatePipe,
-    MatButtonModule,
-    MatCardModule,
     PageContainerComponent,
     NewsFormComponent,
-    PageFeedbackComponent,
+    UiCard,
+    InlineFeedback,
   ],
   templateUrl: './news-edit-page.component.html',
   styleUrl: './news-edit-page.component.scss',

@@ -11,12 +11,9 @@ import {
   signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { firstValueFrom } from 'rxjs';
 
-import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
+import { InlineFeedback } from '../../../../shared/components/inline-feedback/inline-feedback';
 import {
   AdminNewsEditableDraft,
   NewsFormValue,
@@ -32,10 +29,7 @@ export type NewsFormMode = 'create' | 'edit';
   imports: [
     ReactiveFormsModule,
     DatePipe,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    PageFeedbackComponent,
+    InlineFeedback,
   ],
   templateUrl: './news-form.component.html',
   styleUrl: './news-form.component.scss',

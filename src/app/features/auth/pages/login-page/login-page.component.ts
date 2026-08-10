@@ -1,34 +1,29 @@
-import { ChangeDetectionStrategy, Component, inject, computed, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
 
-import { AuthApiService } from '../../../../core/auth/auth-api.service';
 import { AuthSessionStore } from '../../../../core/auth/auth-session.store';
+import { UiCard } from '../../../../shared/components/card/card';
+import { normalizeAdminEmail } from '../../admin-email-auth-validation';
+import { AdminEmailAuthApiService } from '../../data-access/admin-email-auth-api.service';
 
 @Component({
   selector: 'hsc-login-page',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule],
+  imports: [UiCard],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginPageComponent {
   private readonly router = inject(Router);
-  private readonly authApi = inject(AuthApiService);
+  private readonly emailAuthApi = inject(AdminEmailAuthApiService);
   protected readonly authSessionStore = inject(AuthSessionStore);
 
   protected readonly email = signal('');
-  protected readonly isRequestingLink = signal(false);
+  protected readonly pending = signal(false);
   protected readonly isResolving = signal(false);
   protected readonly requestMessage = signal<string | null>(null);
   protected readonly requestError = signal<string | null>(null);
-
-  protected readonly trimmedEmail = computed(() => this.email().trim().toLowerCase());
 
   protected async handleResolveCurrentSession(): Promise<void> {
     this.isResolving.set(true);
@@ -44,32 +39,41 @@ export class LoginPageComponent {
     }
   }
 
-  protected async handleRequestMagicLink(): Promise<void> {
-    if (!this.trimmedEmail()) {
+  protected submit(event: Event): void {
+    event.preventDefault();
+    if (this.pending()) {
+      return;
+    }
+
+    const email = normalizeAdminEmail(this.email());
+    if (!email) {
       this.requestError.set('Informe um email.');
       this.requestMessage.set(null);
       return;
     }
 
-    this.isRequestingLink.set(true);
+    this.pending.set(true);
     this.requestError.set(null);
     this.requestMessage.set(null);
 
-    try {
-      const response = await firstValueFrom(
-        this.authApi.requestMagicLink(this.trimmedEmail()),
-      );
-      this.requestMessage.set(
-        response?.message || 'Se a conta estiver autorizada, um link de acesso foi enviado.',
-      );
-    } catch {
-      this.requestError.set('Não foi possível solicitar o link neste momento.');
-    } finally {
-      this.isRequestingLink.set(false);
-    }
+    this.emailAuthApi.requestMagicLink({ email }).subscribe({
+      next: (result) => {
+        this.pending.set(false);
+        this.requestMessage.set(
+          result.message || 'Se a conta estiver autorizada, um link de acesso foi enviado.',
+        );
+      },
+      error: () => {
+        this.pending.set(false);
+        this.requestError.set('Não foi possível solicitar o link neste momento.');
+      },
+    });
   }
 
-  protected updateEmail(value: string): void {
-    this.email.set(value);
+  protected updateEmail(event: Event): void {
+    this.email.set((event.target as HTMLInputElement).value);
+    if (this.requestError()) {
+      this.requestError.set(null);
+    }
   }
 }

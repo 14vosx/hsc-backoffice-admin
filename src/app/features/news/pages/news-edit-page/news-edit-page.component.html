@@ -3,22 +3,22 @@
   subtitle="Edite um item conhecido pelo frontend e execute ações de lifecycle do recurso."
 >
   <section class="news-edit-page">
-    <mat-card class="news-edit-page__actions-card" appearance="outlined">
-      <mat-card-content>
+    <app-ui-card class="news-edit-page__actions-card">
+      <div class="news-edit-page__card-content">
         <div class="news-edit-page__actions">
-          <button type="button" mat-stroked-button [disabled]="submitting()" (click)="cancel()">
+          <button type="button" class="news-edit-page__action news-edit-page__action--secondary" [disabled]="submitting()" (click)="cancel()">
             Voltar
           </button>
 
           @if (canRunLifecycle()) {
             @if (!isPublished()) {
-              <button type="button" mat-flat-button [disabled]="submitting()" (click)="publish()">
+              <button type="button" class="news-edit-page__action news-edit-page__action--primary" [disabled]="submitting()" (click)="publish()">
                 Publicar
               </button>
             } @else {
               <button
                 type="button"
-                mat-stroked-button
+                class="news-edit-page__action news-edit-page__action--secondary"
                 [disabled]="submitting()"
                 (click)="unpublish()"
               >
@@ -28,8 +28,7 @@
 
             <button
               type="button"
-              mat-stroked-button
-              class="news-edit-page__danger-action"
+              class="news-edit-page__action news-edit-page__action--secondary news-edit-page__danger-action"
               [disabled]="submitting()"
               (click)="remove()"
             >
@@ -37,29 +36,29 @@
             </button>
           }
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </app-ui-card>
 
     @if (resolutionState() === 'loading') {
-      <hsc-page-feedback variant="neutral"> Carregando contexto de edição... </hsc-page-feedback>
+      <app-inline-feedback variant="neutral"> Carregando contexto de edição... </app-inline-feedback>
     } @else {
       @if (pageError()) {
-        <hsc-page-feedback variant="error">
+        <app-inline-feedback variant="error">
           <p>{{ pageError() }}</p>
 
           <div class="news-edit-page__error-actions">
-            <button type="button" mat-button (click)="retry()">Tentar novamente</button>
+            <button type="button" class="news-edit-page__action news-edit-page__action--quiet" (click)="retry()">Tentar novamente</button>
 
-            <button type="button" mat-stroked-button (click)="cancel()">
+            <button type="button" class="news-edit-page__action news-edit-page__action--secondary" (click)="cancel()">
               Voltar para listagem
             </button>
           </div>
-        </hsc-page-feedback>
+        </app-inline-feedback>
       }
 
       @if (canRenderForm()) {
-        <mat-card class="news-edit-page__form-card" appearance="outlined">
-          <mat-card-content>
+        <app-ui-card class="news-edit-page__form-card">
+          <div class="news-edit-page__card-content">
             <hsc-news-form
               mode="edit"
               [initialValue]="initialValue()"
@@ -69,16 +68,16 @@
               (formSubmit)="submit($event)"
               (cancel)="cancel()"
             />
-          </mat-card-content>
-        </mat-card>
+          </div>
+        </app-ui-card>
       } @else if (metadata()) {
-        <mat-card class="news-edit-page__metadata-card" appearance="outlined">
-          <mat-card-header>
-            <mat-card-title>Resumo administrativo</mat-card-title>
-            <mat-card-subtitle> Dados conhecidos para este item de news. </mat-card-subtitle>
-          </mat-card-header>
+        <app-ui-card class="news-edit-page__metadata-card">
+          <header class="news-edit-page__card-header">
+            <h2>Resumo administrativo</h2>
+            <p>Dados conhecidos para este item de news.</p>
+          </header>
 
-          <mat-card-content>
+          <div class="news-edit-page__card-content">
             <dl class="news-edit-page__metadata">
               <div>
                 <dt>Status</dt>
@@ -127,8 +126,8 @@
                 </dd>
               </div>
             </dl>
-          </mat-card-content>
-        </mat-card>
+          </div>
+        </app-ui-card>
       }
     }
   </section>

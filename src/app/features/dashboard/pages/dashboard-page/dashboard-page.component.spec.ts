@@ -21,4 +21,13 @@ describe('DashboardPageComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should preserve the main administrative links without Material directives', () => {
+    const links = Array.from(fixture.nativeElement.querySelectorAll('a')) as HTMLAnchorElement[];
+    const hrefs = links.map((link) => link.getAttribute('href'));
+    expect(hrefs).toContain('/news/new');
+    expect(hrefs).toContain('/seasons/new');
+    expect(hrefs).toContain('/users');
+    expect(fixture.nativeElement.querySelector('app-ui-card')).toBeTruthy();
+  });
 });

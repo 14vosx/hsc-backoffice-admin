@@ -3,47 +3,47 @@
   subtitle="Gerencie notícias administrativas do HSC Backoffice."
 >
   <section class="news-list-page">
-    <mat-card class="news-list-page__card" appearance="outlined">
-      <mat-card-header>
+    <app-ui-card class="news-list-page__card">
+      <header class="news-list-page__header">
         <div class="news-list-page__card-header">
           <div>
-            <mat-card-title>Notícias cadastradas</mat-card-title>
-            <mat-card-subtitle>
+            <h2>Notícias cadastradas</h2>
+            <p>
               Acompanhe drafts, publicações e itens removíveis do portal.
-            </mat-card-subtitle>
+            </p>
           </div>
 
-          <button type="button" mat-flat-button (click)="goToCreate()">
+          <button type="button" class="news-list-page__action news-list-page__action--primary" (click)="goToCreate()">
             Nova notícia
           </button>
         </div>
-      </mat-card-header>
+      </header>
 
-      <mat-card-content>
+      <div class="news-list-page__content">
         @if (activeMutation()) {
-          <hsc-page-feedback variant="neutral">
+          <app-inline-feedback variant="neutral">
             Processando ação administrativa...
-          </hsc-page-feedback>
+          </app-inline-feedback>
         }
 
         @if (error()) {
-          <hsc-page-feedback variant="error">
+          <app-inline-feedback variant="error">
             <p>{{ error() }}</p>
-            <button type="button" mat-button (click)="load()">
+            <button type="button" class="news-list-page__action news-list-page__action--quiet" (click)="load()">
               Tentar novamente
             </button>
-          </hsc-page-feedback>
+          </app-inline-feedback>
         } @else if (loading() && items().length === 0) {
-          <hsc-page-feedback variant="neutral">
+          <app-inline-feedback variant="neutral">
             Carregando news...
-          </hsc-page-feedback>
+          </app-inline-feedback>
         } @else if (isEmpty()) {
-          <hsc-page-feedback variant="neutral">
+          <app-inline-feedback variant="neutral">
             <p>Nenhuma news cadastrada até o momento.</p>
-            <button type="button" mat-flat-button (click)="goToCreate()">
+            <button type="button" class="news-list-page__action news-list-page__action--primary" (click)="goToCreate()">
               Criar primeira news
             </button>
-          </hsc-page-feedback>
+          </app-inline-feedback>
         } @else {
           <hsc-news-table
             [items]="items()"
@@ -54,7 +54,7 @@
             (remove)="remove($event)"
           />
         }
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </app-ui-card>
   </section>
 </hsc-page-container>

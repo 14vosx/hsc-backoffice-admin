@@ -6,30 +6,49 @@
   min-height: 100vh;
   display: grid;
   place-content: center;
-  padding: 24px;
-  background: var(--mat-sys-surface-container-lowest);
+  padding: var(--space-5);
+  background: var(--color-bg-base);
 }
 
 .auth-callback-page__card {
   width: min(520px, 100%);
-  background: var(--mat-sys-surface);
 }
 
-.auth-callback-page__card mat-card-header {
-  padding-bottom: 16px;
+.auth-callback-page__header {
+  padding-bottom: var(--space-4);
 }
 
-.auth-callback-page__card mat-card-content {
+.auth-callback-page__header h1,
+.auth-callback-page__header p {
+  margin: 0;
+}
+
+.auth-callback-page__header p {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.auth-callback-page__content {
   display: grid;
-  gap: 16px;
+  gap: var(--space-4);
 }
 
-.auth-callback-page__card p {
+.auth-callback-page__content p {
   margin: 0;
 }
 
 .auth-callback-page__error {
-  color: var(--mat-sys-error);
+  color: var(--color-status-error);
+}
+
+.auth-callback-page__action {
+  justify-self: start;
+  padding: var(--space-2) var(--space-4);
+  color: var(--color-text-main);
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
 }
 
 @media (max-width: 560px) {

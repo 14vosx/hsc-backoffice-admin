@@ -1,29 +1,29 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { BehaviorSubject, catchError, map, of, startWith, switchMap } from 'rxjs';
 
 import { PageContainerComponent } from '../../../../layout/page-container/page-container.component';
-import { ConfirmationService } from '../../../../shared/ui/confirmation-dialog/confirmation.service';
-import { InputDialogService } from '../../../../shared/ui/input-dialog/input-dialog.service';
-import { PageFeedbackComponent } from '../../../../shared/ui/page-feedback/page-feedback.component';
-import { UiFeedbackService } from '../../../../shared/ui/ui-feedback.service';
+import { UiCard } from '../../../../shared/components/card/card';
+import { InlineFeedback } from '../../../../shared/components/inline-feedback/inline-feedback';
+import { ConfirmationService } from '../../../../shared/state/confirmation.service';
+import { InputDialogService } from '../../../../shared/state/input-dialog.service';
+import { UiFeedbackService } from '../../../../shared/state/ui-feedback.service';
+import { UsersAdminApiService } from '../../data-access/users-admin-api.service';
 import {
-  AdminUserListItem,
-  AdminUserRole,
-  UsersAdminApiService,
-} from '../../data-access/users-admin-api.service';
+  ADMIN_USER_ROLES,
+  isAdminUserRole,
+  type AdminUser,
+  type AdminUserRole,
+} from '../../domain/admin-user.model';
+import {
+  buildAdminUserCreateCommand,
+  validateAdminUserCreate,
+} from './admin-user-create.model';
 
 type UsersPageVm = {
   loading: boolean;
   error: string | null;
-  items: AdminUserListItem[];
+  items: AdminUser[];
   count: number;
 };
 
@@ -32,33 +32,35 @@ type UsersPageVm = {
   standalone: true,
   imports: [
     AsyncPipe,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatCardModule,
-    MatDividerModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
     PageContainerComponent,
-    PageFeedbackComponent,
+    UiCard,
+    InlineFeedback,
   ],
   templateUrl: './users-page.component.html',
   styleUrl: './users-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersPageComponent {
-  private readonly fb = inject(FormBuilder);
   private readonly confirmation = inject(ConfirmationService);
   private readonly feedback = inject(UiFeedbackService);
   private readonly inputDialog = inject(InputDialogService);
   private readonly usersAdminApi = inject(UsersAdminApiService);
   private readonly reload$ = new BehaviorSubject<void>(undefined);
 
-  readonly createForm = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    display_name: ['', [Validators.required]],
-    role: ['admin' as AdminUserRole, [Validators.required]],
-  });
+  protected readonly roleOptions = ADMIN_USER_ROLES;
+  protected readonly email = signal('');
+  protected readonly displayName = signal('');
+  protected readonly role = signal<AdminUserRole>('admin');
+  protected readonly createPending = signal(false);
+  protected readonly createSubmitted = signal(false);
+  protected readonly createError = signal<string | null>(null);
+  protected readonly createValidation = computed(() =>
+    validateAdminUserCreate({
+      email: this.email(),
+      displayName: this.displayName(),
+      role: this.role(),
+    }),
+  );
 
   readonly vm$ = this.reload$.pipe(
     switchMap(() =>
@@ -87,37 +89,63 @@ export class UsersPageComponent {
     ),
   );
 
-  submitCreate(): void {
-    if (this.createForm.invalid) {
-      this.createForm.markAllAsTouched();
+  submitCreate(event: Event): void {
+    event.preventDefault();
+    if (this.createPending()) {
       return;
     }
 
-    const raw = this.createForm.getRawValue();
+    this.createSubmitted.set(true);
+    const command = buildAdminUserCreateCommand({
+      email: this.email(),
+      displayName: this.displayName(),
+      role: this.role(),
+    });
+    if (!command) {
+      return;
+    }
 
+    this.createPending.set(true);
+    this.createError.set(null);
     this.usersAdminApi
-      .createUser({
-        email: raw.email.trim(),
-        display_name: raw.display_name.trim(),
-        role: raw.role,
-      })
+      .createUser(command)
       .subscribe({
         next: () => {
-          this.createForm.reset({
-            email: '',
-            display_name: '',
-            role: 'admin',
-          });
+          this.createPending.set(false);
+          this.email.set('');
+          this.displayName.set('');
+          this.role.set('admin');
+          this.createSubmitted.set(false);
           this.reload$.next();
           this.feedback.success('Usuário criado com sucesso.');
         },
         error: () => {
+          this.createPending.set(false);
+          this.createError.set('Não foi possível criar o usuário.');
           this.feedback.error('Não foi possível criar o usuário.');
         },
       });
   }
 
-  async changeRole(item: AdminUserListItem, role: AdminUserRole): Promise<void> {
+  protected updateEmail(event: Event): void {
+    this.email.set((event.target as HTMLInputElement).value);
+    this.clearCreateError();
+  }
+
+  protected updateDisplayName(event: Event): void {
+    this.displayName.set((event.target as HTMLInputElement).value);
+    this.clearCreateError();
+  }
+
+  protected updateRole(event: Event): void {
+    const role = (event.target as HTMLSelectElement).value;
+    if (isAdminUserRole(role)) {
+      this.role.set(role);
+      this.clearCreateError();
+    }
+  }
+
+  async changeRole(item: AdminUser, role: AdminUserRole): Promise<void> {
     if (item.role === role) {
       return;
     }
@@ -146,8 +174,8 @@ export class UsersPageComponent {
       });
   }
 
-  async renameUser(item: AdminUserListItem): Promise<void> {
-    const currentName = item.display_name ?? '';
+  async renameUser(item: AdminUser): Promise<void> {
+    const currentName = item.displayName ?? '';
     const nextName = await this.inputDialog.prompt({
       title: 'Renomear usuário',
       label: 'Nome do usuário',
@@ -168,7 +196,7 @@ export class UsersPageComponent {
     }
 
     this.usersAdminApi
-      .updateUser(item.id, { display_name: cleanName })
+      .updateUser(item.id, { displayName: cleanName })
       .subscribe({
         next: () => {
           this.reload$.next();
@@ -180,7 +208,7 @@ export class UsersPageComponent {
       });
   }
 
-  async changeEmail(item: AdminUserListItem): Promise<void> {
+  async changeEmail(item: AdminUser): Promise<void> {
     const currentEmail = item.email;
     const nextEmail = await this.inputDialog.prompt({
       title: 'Alterar email do usuário',
@@ -213,5 +241,11 @@ export class UsersPageComponent {
           this.feedback.error('Não foi possível atualizar o email do usuário.');
         },
       });
+  }
+
+  private clearCreateError(): void {
+    if (this.createError()) {
+      this.createError.set(null);
+    }
   }
 }

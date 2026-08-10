@@ -6,11 +6,6 @@ import { API_BASE_URL } from '../config/api.config';
 import { AuthSession, AuthUser } from './models/auth.model';
 import { AppRole } from './models/role.model';
 
-type MagicLinkRequestResponse = {
-  ok: boolean;
-  message?: string;
-};
-
 type RawSessionResponse = Partial<{
   authenticated: boolean;
   user: Partial<AuthUser> | null;
@@ -24,7 +19,6 @@ export class AuthApiService {
   private readonly http = inject(HttpClient);
 
   private readonly sessionEndpoint = `${API_BASE_URL}/auth/session`;
-  private readonly requestMagicLinkEndpoint = `${API_BASE_URL}/auth/magic-link/request`;
   private readonly devBootstrapSessionEndpoint = `${API_BASE_URL}/auth/dev/bootstrap-session`;
 
   getSession(): Observable<AuthSession> {
@@ -44,16 +38,6 @@ export class AuthApiService {
       )
       .pipe(map((response) => this.normalizeSession(response)));
   }
-
-  requestMagicLink(email: string): Observable<MagicLinkRequestResponse> {
-  return this.http.post<MagicLinkRequestResponse>(
-    this.requestMagicLinkEndpoint,
-    { email },
-    {
-      withCredentials: true,
-    },
-  );
-}
 
   private normalizeSession(response: RawSessionResponse): AuthSession {
     const authenticated = response.authenticated === true;
