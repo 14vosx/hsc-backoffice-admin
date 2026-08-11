@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router, Routes } from '@angular/router';
 import { adminAccessGuard } from './core/guards/admin-access.guard';
 import { authGuard } from './core/guards/auth.guard';
 
@@ -12,12 +13,18 @@ export const routes: Routes = [
     title: 'Login | HSC Backoffice',
   },
   {
-    path: 'login/callback',
+    path: 'auth/callback',
     loadComponent: () =>
       import('./features/auth/pages/auth-callback-page/auth-callback-page.component').then(
         (m) => m.AuthCallbackPageComponent,
       ),
     title: 'Autenticação | HSC Backoffice',
+  },
+  {
+    path: 'login/callback',
+    pathMatch: 'full',
+    redirectTo: ({ queryParams }) =>
+      inject(Router).createUrlTree(['/auth/callback'], { queryParams }),
   },
   {
     path: '',
