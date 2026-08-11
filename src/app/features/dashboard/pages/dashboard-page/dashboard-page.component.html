@@ -88,7 +88,7 @@
                     <div>
                       <dt>Último mapa</dt>
                       <dd>
-                        @if (toUtcDateTime(summary.lastMapEndedAt); as lastMapEndedAt) {
+                        @if (summary.lastMapEndedAt; as lastMapEndedAt) {
                           {{ lastMapEndedAt | date: 'dd/MM/yyyy HH:mm' }}
                         } @else {
                           -

@@ -121,8 +121,4 @@ export class DashboardPageComponent implements OnInit {
   private timestamp(value: string | null): number {
     return value ? new Date(value).getTime() || 0 : 0;
   }
-
-  protected toUtcDateTime(value: string | null): string | null {
-    return value ? `${value.replace(' ', 'T')}Z` : null;
-  }
 }
