@@ -8,11 +8,62 @@
       <div class="detail">
         <section><header><h2>Conta</h2><app-status-badge [label]="item.status" [tone]="item.status === 'active' ? 'success' : 'danger'" /></header>
           <dl><div><dt>Display name</dt><dd>{{ item.displayName || 'Não informado' }}</dd></div><div><dt>ID</dt><dd>{{ item.id }}</dd></div><div><dt>Criada em</dt><dd>{{ item.createdAt | date:'dd/MM/yyyy HH:mm' }}</dd></div><div><dt>Atualizada em</dt><dd>{{ item.updatedAt | date:'dd/MM/yyyy HH:mm' }}</dd></div><div><dt>Desativada em</dt><dd>{{ item.disabledAt ? (item.disabledAt | date:'dd/MM/yyyy HH:mm') : '—' }}</dd></div></dl>
-          <button type="button" [disabled]="pending()" (click)="changeStatus(item)">{{ pending() ? 'Alterando status...' : item.status === 'active' ? 'Desativar conta' : 'Reativar conta' }}</button>
+          <button class="button button--danger" type="button" [disabled]="accountPending()" (click)="changeStatus(item)">{{ accountPending() ? 'Alterando status...' : item.status === 'active' ? 'Desativar conta' : 'Reativar conta' }}</button>
         </section>
         <section><h2>Identidades</h2><dl><div><dt>Email vinculado</dt><dd>{{ item.identities.email.linked ? 'Sim' : 'Não' }}</dd></div><div><dt>Email</dt><dd>{{ item.identities.email.email || '—' }}</dd></div><div><dt>Email verificado</dt><dd>{{ item.identities.email.verified ? 'Sim' : 'Não' }}</dd></div><div><dt>Steam vinculada</dt><dd>{{ item.identities.steam.linked ? 'Sim' : 'Não' }}</dd></div><div><dt>SteamID64</dt><dd>{{ item.identities.steam.steamid64 || '—' }}</dd></div></dl></section>
         <section><h2>Profile</h2><dl><div><dt>Existe</dt><dd>{{ item.profile.exists ? 'Sim' : 'Não' }}</dd></div><div><dt>Display name</dt><dd>{{ item.profile.displayName || '—' }}</dd></div><div><dt>Slug</dt><dd>{{ item.profile.slug || '—' }}</dd></div><div><dt>Visibilidade</dt><dd>{{ item.profile.visibility || '—' }}</dd></div><div><dt>Avatar URL</dt><dd>{{ item.profile.avatarUrl || '—' }}</dd></div></dl></section>
-        <section><h2>Membership <small>Somente leitura</small></h2><dl><div><dt>Existe</dt><dd>{{ item.membership.exists ? 'Sim' : 'Não' }}</dd></div><div><dt>Status efetivo</dt><dd>{{ item.membership.status || '—' }}</dd></div><div><dt>Plano</dt><dd>{{ item.membership.planCode || '—' }}</dd></div><div><dt>Início</dt><dd>{{ item.membership.startedAt ? (item.membership.startedAt | date:'dd/MM/yyyy HH:mm') : '—' }}</dd></div><div><dt>Expira em</dt><dd>{{ item.membership.expiresAt ? (item.membership.expiresAt | date:'dd/MM/yyyy HH:mm') : '—' }}</dd></div></dl></section>
+        <section class="membership-section">
+          <h2>Membership</h2>
+          <p class="membership-section__note">Membership ativa é requisito para acesso ao servidor. A conta ativa e a identidade Steam também participam da autorização.</p>
+          @if (membershipVm$ | async; as membershipVm) {
+            @if (membershipVm.loading) {
+              <app-inline-feedback variant="neutral">Carregando associação...</app-inline-feedback>
+            } @else if (membershipVm.error) {
+              <app-inline-feedback variant="error">{{ membershipVm.error }}</app-inline-feedback>
+              <button class="button button--secondary" type="button" (click)="retryMembership()">Tentar novamente</button>
+            } @else if (membershipVm.item; as membership) {
+              <header><h3>Associação atual</h3><app-status-badge [label]="membership.status" [tone]="membershipTone(membership.status)" /></header>
+              <dl>
+                <div><dt>Status efetivo</dt><dd>{{ membership.status }}</dd></div>
+                <div><dt>Plano</dt><dd>{{ membership.planCode }}</dd></div>
+                <div><dt>Origem</dt><dd>{{ membership.source }}</dd></div>
+                <div><dt>Início</dt><dd>{{ membership.startedAt ? (membership.startedAt | date:'dd/MM/yyyy HH:mm') : '—' }}</dd></div>
+                <div><dt>Expiração</dt><dd>{{ membership.expiresAt ? (membership.expiresAt | date:'dd/MM/yyyy HH:mm') : '—' }}</dd></div>
+                <div><dt>Suspensa em</dt><dd>{{ membership.suspendedAt ? (membership.suspendedAt | date:'dd/MM/yyyy HH:mm') : '—' }}</dd></div>
+                <div><dt>Cancelada em</dt><dd>{{ membership.cancelledAt ? (membership.cancelledAt | date:'dd/MM/yyyy HH:mm') : '—' }}</dd></div>
+                <div><dt>Criada em</dt><dd>{{ membership.createdAt | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+                <div><dt>Atualizada em</dt><dd>{{ membership.updatedAt | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+              </dl>
+              @if (membership.status === 'expired' || membership.status === 'cancelled') {
+                <p class="membership-section__terminal">Estado terminal: esta associação não possui ações de ciclo de vida disponíveis.</p>
+              } @else {
+                <div class="membership-actions">
+                  @if (membership.status === 'inactive') { <button class="button button--primary" type="button" [disabled]="membershipPending()" (click)="changeMembership(membership, 'activate')">Ativar associação</button> }
+                  @if (membership.status === 'active') { <button class="button button--secondary" type="button" [disabled]="membershipPending()" (click)="changeMembership(membership, 'suspend')">Suspender associação</button> }
+                  @if (membership.status === 'suspended') { <button class="button button--primary" type="button" [disabled]="membershipPending()" (click)="changeMembership(membership, 'reactivate')">Reativar associação</button> }
+                  @if (membership.status === 'active' || membership.status === 'suspended') { <button class="button button--danger" type="button" [disabled]="membershipPending()" (click)="changeMembership(membership, 'cancel')">{{ membershipPending() ? 'Alterando associação...' : 'Cancelar associação' }}</button> }
+                </div>
+              }
+            } @else {
+              <h3>Sem associação</h3>
+              <form class="grant-form" [formGroup]="grantForm" (ngSubmit)="grantMembership()" novalidate>
+                <h3>Conceder associação</h3>
+                <div class="field">
+                  <label for="membership-plan">Plano</label>
+                  <input id="membership-plan" type="text" formControlName="planCode" maxlength="64" autocomplete="off" required />
+                  @if (grantForm.controls.planCode.touched && grantForm.controls.planCode.hasError('required')) { <small class="field__error">Informe o plano.</small> }
+                  @if (grantForm.controls.planCode.touched && grantForm.controls.planCode.hasError('maxlength')) { <small class="field__error">Use no máximo 64 caracteres.</small> }
+                </div>
+                <div class="field">
+                  <label for="membership-expiry">Expira em <span>— opcional</span></label>
+                  <input id="membership-expiry" type="datetime-local" formControlName="expiresAt" />
+                  @if (grantForm.controls.expiresAt.touched && grantForm.controls.expiresAt.hasError('invalidDate')) { <small class="field__error">Informe uma data e hora válidas.</small> }
+                </div>
+                <button class="button button--primary" type="submit" [disabled]="membershipPending()">{{ membershipPending() ? 'Concedendo associação...' : 'Conceder associação' }}</button>
+              </form>
+            }
+          }
+        </section>
       </div>
     }
   }
