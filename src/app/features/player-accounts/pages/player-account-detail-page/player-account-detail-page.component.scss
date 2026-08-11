@@ -21,7 +21,8 @@
 }
 
 .detail-page > a:focus-visible,
-button:focus-visible {
+button:focus-visible,
+input:focus-visible {
   outline: 2px solid var(--color-border-focus);
   outline-offset: 3px;
 }
@@ -51,6 +52,11 @@ header {
 
 h2 {
   margin: 0 0 var(--space-4);
+  color: var(--color-text-main);
+}
+
+h3 {
+  margin: 0 0 var(--space-3);
   color: var(--color-text-main);
 }
 
@@ -95,12 +101,11 @@ dd {
   overflow-wrap: anywhere;
 }
 
-button {
+.button {
   min-height: 2.625rem;
   padding: var(--space-2) var(--space-4);
   color: var(--color-text-main);
-  background: var(--color-status-error);
-  border: 1px solid var(--color-status-error);
+  border: 1px solid transparent;
   border-radius: var(--radius-sm);
   font: inherit;
   font-weight: 700;
@@ -110,16 +115,87 @@ button {
     opacity var(--transition-fast);
 }
 
-button:hover:not(:disabled) {
+.button--primary {
+  background: var(--color-accent-cyan);
+  border-color: var(--color-accent-cyan);
+  color: var(--color-surface-base);
+}
+
+.button--secondary {
+  background: var(--color-surface-strong);
+  border-color: var(--color-border-default);
+}
+
+.button--danger {
+  background: var(--color-status-error);
+  border-color: var(--color-status-error);
+}
+
+.button:hover:not(:disabled) {
   filter: brightness(1.1);
 }
 
-button:disabled {
+.button:disabled {
   color: var(--color-text-muted);
   background: var(--color-surface-strong);
   border-color: var(--color-border-default);
   opacity: 1;
   cursor: wait;
+}
+
+.membership-section {
+  grid-column: 1 / -1;
+}
+
+.membership-section__note,
+.membership-section__terminal {
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.membership-section__terminal {
+  margin-bottom: 0;
+}
+
+.membership-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.grant-form {
+  display: grid;
+  max-width: 36rem;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.field label {
+  font-weight: 700;
+}
+
+.field label span {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.field input {
+  min-height: 2.625rem;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-main);
+  background: var(--color-surface-base);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  font: inherit;
+}
+
+.field__error {
+  color: var(--color-status-error);
 }
 
 @media (max-width: 560px) {
