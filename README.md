@@ -1,72 +1,56 @@
 # HSC Backoffice Admin
 
-SPA administrativa Angular do ecossistema HSC.
+Aplicação web administrativa do ecossistema HSC, construída em Angular. O Backoffice concentra operações internas de conteúdo, usuários, Seasons, contas/perfis de jogadores e outras rotinas administrativas autorizadas.
 
-## Papel
+Este repositório contém somente a SPA administrativa. Ele **não** é a `hsc-auth-api`, não é o Portal público/player-facing e não é o ETL do CS2.
 
-O Backoffice é a interface autorizada para operações administrativas expostas pelo `hsc-auth-api`.
+## Desenvolvimento local
 
-Domínios atuais incluem:
+### Pré-requisitos
 
-- conteúdo;
-- News;
-- Seasons;
-- usuários/admin;
-- PlayerAccounts;
-- Membership management.
+- Node.js `22.22.3` ou superior dentro da linha suportada pelo Angular 22.
+- npm `10.9.4` recomendado pelo `packageManager` do projeto.
+- Angular CLI global não é obrigatório; o CLI do projeto é instalado por `npm ci`.
 
-Ele não é:
-
-- Auth API;
-- Portal CS2;
-- Match Room player-facing;
-- ETL;
-- servidor CS2.
-
-## Stack
-
-```text
-Angular 22
-TypeScript
-Lego-oriented shared UI foundation
-```
-
-A aplicação já passou pela frente de upgrade/reestruturação para Angular 22 e pela evolução da fundação visual/arquitetural administrativa.
-
-## Match Domain
-
-O Backoffice **não está no caminho crítico atual** de:
-
-```text
-Portal Match Room
-→ Draft/Veto
-→ READY
-→ PREPARED
-→ JOINABLE
-```
-
-Não adicionar controles Match ao Backoffice sem necessidade operacional/admin concreta.
-
-## Desenvolvimento
+### Instalação
 
 ```bash
 npm ci
+```
+
+O projeto não consome `.env.local` no estado atual. A integração local com a Auth API é feita pelo proxy do Angular CLI.
+
+Para subir a aplicação sem proxy:
+
+```bash
+npm start
+```
+
+Para desenvolvimento integrado com a `hsc-auth-api` local, use o comando canônico:
+
+```bash
 npm run start:dev
 ```
 
-## Validação
+Também é possível usar diretamente o CLI local:
 
-Usar os gates documentados no repositório e `git diff --check`.
+```bash
+npx ng serve
+```
 
-## Fronteira de configuração
+Consulte [`docs/setup.md`](docs/setup.md) para o fluxo completo de ambiente local, staging e validação.
 
-O frontend não deve carregar secrets ou credenciais de backend.
+## Variáveis de ambiente
 
-Integrações locais usam proxy quando aplicável.
+| NOME_DA_VAR | DESCRIÇÃO |
+| --- | --- |
+| — | O frontend não consome variáveis de ambiente de build atualmente; configuração local de API é feita por proxy. |
 
-## Segurança
+Nunca registre segredos, cookies, tokens ou chaves em arquivos versionados de configuração ou documentação.
 
-- não logar cookies/tokens;
-- não versionar secret;
-- autorização real continua backend-side;
-- guard/RBAC do frontend não substitui enforcement de API.
+## Links úteis
+
+- [Setup operacional](docs/setup.md)
+- [Guia funcional e domínio](docs/domain.md)
+- [Template de ADR](docs/adr/0001-template.md)
+- [Regras para agentes de IA](AGENTS.md)
