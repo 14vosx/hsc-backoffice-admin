@@ -21,7 +21,7 @@ describe('AppFooter', () => {
 
   it('should render only institutional Backoffice content', () => {
     const text = fixture.nativeElement.textContent;
-    expect(text).toContain('High Skill Community');
+    expect(text).toContain('Hash Smoke Club');
     expect(text).toContain('BACKOFFICE');
     expect(fixture.nativeElement.querySelector('a')).toBeNull();
   });
